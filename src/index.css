@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -126,4 +128,16 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+:root {
+  --color-primary-light: #4a82c3;
+  --color-primary-main: #203a90;
+  --color-primary-dark: #102774;
+  --color-secondary-light: rgba(84, 86, 90, 0.6);
+  --color-secondary-main: #54565a;
+  --color-secondary-dark: #202124;
+
+  --text-primary: #54565a;
+  --text-secondary: rgba(84, 86, 90, 0.6);
 }
