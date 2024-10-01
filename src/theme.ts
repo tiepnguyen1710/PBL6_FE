@@ -11,6 +11,22 @@ const theme = createTheme({
         },
       },
     },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          color: "#54565A",
+          fontWeight: 400,
+        },
+        h5: {
+          fontSize: "1.5rem",
+          fontWeight: 600,
+          lineHeight: 1.2,
+        },
+        body2: {
+          color: "rgba(84, 86, 90, 0.6)",
+        },
+      },
+    },
   },
   palette: {
     primary: {

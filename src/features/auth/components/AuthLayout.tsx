@@ -1,0 +1,88 @@
+import Grid from "@mui/material/Grid2";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Container from "@mui/material/Container";
+
+import LoginImg from "../assets/login-img.svg";
+import RegisterImg from "../assets/register-img.svg";
+
+import classes from "./AuthLayout.module.scss";
+
+import TabItem from "./TabItem";
+import { Link, Outlet, useLocation } from "react-router-dom";
+
+const AuthLayout: React.FC = () => {
+  const { pathname: activeRoute } = useLocation();
+  const isOnLoginPage = activeRoute === "/account/login";
+  return (
+    <Container
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          p: {
+            xs: 4,
+            lg: 0,
+          },
+          minHeight: { xs: "787px", lg: "auto" },
+        }}
+      >
+        <Grid container columns={10} sx={{ alignItems: "center" }}>
+          <Grid
+            size={5}
+            sx={{
+              display: { xs: "none", lg: "flex" },
+            }}
+          >
+            <img
+              src={isOnLoginPage ? LoginImg : RegisterImg}
+              className={classes.sideImg}
+            />
+          </Grid>
+          <Grid
+            size={{ xs: 10, lg: 5 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              alignSelf: { lg: "flex-start" },
+              px: { lg: 4 },
+              paddingTop: { lg: 4 },
+            }}
+          >
+            {/* Nav */}
+            <Box sx={{ textAlign: "center", marginBottom: 3.25 }}>
+              <Typography
+                variant="h5"
+                color="primary.main"
+                sx={{ marginBottom: 1.25 }}
+              >
+                Welcome to EngFlash!
+              </Typography>
+              <Box className={classes.tabGroup}>
+                <Link to="login">
+                  <TabItem isActive={isOnLoginPage}>Login</TabItem>
+                </Link>
+                <Link to="register">
+                  <TabItem isActive={!isOnLoginPage}>Register</TabItem>
+                </Link>
+              </Box>
+            </Box>
+
+            {/* form */}
+            <Outlet />
+          </Grid>
+        </Grid>
+      </Paper>
+    </Container>
+  );
+};
+
+export default AuthLayout;

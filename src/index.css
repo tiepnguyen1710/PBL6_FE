@@ -130,6 +130,12 @@ table {
   border-spacing: 0;
 }
 
+img {
+  width: 100%;
+}
+
+/* --------------------- */
+
 :root {
   --color-primary-light: #4a82c3;
   --color-primary-main: #203a90;
@@ -140,4 +146,13 @@ table {
 
   --text-primary: #54565a;
   --text-secondary: rgba(84, 86, 90, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
 }
