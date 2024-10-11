@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
 import RoundedInput from "./RoundedInput";
-import RoundedPasswordInput from "./RoudedPasswordInput";
+import RoundedPasswordInput from "./RoundedPasswordInput";
 
 const LoginPage: React.FC = () => {
   return (

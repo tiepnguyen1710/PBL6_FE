@@ -21,11 +21,11 @@ const Header: React.FC = () => {
       >
         <Stack direction="row" spacing={2}>
           <img src={Logo} />
-          <Box>
+          <Stack direction="row">
             <NavLink isActive>Learn English</NavLink>
             <NavLink>Vocab Boost</NavLink>
             <NavLink>TOEIC Practice</NavLink>
-          </Box>
+          </Stack>
         </Stack>
         <Stack direction="row" spacing={1}>
           <Button

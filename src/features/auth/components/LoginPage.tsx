@@ -1,3 +1,7 @@
+import React from "react";
+import { useDispatch } from "react-redux";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -7,29 +11,108 @@ import Link from "@mui/material/Link";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import RoundedInput from "./RoundedInput";
-import RoundedPasswordInput from "./RoudedPasswordInput";
+import RoundedPasswordInput from "./RoundedPasswordInput";
+
+import { loginAction } from "../../../stores/authSlice";
+import { AppDispatch } from "../../../stores";
+
+// Interface for form data
+interface FormData {
+  username: string;
+  password: string;
+}
+
+const validationRules = {
+  username: {
+    required: "Username is required",
+  },
+  password: {
+    required: "Password is required",
+    minLength: {
+      value: 6,
+      message: "Password must be at least 6 characters long",
+    },
+  },
+};
 
 const LoginPage: React.FC = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    console.log("Form submitted with data:", data);
+    const loginSuccess = await dispatch(
+      loginAction(data.username, data.password)
+    );
+
+    if (loginSuccess) {
+      console.log("Login successful!");
+      navigate("/");
+    } else {
+      console.log("Login failed!");
+    }
+  };
+
   return (
     <Stack sx={{ gap: "42px", width: "100%" }}>
       <Typography variant="body1" sx={{ textAlign: "center" }}>
         Login to continue your learning journey.
       </Typography>
 
-      <Stack spacing={1}>
-        <RoundedInput label="Email" placeholder="Enter your user name" />
-        <RoundedPasswordInput
-          label="Password"
-          placeholder="Enter your password"
-        />
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <FormControlLabel control={<Checkbox />} label="Remember me" />
-          <Link href="#" underline="hover">
-            Forgot password?
-          </Link>
-        </Box>
-      </Stack>
+      <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={1}>
+          {/* Username Field */}
+          <Controller
+            name="username"
+            control={control}
+            rules={validationRules.username}
+            render={({ field }) => (
+              <RoundedInput
+                {...field}
+                label="User name"
+                placeholder="Enter your user name"
+                validationError={errors.username?.message}
+              />
+            )}
+          />
+
+          {/* Password Field */}
+          <Controller
+            name="password"
+            control={control}
+            rules={validationRules.password}
+            render={({ field }) => (
+              <RoundedPasswordInput
+                {...field} // Pass form field props (value, onChange, etc.)
+                label="Password"
+                placeholder="Enter your password"
+                validationError={errors.password?.message}
+              />
+            )}
+          />
+
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <FormControlLabel control={<Checkbox />} label="Remember me" />
+            <Link href="#" underline="hover">
+              Forgot password?
+            </Link>
+          </Box>
+        </Stack>
+      </form>
+
       <Button
+        type="submit"
+        form="login-form"
         variant="contained"
         sx={{
           backgroundColor: "success.main",

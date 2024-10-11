@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import React, { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -11,17 +10,16 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-interface RoundedPasswordInput {
-  label: string;
-  placeholder?: string;
-}
+import InputProps from "../types/InputProps";
 
-const RoundedPasswordInput: React.FC<RoundedPasswordInput> = ({
+const RoundedPasswordInput: React.FC<InputProps> = ({
   label,
-  placeholder,
+  placeholder = "",
+  validationError = "",
+  ...props
 }) => {
-  const [showPassword, setShowPassword] = useState(true);
-  const hasError = false;
+  const [showPassword, setShowPassword] = useState(false);
+  const hasError = Boolean(validationError);
 
   return (
     <Stack spacing={1}>
@@ -32,12 +30,12 @@ const RoundedPasswordInput: React.FC<RoundedPasswordInput> = ({
         <OutlinedInput
           placeholder={placeholder}
           type={showPassword ? "text" : "password"}
+          {...props} // Spread props like value, onChange, onBlur from React Hook Form
           endAdornment={
             <InputAdornment position="end">
               <IconButton
                 onClick={() => setShowPassword(!showPassword)}
                 onMouseDown={(e) => e.preventDefault()}
-                onMouseUp={(e) => e.preventDefault()}
               >
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
@@ -49,7 +47,7 @@ const RoundedPasswordInput: React.FC<RoundedPasswordInput> = ({
             "& input": { px: 2, py: 1 },
           }}
         />
-        {hasError && <FormHelperText>Error</FormHelperText>}
+        {hasError && <FormHelperText>{validationError}</FormHelperText>}
       </FormControl>
     </Stack>
   );
