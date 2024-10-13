@@ -68,7 +68,7 @@ const LoginPage: React.FC = () => {
     <>
       {isPending && <CustomBackdrop open />}
 
-      <Stack sx={{ gap: "42px", width: "100%" }}>
+      <Stack sx={{ gap: 2, width: "100%" }}>
         <Typography variant="body1" sx={{ textAlign: "center" }}>
           Login to continue your learning journey.
         </Typography>

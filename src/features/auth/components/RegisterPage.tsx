@@ -16,6 +16,7 @@ import { capitalizeFirstLetter } from "../../../utils/stringFormatter";
 interface FormData {
   username: string;
   email: string;
+  name: string;
   password: string;
   passwordConfirm: string;
 }
@@ -30,6 +31,9 @@ const validationRules = {
       value: /^\S+@\S+$/i,
       message: "Invalid email format",
     },
+  },
+  name: {
+    required: "Username is required",
   },
   password: {
     required: "Password is required",
@@ -85,14 +89,14 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmitRegisterForm: SubmitHandler<FormData> = (data) => {
     console.log("Submit register form: ", data);
-    mutate({ ...data, roles: ["user"], name: "Tien Nguyen test" }); // temp
+    mutate({ ...data, roles: ["user"] }); // temp
   };
 
   return (
     <>
       {isPending && <CustomBackdrop open />}
 
-      <Stack sx={{ gap: "42px", width: "100%" }}>
+      <Stack sx={{ gap: 2, width: "100%" }}>
         <Typography variant="body1" sx={{ textAlign: "center" }}>
           Create an account to start learning with us.
         </Typography>
@@ -114,6 +118,7 @@ const RegisterPage: React.FC = () => {
                   label="User name"
                   placeholder="Enter your user name"
                   validationError={errors.username?.message}
+                  gap={0.4}
                 />
               )}
             />
@@ -128,6 +133,22 @@ const RegisterPage: React.FC = () => {
                   label="Email"
                   placeholder="Enter your email"
                   validationError={errors.email?.message}
+                  gap={0.4}
+                />
+              )}
+            />
+
+            <Controller
+              name="name"
+              control={control}
+              rules={validationRules.name}
+              render={({ field }) => (
+                <RoundedInput
+                  {...field}
+                  label="Name"
+                  placeholder="Enter your name"
+                  validationError={errors.name?.message}
+                  gap={0.4}
                 />
               )}
             />
@@ -142,6 +163,7 @@ const RegisterPage: React.FC = () => {
                   label="Password"
                   placeholder="Enter your password"
                   validationError={errors.password?.message}
+                  gap={0.4}
                 />
               )}
             />
@@ -160,6 +182,7 @@ const RegisterPage: React.FC = () => {
                   label="Confirm Password"
                   placeholder="Retype your password"
                   validationError={errors.passwordConfirm?.message}
+                  gap={0.4}
                 />
               )}
             />

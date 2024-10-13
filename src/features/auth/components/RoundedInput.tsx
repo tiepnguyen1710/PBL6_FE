@@ -11,12 +11,13 @@ const RoundedInput: React.FC<InputProps> = ({
   label,
   placeholder = "",
   validationError = "",
+  gap = 1,
   ...props
 }) => {
   const hasError = Boolean(validationError);
 
   return (
-    <Stack spacing={1}>
+    <Stack spacing={gap}>
       <Typography component="label" sx={{ color: "secondary.dark" }}>
         {label}
       </Typography>
@@ -27,7 +28,7 @@ const RoundedInput: React.FC<InputProps> = ({
           sx={{
             borderRadius: "32px",
             "& fieldset": { borderColor: "text.secondary" },
-            "& input": { px: 2, py: 1 },
+            "& input": { px: 2, py: 0.75 },
           }}
         />
         {hasError && <FormHelperText>{validationError}</FormHelperText>}

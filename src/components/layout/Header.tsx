@@ -1,10 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+
 import AppBar from "@mui/material/AppBar";
 import {
   Avatar,
-  Box,
   Button,
   Divider,
   ListItemIcon,
@@ -29,9 +30,10 @@ import Logo from "../../assets/logos/logo.svg";
 import { AppDispatch, RootState } from "../../stores";
 import DefaultAvatar from "../../assets/avatars/default.svg";
 import { authActions, AuthState } from "../../stores/authSlice";
+import { me } from "../../features/auth/api/account-api";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, identity } = useSelector<RootState, AuthState>(
+  const { isAuthenticated, token } = useSelector<RootState, AuthState>(
     (state) => state.auth
   );
 
@@ -39,6 +41,12 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => me(token!),
+    enabled: isAuthenticated,
+  });
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -75,7 +83,7 @@ const Header: React.FC = () => {
         </Stack>
         {isAuthenticated ? (
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography>{identity?.username}</Typography>
+            <Typography>{user?.name}</Typography>
             <Stack
               color="text.primary"
               direction="row"
@@ -83,7 +91,7 @@ const Header: React.FC = () => {
               sx={{ cursor: "pointer", py: 0.5 }}
               onClick={handleOpenMenu}
             >
-              <Avatar src={identity?.avatar || DefaultAvatar} />
+              <Avatar src={user?.avatar || DefaultAvatar} />
               {open ? <ArrowDropDown /> : <ArrowLeft />}
             </Stack>
             <Menu

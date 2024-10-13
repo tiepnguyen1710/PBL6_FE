@@ -26,21 +26,17 @@ const AuthLayout: React.FC = () => {
       sx={{
         minHeight: "100vh",
         display: "flex",
-        alignItems: "center",
+        alignItems: "start",
         justifyContent: "center",
       }}
     >
       <Paper
         elevation={3}
         sx={{
-          p: {
-            xs: 4,
-            lg: 0,
-          },
-          minHeight: { xs: "787px", lg: "auto" },
+          marginTop: 3,
         }}
       >
-        <Grid container columns={10} sx={{ alignItems: "center" }}>
+        <Grid container columns={10} sx={{}}>
           <Grid
             size={5}
             sx={{
@@ -59,12 +55,12 @@ const AuthLayout: React.FC = () => {
               alignItems: "center",
               flexDirection: "column",
               alignSelf: { lg: "flex-start" },
-              px: { lg: 4 },
-              paddingTop: { lg: 2 },
+              px: 4,
+              py: 2,
             }}
           >
             {/* Nav */}
-            <Box sx={{ textAlign: "center", marginBottom: 3.25 }}>
+            <Box sx={{ textAlign: "center", marginBottom: 2 }}>
               <Typography
                 variant="h5"
                 color="primary.main"

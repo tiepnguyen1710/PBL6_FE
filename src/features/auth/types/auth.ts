@@ -9,12 +9,3 @@ export interface User {
 }
 
 export type Role = "admin" | "user";
-
-export interface Identity {
-  userId: string;
-  username: string;
-  name: string;
-  email: string;
-  roles: Role[];
-  avatar?: string | null;
-}

@@ -1,4 +1,5 @@
 import axios from "../../../axios";
+import { User } from "../types/auth";
 import LoginResponse from "../types/LoginResponse";
 import RegisterRequest from "../types/RegisterRequest";
 
@@ -15,5 +16,12 @@ export async function postLogin(
 
 export async function postRegister(request: RegisterRequest) {
   const response = await axios.post("/auth/signup", request);
+  return response.data;
+}
+
+export async function me(token: string) {
+  const response = await axios.get<User>("/auth/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return response.data;
 }

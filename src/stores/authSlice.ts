@@ -1,38 +1,37 @@
 import { ThunkAction } from "redux-thunk";
 import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Dispatch } from "redux";
-import { Identity } from "../features/auth/types/auth";
 import { postLogin } from "../features/auth/api/account-api";
 import { RootState } from "./index";
 
 export interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
-  identity: Identity | null;
+  user: User | null;
 }
 
 const initialState: AuthState = {
   token: localStorage.getItem("token") || null,
   isAuthenticated: localStorage.getItem("token") ? true : false,
-  identity: null,
+  user: null,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
-    login(state, action: PayloadAction<{ token: string; identity: Identity }>) {
-      const { token, identity } = action.payload;
+    login(state, action: PayloadAction<{ token: string; user: User }>) {
+      const { token, user } = action.payload;
       state.token = token;
       state.isAuthenticated = true;
-      state.identity = identity;
+      state.user = user;
 
       localStorage.setItem("token", token);
     },
     logout(state) {
       state.token = null;
       state.isAuthenticated = false;
-      state.identity = null;
+      state.user = null;
 
       localStorage.removeItem("token");
     },
@@ -48,16 +47,7 @@ export const loginAction =
     const response = await postLogin(username, password);
     const { user, token } = response;
 
-    const identity: Identity = {
-      userId: user.id,
-      username: user.username,
-      name: user.name,
-      email: user.email,
-      roles: user.roles,
-      avatar: user.avatar,
-    };
-
-    dispatch(authActions.login({ token, identity }));
+    dispatch(authActions.login({ token, user }));
   };
 
 export const authActions = authSlice.actions;
