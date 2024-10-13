@@ -60,7 +60,7 @@ const AuthLayout: React.FC = () => {
               flexDirection: "column",
               alignSelf: { lg: "flex-start" },
               px: { lg: 4 },
-              paddingTop: { lg: 4 },
+              paddingTop: { lg: 2 },
             }}
           >
             {/* Nav */}

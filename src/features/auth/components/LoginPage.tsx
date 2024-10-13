@@ -66,6 +66,8 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
+      {isPending && <CustomBackdrop open />}
+
       <Stack sx={{ gap: "42px", width: "100%" }}>
         <Typography variant="body1" sx={{ textAlign: "center" }}>
           Login to continue your learning journey.
@@ -135,7 +137,6 @@ const LoginPage: React.FC = () => {
           Submit
         </Button>
       </Stack>
-      {isPending && <CustomBackdrop open />}
     </>
   );
 };

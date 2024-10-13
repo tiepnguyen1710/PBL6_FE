@@ -1,5 +1,6 @@
 import axios from "../../../axios";
 import LoginResponse from "../types/LoginResponse";
+import RegisterRequest from "../types/RegisterRequest";
 
 export async function postLogin(
   username: string,
@@ -9,5 +10,10 @@ export async function postLogin(
     username,
     password,
   });
+  return response.data;
+}
+
+export async function postRegister(request: RegisterRequest) {
+  const response = await axios.post("/auth/signup", request);
   return response.data;
 }
