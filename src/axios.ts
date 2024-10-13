@@ -27,15 +27,21 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // The request was made and the server responded with a status code
+      // The request was made and the server responded with a status code that falls out of the range of 2xx
       const response = error.response;
 
       if (response.status === 401) {
+        // Logout user ...
         // store.dispatch(logoutUser());
+      }
+
+      if (response.data) {
+        console.log("Response with error:", response.data);
+        return Promise.reject(response.data);
       }
     }
 
-    console.log("Response error", error.message);
+    console.log("Response error:", error.message);
     return Promise.reject(error);
   }
 );

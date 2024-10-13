@@ -1,5 +1,5 @@
 import axios from "../../../axios";
-import { LoginResponse } from "../types/LoginResponse";
+import LoginResponse from "../types/LoginResponse";
 
 export async function postLogin(
   username: string,

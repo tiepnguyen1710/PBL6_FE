@@ -5,10 +5,10 @@ import { Identity } from "../features/auth/types/auth";
 import { postLogin } from "../features/auth/api/account-api";
 import { RootState } from "./index";
 
-interface AuthState {
+export interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
-  identity: Identity | null; // Adjust based on your user structure
+  identity: Identity | null;
 }
 
 const initialState: AuthState = {
@@ -26,6 +26,8 @@ const authSlice = createSlice({
       state.token = token;
       state.isAuthenticated = true;
       state.identity = identity;
+
+      localStorage.setItem("token", token);
     },
     logout(state) {
       state.token = null;
@@ -41,27 +43,21 @@ export const loginAction =
   (
     username: string,
     password: string
-  ): ThunkAction<Promise<boolean>, RootState, unknown, AnyAction> =>
+  ): ThunkAction<Promise<void>, RootState, unknown, AnyAction> =>
   async (dispatch: Dispatch) => {
-    try {
-      const response = await postLogin(username, password);
+    const response = await postLogin(username, password);
+    const { user, token } = response;
 
-      const identity: Identity = {
-        userId: response.user.id,
-        username: response.user.username,
-        name: response.user.name,
-        email: response.user.email,
-        roles: response.user.roles,
-      };
+    const identity: Identity = {
+      userId: user.id,
+      username: user.username,
+      name: user.name,
+      email: user.email,
+      roles: user.roles,
+      avatar: user.avatar,
+    };
 
-      dispatch(authActions.login({ token: response.token, identity }));
-      localStorage.setItem("token", response.token);
-
-      return true;
-    } catch (error) {
-      console.log("Login failed:", error);
-      return false;
-    }
+    dispatch(authActions.login({ token, identity }));
   };
 
 export const authActions = authSlice.actions;

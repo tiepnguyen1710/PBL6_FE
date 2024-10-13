@@ -16,4 +16,5 @@ export interface Identity {
   name: string;
   email: string;
   roles: Role[];
+  avatar?: string | null;
 }
