@@ -1,6 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ThemeProvider } from "@mui/material/styles";
+
+// Use this workaround to make default MUI styles is overridden by the same specificity styles
 import StyledEngineProvider from "@mui/material/StyledEngineProvider";
 import theme from "./theme";
 import App from "./App.tsx";
@@ -21,10 +23,21 @@ import Part7 from "./features/toeic-exam/components/Part7/Part7.tsx";
 import Part6 from "./features/toeic-exam/components/Part6/Part6.tsx";
 import Part5 from "./features/toeic-exam/components/Part5/Part5.tsx";
 
+import { Provider } from "react-redux";
+
+import { QueryClientProvider } from "@tanstack/react-query";
+
+import queryClient from "./queryClient.ts";
+import store from "./stores/index.ts";
+import "./index.css";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import HomePage from "./features/home/components/HomePage.tsx";
+
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <HomePage />,
   },
   {
     path: "/account",
@@ -41,7 +54,14 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "exams",
+    
+  },
+  {
+    path: "/",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "exams",
     element: <Exams />,
     children: [
       {
@@ -80,6 +100,8 @@ const router = createBrowserRouter([
         path: "detail/part7",
         element: <Part7 />,
       },
+    ] 
+      },
     ],
   },
 ]);
@@ -88,7 +110,11 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <RouterProvider router={router} />
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </Provider>
       </ThemeProvider>
     </StyledEngineProvider>
   </StrictMode>

@@ -10,10 +10,16 @@ import RegisterImg from "../assets/register-img.svg";
 import classes from "./AuthLayout.module.scss";
 
 import TabItem from "./TabItem";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, Navigate } from "react-router-dom";
 
 const AuthLayout: React.FC = () => {
   const { pathname: activeRoute } = useLocation();
+
+  if (localStorage.getItem("token")) {
+    // Redirect to home if user is already logged in
+    return <Navigate to="/" />;
+  }
+
   const isOnLoginPage = activeRoute === "/account/login";
   return (
     <Container
