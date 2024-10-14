@@ -1,0 +1,27 @@
+.title{
+    margin: 0px 0px 50px;
+    padding-bottom: 10px;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--color-primary-main);
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.skills{
+    display: flex;
+    gap: 25px;
+    justify-content: flex-start;
+    margin: 0px 0px 20px;
+
+    .innerButton{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+}
+
+.search{
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
