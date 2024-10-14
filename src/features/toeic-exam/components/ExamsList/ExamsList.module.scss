@@ -1,0 +1,39 @@
+.examByYear{
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 50px;
+    background-color: #fff;
+
+    .leftContent{
+        width: 20%;
+    }
+
+    .rightContent{
+        width: calc(80% - 30px) ;
+
+        .title{
+            color: var(--color-primary-main);
+            font-size: 25px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .innerExamsContainer{
+            //border: 1px solid black;
+            .innerTest{
+
+                .testName{
+                    color: var(--color-primary-main);
+                    font-size: 14px;
+                    font-weight: 600;
+                    margin-bottom: 12px;
+                }
+            }
+        }
+
+        
+    }
+}
