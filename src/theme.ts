@@ -17,13 +17,61 @@ const theme = createTheme({
           color: "#54565A",
           fontWeight: 400,
         },
+        h4: {
+          fontFamily: "'Roboto', sans-serif",
+          fontSize: "2rem",
+          fontWeight: "bold",
+        },
         h5: {
+          fontFamily: "'Roboto', sans-serif",
           fontSize: "1.5rem",
           fontWeight: 600,
           lineHeight: 1.2,
         },
         body2: {
           color: "rgba(84, 86, 90, 0.6)",
+        },
+        caption: {
+          fontSize: 14,
+          fontWeight: 500,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: "6px",
+          fontWeight: 500,
+          "& .MuiChip-label": {
+            overflow: "initial",
+          },
+        },
+        sizeSmall: {
+          height: "22px",
+          fontSize: "12px",
+        },
+      },
+      defaultProps: {
+        size: "small", // Set 'small' as the default size
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          "@media (min-width: 600px)": {
+            maxWidth: "100%",
+          },
+
+          // Need to rewrite the default rules so that they have higher specificity
+          "@media (min-width: 900px)": {
+            maxWidth: "900px",
+          },
+          "@media (min-width: 1200px)": {
+            maxWidth: "1200px",
+          },
+          "@media (min-width: 1536px)": {
+            maxWidth: "1536px",
+          },
         },
       },
     },
