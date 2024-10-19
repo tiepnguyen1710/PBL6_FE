@@ -34,6 +34,7 @@ const AuthLayout: React.FC = () => {
         elevation={3}
         sx={{
           marginTop: 3,
+          maxWidth: "1100px",
         }}
       >
         <Grid container columns={10} sx={{}}>

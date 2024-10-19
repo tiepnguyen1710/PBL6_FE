@@ -15,7 +15,16 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#54565A",
-          fontWeight: 400,
+          // fontWeight: 400,
+        },
+        h1: {
+          fontSize: "90px",
+          fontWeight: "bold",
+        },
+        h3: {
+          fontFamily: "'Roboto', sans-serif",
+          fontSize: "3rem",
+          fontWeight: "bold",
         },
         h4: {
           fontFamily: "'Roboto', sans-serif",

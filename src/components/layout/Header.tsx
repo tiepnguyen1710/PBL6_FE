@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import AppBar from "@mui/material/AppBar";
@@ -74,13 +74,16 @@ const Header: React.FC = () => {
         }}
       >
         <Stack direction="row" spacing={2}>
-          <img src={Logo} />
+          <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+            <img src={Logo} />
+          </Link>
           <Stack direction="row">
             <NavLink isActive>Learn English</NavLink>
             <NavLink>Vocab Boost</NavLink>
             <NavLink>TOEIC Practice</NavLink>
           </Stack>
         </Stack>
+
         {isAuthenticated ? (
           <Stack direction="row" alignItems="center" spacing={1}>
             <Typography>{user?.name}</Typography>
