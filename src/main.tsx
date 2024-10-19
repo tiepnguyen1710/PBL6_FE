@@ -33,7 +33,6 @@ import "./index.css";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./features/home/components/HomePage.tsx";
 
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -53,15 +52,13 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {},
   {
-    
-  },
-  {
-    path: "/",
-    element: <ProtectedRoute />,
-    children: [
-      {
-        path: "exams",
+    // path: "/",
+    // element: <ProtectedRoute />,
+    // children: [
+    //   {
+    path: "exams",
     element: <Exams />,
     children: [
       {
@@ -100,10 +97,10 @@ const router = createBrowserRouter([
         path: "detail/part7",
         element: <Part7 />,
       },
-    ] 
-      },
     ],
   },
+  //   ],
+  // },
 ]);
 
 createRoot(document.getElementById("root")!).render(
