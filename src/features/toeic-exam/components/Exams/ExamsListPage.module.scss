@@ -6,7 +6,7 @@
 
 .mainContent {
     display: flex;
-    gap: 20px;
+    gap: 30px;
 
     .leftContent{
         //border: solid 1px black;
@@ -15,8 +15,10 @@
 
     .rightContent{
         border-radius: 10px;
-        height: 100px;
-        width: calc(30% - 20px);
+        height: fit-content;
+        padding: 30px;
+        width: calc(30% - 30px);
+        margin-top: 60px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 }

@@ -3,6 +3,7 @@ import ExamsList from "../ExamsList/ExamsList";
 import Skills from "../Skills/Skills";
 import styles from "./ExamsListPage.module.scss";
 import Paginate from "../Paginate/Paginate";
+import InforUserBox from "../InforUserBox/InforUserBox";
 
 const ExamsListPage = () => {
   return (
@@ -12,7 +13,7 @@ const ExamsListPage = () => {
         maxWidth="lg"
         className={styles.mainContent}
         sx={{
-          maxWidth: { lg: "1000px", xl: "1300px" }, // Thay đổi max-width tại các điểm dừng màn hình
+          maxWidth: { lg: "1000px", xl: "1300px" },
         }}
       >
         <div className={styles.leftContent}>
@@ -26,7 +27,9 @@ const ExamsListPage = () => {
             <Paginate />
           </div>
         </div>
-        <div className={styles.rightContent}>Quang cao</div>
+        <div className={styles.rightContent}>
+          <InforUserBox />
+        </div>
       </Container>
     </div>
   );
