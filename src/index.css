@@ -143,6 +143,7 @@ img {
   --color-secondary-light: rgba(84, 86, 90, 0.6);
   --color-secondary-main: #54565a;
   --color-secondary-dark: #202124;
+  --color-gradient-secondary: linear-gradient(315deg, #aee1f9, #f6ebe6 74%);
 
   --text-primary: #54565a;
   --text-secondary: rgba(84, 86, 90, 0.6);
@@ -156,5 +157,3 @@ body {
   font-family: "Inter", sans-serif;
   font-weight: 400;
 }
-
-
