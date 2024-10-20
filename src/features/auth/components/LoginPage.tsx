@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -56,6 +57,7 @@ const LoginPage: React.FC = () => {
     },
     onSuccess: () => {
       navigate("/");
+      toast.success("Login successful!");
     },
   });
 

@@ -42,6 +42,8 @@ axiosClient.interceptors.response.use(
     }
 
     console.log("Response error:", error.message);
+
+    // If don't have response error data, then return the axios error object
     return Promise.reject(error);
   }
 );

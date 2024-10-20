@@ -32,6 +32,8 @@ import store from "./stores/index.ts";
 import "./index.css";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./features/home/components/HomePage.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter([
   {
@@ -110,6 +112,7 @@ createRoot(document.getElementById("root")!).render(
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />
+            <ToastContainer />
           </QueryClientProvider>
         </Provider>
       </ThemeProvider>

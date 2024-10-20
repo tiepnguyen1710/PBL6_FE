@@ -12,6 +12,7 @@ import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import { Alert } from "@mui/material";
 
 import { capitalizeFirstLetter } from "../../../utils/stringFormatter";
+import { toast } from "react-toastify";
 
 interface FormData {
   username: string;
@@ -33,7 +34,11 @@ const validationRules = {
     },
   },
   name: {
-    required: "Username is required",
+    required: "Name is required",
+    minLength: {
+      value: 6,
+      message: "Name must be at least 6 characters long",
+    },
   },
   password: {
     required: "Password is required",
@@ -61,6 +66,7 @@ const RegisterPage: React.FC = () => {
     mutationFn: postRegister,
     onSuccess: () => {
       navigate("/account/login");
+      toast.success("Register successful! Please login to continue.");
     },
   });
 
