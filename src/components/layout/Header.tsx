@@ -62,7 +62,7 @@ const Header: React.FC = () => {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       sx={{
         bgcolor: "white",
       }}

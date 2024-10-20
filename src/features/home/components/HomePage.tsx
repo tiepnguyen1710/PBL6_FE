@@ -246,51 +246,6 @@ const HomePage: React.FC = () => {
                     </SwiperSlide>
                   </Swiper>
                 </Box>
-
-                {/* <Box display="flex" justifyContent="center" sx={{ marginTop: 3 }}>
-            <Grid2
-              container
-              sx={{ maxWidth: { md: "900px", lg: "1100px" } }}
-              spacing={1.25}
-              justifyContent="center"
-            >
-              <Grid2>
-                <VocaSet
-                  title="400 Words of TOEFL - Intermediate English"
-                  qualification="Medium"
-                  topic="Biology"
-                  takenNumber="2.1m"
-                />
-              </Grid2>
-              <Grid2>
-                <VocaSet
-                  title="400 Words of TOEFL - Intermediate English"
-                  qualification="Easy"
-                  topic="Family"
-                  takenNumber="10.1m"
-                />
-              </Grid2>
-              <Grid2>
-                <VocaSet
-                  title="400 Words of TOEFL - Intermediate English"
-                  qualification="Advanced"
-                  takenNumber="2.1m"
-                />
-              </Grid2>
-              <Grid2>
-                <VocaSet
-                  title="400 Words of TOEFL - Intermediate English"
-                  qualification="Medium"
-                  topic="Biology"
-                  takenNumber="2.1m"
-                />
-              </Grid2>
-            </Grid2>
-          </Box> */}
-
-                {/* <Box display="flex" justifyContent="center" sx={{ marginTop: 1 }}>
-            <ViewMoreButton>Browser More</ViewMoreButton>
-          </Box> */}
               </Box>
 
               <Divider />
