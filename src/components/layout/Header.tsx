@@ -115,13 +115,15 @@ const Header: React.FC = () => {
                 "& .MuiMenu-list > ul:focus-visible": { outline: "none" },
               }}
             >
-              <MenuList>
-                <MenuItem>
-                  <ListItemIcon>
-                    <Person fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Profile</ListItemText>
-                </MenuItem>
+              <MenuList sx={{ "& a": { textDecoration: "none" } }}>
+                <Link to="/profile">
+                  <MenuItem>
+                    <ListItemIcon>
+                      <Person fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Profile</ListItemText>
+                  </MenuItem>
+                </Link>
                 <MenuItem>
                   <ListItemIcon>
                     <BarChart fontSize="small" />

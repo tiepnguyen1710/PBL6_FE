@@ -1,6 +1,7 @@
-import React, { ReactNode } from 'react';
-import Header from './Header';
-import Footer from './Footer';
+import React, { ReactNode } from "react";
+import Header from "./Header";
+import Footer from "./Footer";
+import { Stack } from "@mui/material";
 
 // Định nghĩa kiểu cho props
 interface Props {
@@ -8,11 +9,11 @@ interface Props {
 }
 
 const Content: React.FC<Props> = ({ children }) => (
-  <div>
+  <Stack sx={{ minHeight: "100vh" }}>
     <Header />
-        <main>{children}</main>
+    <main style={{ flexGrow: 1 }}>{children}</main>
     <Footer />
-  </div>
+  </Stack>
 );
 
 export default Content;

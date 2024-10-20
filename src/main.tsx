@@ -34,6 +34,7 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./features/home/components/HomePage.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserProfilePage from "./features/user-profile/components/UserProfilePage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -98,6 +99,16 @@ const router = createBrowserRouter([
       {
         path: "detail/part7",
         element: <Part7 />,
+      },
+    ],
+  },
+  {
+    path: "profile",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <UserProfilePage />,
       },
     ],
   },
