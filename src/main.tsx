@@ -35,6 +35,7 @@ import HomePage from "./features/home/components/HomePage.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserProfilePage from "./features/user-profile/components/UserProfilePage.tsx";
+import VocaLibraryPage from "./features/voca/components/VocaLibraryPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -109,6 +110,16 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <UserProfilePage />,
+      },
+    ],
+  },
+  {
+    path: "voca",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <VocaLibraryPage />,
       },
     ],
   },

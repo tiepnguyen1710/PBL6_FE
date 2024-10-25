@@ -1,11 +1,11 @@
 import { CardContent, CardMedia, Chip, Stack, Typography } from "@mui/material";
-import CardTitle from "./CardTitle";
+import CardTitle from "../features/home/components/CardTitle";
 
-import DefaultVocaSetImg from "../../../assets/images/voca/default.png";
-import StudentIcon from "./StudentIcon";
-import CustomCard from "./CustomCard";
+import DefaultVocaSetImg from "../assets/images/voca/default.png";
+import StudentIcon from "../features/home/components/StudentIcon";
+import CustomCard from "../features/home/components/CustomCard";
 
-interface VocaSetProps {
+export interface VocaSetProps {
   title: string;
   qualification?: string;
   topic?: string;
@@ -33,7 +33,7 @@ const VocaSet: React.FC<VocaSetProps> = ({
   return (
     <CustomCard
       sx={{
-        maxWidth: "250px",
+        width: "250px",
       }}
     >
       <CardMedia component="img" height="140" image={DefaultVocaSetImg} />
@@ -44,16 +44,21 @@ const VocaSet: React.FC<VocaSetProps> = ({
           gap: 0.5,
         }}
       >
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Stack direction="row" spacing={0.25}>
-            {qualification && (
-              <Chip label={qualification} sx={{ ...chipStyleQualification }} />
-            )}
-            {topic && <Chip label={topic} sx={{ ...chipStyleTopic }} />}
+        <Stack direction="row" spacing={0.25}>
+          {qualification && (
+            <Chip label={qualification} sx={{ ...chipStyleQualification }} />
+          )}
+          {topic && <Chip label={topic} sx={{ ...chipStyleTopic }} />}
+        </Stack>
+
+        <CardTitle>{title}</CardTitle>
+
+        <Stack direction="row" justifyContent="space-between" alignItems="end">
+          <Stack direction="row" spacing={0.5} alignItems="end">
+            <StudentIcon sx={{ fontSize: 20 }} />
+            <Typography component="span" sx={{ lineHeight: 1 }}>
+              {takenNumber}
+            </Typography>
           </Stack>
           <Typography fontSize={12} sx={{ fontWeight: "500" }}>
             by{" "}
@@ -65,13 +70,6 @@ const VocaSet: React.FC<VocaSetProps> = ({
             >
               {author || "EngFlash"}
             </Typography>
-          </Typography>
-        </Stack>
-        <CardTitle>{title}</CardTitle>
-        <Stack direction="row" spacing={0.5} alignItems="end">
-          <StudentIcon sx={{ fontSize: 20 }} />
-          <Typography component="span" sx={{ lineHeight: 1 }}>
-            {takenNumber}
           </Typography>
         </Stack>
       </CardContent>

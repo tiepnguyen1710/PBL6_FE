@@ -19,7 +19,7 @@ import DayUntilIcon from "./DayUntilIcon";
 import ExamDateIcon from "./ExamDateIcon";
 import TargetIcon from "./TargetIcon";
 import PracticeResult from "./PracticeResult";
-import VocaSet from "./VocaSet";
+import VocaSet from "../../../components/VocaSet";
 import ViewMoreButton from "./ViewMoreButton";
 import ExamCard from "./ExamCard";
 import Footer from "../../../components/layout/Footer";

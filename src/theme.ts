@@ -100,6 +100,11 @@ const theme = createTheme({
         },
       },
     },
+    MuiTab: {
+      defaultProps: {
+        disableRipple: true,
+      },
+    },
   },
   palette: {
     primary: {
