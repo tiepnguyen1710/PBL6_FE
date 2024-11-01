@@ -34,6 +34,9 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./features/home/components/HomePage.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Admin from "./components/layout/admin/Admin.tsx";
+import Dashboard from "./features/admin/dashboard/Dashboard.tsx";
+import Exam from "./features/admin/exams/components/exam.tsx";
 
 const router = createBrowserRouter([
   {
@@ -101,6 +104,20 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "admin",
+    element: <Admin />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "exam",
+        element: <Exam />,
+      },
+    ],
+  },
   //   ],
   // },
 ]);
@@ -117,5 +134,5 @@ createRoot(document.getElementById("root")!).render(
         </Provider>
       </ThemeProvider>
     </StyledEngineProvider>
-  </StrictMode>
+  </StrictMode>,
 );
