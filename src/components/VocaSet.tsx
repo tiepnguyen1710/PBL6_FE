@@ -11,6 +11,7 @@ export interface VocaSetProps {
   topic?: string;
   author?: string;
   takenNumber: string;
+  image?: string;
 }
 
 const VocaSet: React.FC<VocaSetProps> = ({
@@ -19,6 +20,7 @@ const VocaSet: React.FC<VocaSetProps> = ({
   topic,
   author,
   takenNumber,
+  image = DefaultVocaSetImg,
 }) => {
   const chipStyleTopic = {
     backgroundColor: "#ff6f00",
@@ -36,7 +38,7 @@ const VocaSet: React.FC<VocaSetProps> = ({
         width: "250px",
       }}
     >
-      <CardMedia component="img" height="140" image={DefaultVocaSetImg} />
+      <CardMedia component="img" height="140" image={image} />
       <CardContent
         sx={{
           display: "flex",

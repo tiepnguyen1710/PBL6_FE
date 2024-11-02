@@ -5,4 +5,5 @@ export default interface VocaSetInfo {
   topic?: string;
   author?: string;
   takenNumber: string;
+  image?: string;
 }

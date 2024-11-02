@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import AppBar from "@mui/material/AppBar";
@@ -25,7 +25,7 @@ import {
   Person,
 } from "@mui/icons-material";
 
-import NavLink from "../UI/NavLink";
+import CustomNavLink from "../UI/NavLink";
 import Logo from "../../assets/logos/logo.svg";
 import { AppDispatch, RootState } from "../../stores";
 import DefaultAvatar from "../../assets/avatars/default.svg";
@@ -78,9 +78,23 @@ const Header: React.FC = () => {
             <img src={Logo} />
           </Link>
           <Stack direction="row">
-            <NavLink isActive>Learn English</NavLink>
-            <NavLink>Vocab Boost</NavLink>
-            <NavLink>TOEIC Practice</NavLink>
+            <NavLink to="/">
+              {({ isActive }) => (
+                <CustomNavLink isActive={isActive}>Learn English</CustomNavLink>
+              )}
+            </NavLink>
+            <NavLink to="/voca">
+              {({ isActive }) => (
+                <CustomNavLink isActive={isActive}>Vocab Boost</CustomNavLink>
+              )}
+            </NavLink>
+            <NavLink to="/exams">
+              {({ isActive }) => (
+                <CustomNavLink isActive={isActive}>
+                  TOEIC Practice
+                </CustomNavLink>
+              )}
+            </NavLink>
           </Stack>
         </Stack>
 

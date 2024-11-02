@@ -6,6 +6,7 @@ import VocaSet from "../../../components/VocaSet";
 import TabPanel from "../../../components/UI/TabPanel";
 import { mockVocaSets } from "../utils/data";
 import VocaSetInfo from "../types/VocaSetInfo";
+import SearchInput from "./SearchInput";
 
 const VOCA_TABS = [
   {
@@ -31,10 +32,17 @@ const VOCA_TABS = [
 ];
 
 const VocaLibraryPage: React.FC = () => {
-  const [tabIndex, setTabIndex] = useState(1);
+  const [tabIndex, setTabIndex] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
+  };
+
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchValue(event.target.value);
   };
 
   return (
@@ -45,29 +53,24 @@ const VocaLibraryPage: React.FC = () => {
           Vocabulary Library
         </Typography>
 
-        <Tabs
-          value={tabIndex}
-          onChange={handleChange}
-          sx={{
-            "& .MuiTab-root": { px: 0.75 },
-            "& .MuiTabs-indicator": {
-              height: "4px",
-              bottom: "-2px",
-            },
-            "& .MuiTabs-scroller": {
-              overflowX: "visible",
-            },
-            borderBottom: 2,
-            borderColor: "divider",
-            overflowY: "visible",
-            overflow: "initial",
-          }}
-        >
-          <Tab label="All" />
-          <Tab label="Beginner" />
-          <Tab label="Intermediate" />
-          <Tab label="Advanced" />
-        </Tabs>
+        <Box sx={{ position: "relative" }}>
+          <Tabs
+            value={tabIndex}
+            onChange={handleChange}
+            sx={{
+              "& .MuiTab-root": { px: 0.75 },
+              borderColor: "divider",
+            }}
+          >
+            <Tab label="All" />
+            <Tab label="Beginner" />
+            <Tab label="Intermediate" />
+            <Tab label="Advanced" />
+          </Tabs>
+          <Box sx={{ position: "absolute", right: 0, top: 0 }}>
+            <SearchInput onChange={handleSearchInputChange} />
+          </Box>
+        </Box>
         {VOCA_TABS.map((tab) => (
           <TabPanel
             key={tab.index}
@@ -77,11 +80,24 @@ const VocaLibraryPage: React.FC = () => {
           >
             <Grid2 container rowGap={1.5}>
               {mockVocaSets
-                .filter((vocaSet: VocaSetInfo) =>
-                  tab.qualification === "all"
-                    ? true
-                    : vocaSet.qualification === tab.qualification
-                )
+                .filter((vocaSet: VocaSetInfo) => {
+                  const title = vocaSet.title.toLowerCase();
+                  const author = vocaSet.author?.toLowerCase();
+
+                  let isRendered = true;
+
+                  if (searchValue) {
+                    isRendered =
+                      author?.includes(searchValue) ||
+                      title.includes(searchValue);
+                  }
+
+                  if (tab.qualification !== "all") {
+                    isRendered &&= vocaSet.qualification === tab.qualification;
+                  }
+
+                  return isRendered;
+                })
                 .map((vocaSet: VocaSetInfo) => (
                   <Grid2 sx={{ width: "250px", marginRight: 1 }}>
                     <VocaSet
@@ -91,6 +107,7 @@ const VocaLibraryPage: React.FC = () => {
                       topic={vocaSet.topic}
                       author={vocaSet.author}
                       takenNumber={vocaSet.takenNumber}
+                      image={vocaSet.image}
                     />
                   </Grid2>
                 ))}

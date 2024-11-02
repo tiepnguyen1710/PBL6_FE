@@ -14,7 +14,7 @@ const theme = createTheme({
     MuiTypography: {
       styleOverrides: {
         root: {
-          color: "#54565A",
+          // color: "#54565A",
           // fontWeight: 400,
         },
         h1: {
@@ -97,6 +97,17 @@ const theme = createTheme({
             paddingLeft: "1.5rem",
             paddingRight: "1.5rem",
           },
+          "& .MuiTabs-indicator": {
+            height: "4px",
+            bottom: "-2px",
+          },
+          "& .MuiTabs-scroller": {
+            overflow: "visible !important",
+          },
+          borderBottom: 2,
+          borderStyle: "solid",
+          overflow: "initial",
+          borderColor: "divider",
         },
       },
     },

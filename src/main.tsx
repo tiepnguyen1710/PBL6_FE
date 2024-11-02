@@ -41,6 +41,7 @@ import Exam from "./features/admin/exams/components/exam.tsx";
 
 import UserProfilePage from "./features/user-profile/components/UserProfilePage.tsx";
 import VocaLibraryPage from "./features/voca/components/VocaLibraryPage.tsx";
+import LearningVocaPage from "./features/voca/components/LearningVocaPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <VocaLibraryPage />,
+      },
+      {
+        path: ":vocaSetId/learn",
+        element: <LearningVocaPage />,
       },
     ],
   },
