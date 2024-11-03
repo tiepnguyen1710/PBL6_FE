@@ -4,6 +4,7 @@ import { FaBars } from "react-icons/fa";
 import { useState } from "react";
 import HeaderAdmin from "./HeaderAdmin";
 import { Outlet } from "react-router-dom";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 const Admin = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -12,6 +13,8 @@ const Admin = () => {
       sx={{
         display: "flex",
         overflow: "hidden",
+        width: "100vw",
+        height: "100vh",
       }}
     >
       <Box
@@ -39,10 +42,12 @@ const Admin = () => {
           </Box>
           <Box
             sx={{
-              padding: 3,
+              height: "calc(100vh - 55px)",
             }}
           >
-            <Outlet />
+            <PerfectScrollbar>
+              <Outlet />
+            </PerfectScrollbar>
           </Box>
         </Stack>
       </Box>

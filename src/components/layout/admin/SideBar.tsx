@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logos/logo.svg";
+import LogoMini from "../../../assets/logos/logomini.png";
 
 const SideBar = (props: any) => {
   const { collapsed, toggled } = props;
@@ -22,9 +23,15 @@ const SideBar = (props: any) => {
           style={{
             width: 150,
             height: "auto",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          <img src={Logo} />
+          {collapsed ? (
+            <img src={LogoMini} style={{ height: "30px", width: "auto" }} />
+          ) : (
+            <img src={Logo} />
+          )}
         </Link>
       </Box>
       <Menu

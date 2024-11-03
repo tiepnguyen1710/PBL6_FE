@@ -10,52 +10,52 @@ interface CrPartProps {
   updateExamData: (data: groupQuestionData[], part: string) => void;
   //partIndex: keyof typeof TOEIC_PARTS;
 }
-const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
+const CrPart4: React.FC<CrPartProps> = ({ updateExamData }) => {
   const audioRef = useRef(null);
   const debouncedUpdateExamData = useCallback(
     debounce(updateExamData, 500),
     [],
   );
-  const [part1Data, setPart1Data] = useState<groupQuestionData[]>(
-    Array.from({ length: TOEIC_PARTS.Part1.groupQuestion }, (_, index) => ({
+  const [part4Data, setpart4Data] = useState<groupQuestionData[]>(
+    Array.from({ length: TOEIC_PARTS.Part4.groupQuestion }, (_, index) => ({
       audio: null,
       audioPreview: "",
       image: [],
       imagePreview: [],
       passage: "",
       questionData: Array.from(
-        { length: TOEIC_PARTS.Part1.questionPerGroup },
+        { length: TOEIC_PARTS.Part4.questionPerGroup },
         (_, index) => ({
           number: 0,
           question: "",
           answer: Array.from(
-            { length: TOEIC_PARTS.Part1.answerCount },
+            { length: TOEIC_PARTS.Part4.answerCount },
             (_, index) => "",
           ),
         }),
       ),
     })),
   );
-  //console.log(part1Data);
+  //console.log(part4Data);
 
   useEffect(() => {
-    debouncedUpdateExamData(part1Data, "part1");
-  }, [part1Data]);
+    debouncedUpdateExamData(part4Data, "part4");
+  }, [part4Data]);
 
   // useEffect(() => {
   //   if (audioRef.current) {
   //     audioRef.current.load(); // Reload the audio element to reflect the new source
   //   }
-  // }, [part1Data]);
+  // }, [part4Data]);
 
   const handleQuestionChange = (
     groupIndex: number,
     questionDataIndex: number,
     value: string,
   ) => {
-    let updatedData = [...part1Data];
+    let updatedData = [...part4Data];
     updatedData[groupIndex].questionData[questionDataIndex].question = value;
-    setPart1Data(updatedData);
+    setpart4Data(updatedData);
   };
 
   const handleAnswerChange = (
@@ -64,10 +64,10 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
     answerIndex: number,
     value: string,
   ) => {
-    let updateData = [...part1Data];
+    let updateData = [...part4Data];
     updateData[groupIndex].questionData[questionDataIndex].answer[answerIndex] =
       value;
-    setPart1Data(updateData);
+    setpart4Data(updateData);
   };
 
   const handleAudioChange = (
@@ -75,13 +75,13 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files.length > 0) {
-      let updateData = [...part1Data];
+      let updateData = [...part4Data];
       const file = event.target.files[0];
       console.log(file);
       updateData[groupIndex].audio = file;
       const previewUrl = URL.createObjectURL(file);
       updateData[groupIndex].audioPreview = previewUrl;
-      setPart1Data(updateData);
+      setpart4Data(updateData);
     }
   };
 
@@ -91,7 +91,7 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       console.log(event.target.files);
-      let dataUpdate = [...part1Data];
+      let dataUpdate = [...part4Data];
       const filesArray = Array.from(event.target.files);
       //setSelectedImages((prevImages) => [...prevImages, ...filesArray]);
       dataUpdate[groupIndex].image = [
@@ -110,25 +110,25 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
       // setSelectedImage(file);
       // const previewUrl = URL.createObjectURL(file);
       // setImagePreview(previewUrl);
-      setPart1Data(dataUpdate);
+      setpart4Data(dataUpdate);
     }
   };
 
   const handleClearImage = (groupIndex: number) => {
-    let dataUpdate = [...part1Data];
+    let dataUpdate = [...part4Data];
     dataUpdate[groupIndex].image = [];
     dataUpdate[groupIndex].imagePreview = [];
-    setPart1Data(dataUpdate);
+    setpart4Data(dataUpdate);
   };
 
   const handleEditorChange = (groupIndex: number, newContent: string) => {
-    let updateData = [...part1Data];
+    let updateData = [...part4Data];
     updateData[groupIndex].passage = newContent;
-    setPart1Data(updateData);
+    setpart4Data(updateData);
   };
   return (
     <>
-      {part1Data.map((group, groupIndex) => {
+      {part4Data.map((group, groupIndex) => {
         return (
           <Box
             key={groupIndex}
@@ -150,9 +150,9 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
                       type="file"
                       onChange={(event) => handleAudioChange(groupIndex, event)}
                       style={{ display: "none" }}
-                      id={`audio-upload-${groupIndex}`}
+                      id={`audio-upload-4-${groupIndex}`}
                     />
-                    <label htmlFor={`audio-upload-${groupIndex}`}>
+                    <label htmlFor={`audio-upload-4-${groupIndex}`}>
                       <Button variant="contained" component="span">
                         Upload Audio
                       </Button>
@@ -177,7 +177,7 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
                       multiple
                       onChange={(event) => handleImageChange(groupIndex, event)}
                       style={{ display: "none" }}
-                      id={`image-upload-${groupIndex}`}
+                      id={`image-upload-4-${groupIndex}`}
                     />
 
                     {group.image?.length && group.image.length > 0 ? (
@@ -189,7 +189,7 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
                         Clear Image
                       </Button>
                     ) : (
-                      <label htmlFor={`image-upload-${groupIndex}`}>
+                      <label htmlFor={`image-upload-4-${groupIndex}`}>
                         <Button variant="contained" component="span">
                           Upload Image
                         </Button>
@@ -251,7 +251,9 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
                             alignItems: "center",
                           }}
                         >
-                          {groupIndex * TOEIC_PARTS.Part1.questionPerGroup +
+                          {TOEIC_PARTS.Part4.start -
+                            1 +
+                            groupIndex * TOEIC_PARTS.Part4.questionPerGroup +
                             (questionDataIndex + 1)}
                         </Box>
                         <TextField
@@ -300,4 +302,4 @@ const CrPart1: React.FC<CrPartProps> = ({ updateExamData }) => {
   );
 };
 
-export default CrPart1;
+export default CrPart4;
