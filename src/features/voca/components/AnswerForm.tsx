@@ -4,13 +4,15 @@ import CuteButton from "./CuteButton";
 import { useState } from "react";
 
 interface AnswerFormProps {
-  onSubmit: (answer: string) => void;
+  onSubmit: (answer: string) => Promise<void>;
   status: "correct" | "wrong" | "default";
+  active?: boolean;
   onChange?: (answer: string) => void;
 }
 
 const AnswerForm: React.FC<AnswerFormProps> = ({
   status,
+  active = false,
   onSubmit,
   onChange,
 }) => {
@@ -37,15 +39,15 @@ const AnswerForm: React.FC<AnswerFormProps> = ({
       sx={{ marginTop: 2.5 }}
     >
       <AnswerInput
-        autoFocus
         placeholder="Type the vocabulary you guessed here."
         status={status}
+        active={active}
         sx={{ minWidth: "500px" }}
         value={answer}
         onChange={handleChangeInput}
-        onKeyDown={(e) => {
+        onKeyDown={async (e) => {
           if (e.key === "Enter") {
-            onSubmit(answer);
+            await onSubmit(answer);
           }
         }}
       />
@@ -58,7 +60,7 @@ const AnswerForm: React.FC<AnswerFormProps> = ({
           "&:hover > span": { color: "primary.main" },
         }}
         active={!isEmpty}
-        onClick={() => onSubmit(answer)}
+        onClick={async () => await onSubmit(answer)}
       />
     </Stack>
   );

@@ -14,20 +14,39 @@ import FlashCardComposition from "./FlashCardComposition";
 import { mockVocabularies } from "../utils/data";
 import WrongAnswerAudio from "../assets/learning_wrong.mp3";
 import CorrectAnswerAudio from "../assets/learning_right.mp3";
+import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnimationType";
+import { AnimationType } from "../types/FlashCardCompositionAnimationType";
 
 const LearningVocaPage: React.FC = () => {
   const [currentVocaIdx, setCurrentVocaIdx] = useState(0);
-  const voca = mockVocabularies[currentVocaIdx];
+  const [prevVocaIdx, setPrevVocaIdx] = useState(0);
+
+  console.log("currentVocaIdx", currentVocaIdx);
+  console.log("prevVocaIdx", prevVocaIdx);
+
+  let direction = "Unchanged";
+
+  if (currentVocaIdx > prevVocaIdx) {
+    direction = "Right";
+  } else if (currentVocaIdx < prevVocaIdx) {
+    direction = "Left";
+  }
+
+  console.log("direction", direction);
+
+  // const voca = mockVocabularies[currentVocaIdx];
   const vocaLength = mockVocabularies.length;
 
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
 
   const handleNext = () => {
+    setPrevVocaIdx(currentVocaIdx);
     setCurrentVocaIdx((prev) => Math.min(prev + 1, vocaLength - 1));
   };
 
   const handlePrev = () => {
+    setPrevVocaIdx(currentVocaIdx);
     setCurrentVocaIdx((prev) => Math.max(prev - 1, 0));
   };
 
@@ -35,12 +54,16 @@ const LearningVocaPage: React.FC = () => {
     wrongAnswerAudioRef.current?.play();
   };
 
-  const playCorrectAnswerAudio = () => {
-    correctAnswerAudioRef.current?.play();
+  const playCorrectAnswerAudio = async () => {
+    await correctAnswerAudioRef.current?.play();
+    // Add a little delay
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
   };
 
-  const handleCorrectAnswer = () => {
-    playCorrectAnswerAudio();
+  const handleCorrectAnswer = async () => {
+    await playCorrectAnswerAudio();
   };
 
   const handleWrongAnswer = () => {
@@ -87,6 +110,10 @@ const LearningVocaPage: React.FC = () => {
               minWidth: "110px",
               textAlign: "center",
             }}
+            onClick={() => {
+              setCurrentVocaIdx(0);
+              setPrevVocaIdx(0);
+            }}
           >
             <Typography color="white" sx={{ fontSize: 18, lineHeight: "52px" }}>
               LEARN
@@ -125,15 +152,38 @@ const LearningVocaPage: React.FC = () => {
             }}
           />
         </Stack>
-        {/* {mockVocabularies.map((voca) => ( */}
-        <FlashCardComposition
-          key={voca.id}
-          voca={voca}
-          onCorrectAnswer={handleCorrectAnswer}
-          onWrongAnswer={handleWrongAnswer}
-          onSubmitAfterCorrectAnswer={handleNext}
-        />
-        {/* ))} */}
+        <div style={{ position: "relative" }}>
+          {mockVocabularies.map((voca, idx) => {
+            let animate: FlashCardCompositionAnimationType = undefined;
+
+            if (direction !== "Unchanged") {
+              if (idx === currentVocaIdx) {
+                animate =
+                  direction === "Right"
+                    ? AnimationType.EnterRight
+                    : AnimationType.EnterLeft;
+              } else if (idx === prevVocaIdx) {
+                animate =
+                  direction === "Right"
+                    ? AnimationType.ExitLeft
+                    : AnimationType.ExitRight;
+              }
+            }
+
+            return (
+              <FlashCardComposition
+                key={voca.id + (animate || "")}
+                voca={voca}
+                onCorrectAnswer={handleCorrectAnswer}
+                onWrongAnswer={handleWrongAnswer}
+                onSubmitAfterCorrectAnswer={handleNext}
+                animate={animate}
+                visible={idx === currentVocaIdx || idx === prevVocaIdx}
+                active={idx === currentVocaIdx}
+              />
+            );
+          })}
+        </div>
       </Box>
       {/* Next/prev button */}
       <Box

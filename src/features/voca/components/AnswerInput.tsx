@@ -1,7 +1,9 @@
 import { OutlinedInput, OutlinedInputProps } from "@mui/material";
+import { useEffect, useRef } from "react";
 
 interface AnswerInputProps extends OutlinedInputProps {
   status?: "correct" | "wrong" | "default";
+  active?: boolean;
 }
 
 const wrongAnswerStyle = {
@@ -17,6 +19,8 @@ const correctAnswerStyle = {
 };
 
 const AnswerInput: React.FC<AnswerInputProps> = (props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const { sx, ...remain } = props;
 
   let appliedStyle = {};
@@ -27,8 +31,15 @@ const AnswerInput: React.FC<AnswerInputProps> = (props) => {
     appliedStyle = correctAnswerStyle;
   }
 
+  useEffect(() => {
+    if (props.active) {
+      inputRef.current?.focus();
+    }
+  }, [props.active]);
+
   return (
     <OutlinedInput
+      inputRef={inputRef}
       sx={{
         height: "68px",
         fontSize: "20px",

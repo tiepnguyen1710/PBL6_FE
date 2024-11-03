@@ -99,7 +99,12 @@ const Header: React.FC = () => {
         </Stack>
 
         {isAuthenticated ? (
-          <Stack direction="row" alignItems="center" spacing={1}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            color="secondary.main"
+          >
             <Typography>{user?.name}</Typography>
             <Stack
               color="text.primary"

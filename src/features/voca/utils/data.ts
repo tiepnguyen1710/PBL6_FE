@@ -198,8 +198,8 @@ export const mockVocabularies: Vocabulary[] = [
       "https://www.voca.vn/assets/sounds/samples/8vx5kyy0qlwe7rmqpgfyuvwaozwwnev75gqozvhwow.mp3",
   },
   {
-    id: "4",
-    word: "architect",
+    id: "5",
+    word: "artist",
     meaning: "họa sĩ",
     image:
       "https://www.voca.vn/assets/assets-v2/img/library/artist%20%284%29.jpg",

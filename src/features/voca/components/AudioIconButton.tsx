@@ -1,17 +1,26 @@
 import { IconButton, IconButtonProps } from "@mui/material";
 import AudioIcon from "../assets/audio-icon.svg";
 import AudioPlayGif from "../assets/audio-active.gif";
-import { useRef, useState } from "react";
+import { useImperativeHandle, useRef, useState } from "react";
+import AudioRef from "../types/AudioRef";
 
 interface AudioIconButtonProps extends IconButtonProps {
   iconSize: number;
   audioUrl?: string;
   onClick?: () => void;
+  audioRef?: React.RefObject<AudioRef>;
 }
 
 const AudioIconButton: React.FC<AudioIconButtonProps> = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useImperativeHandle(props.audioRef, () => ({
+    play: () => {
+      setIsPlaying(true);
+      audioRef.current?.play();
+    },
+  }));
 
   const handleClick = () => {
     setIsPlaying(true);

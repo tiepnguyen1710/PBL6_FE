@@ -4,13 +4,15 @@ import { Stack, Typography } from "@mui/material";
 
 import AudioIconButton from "./AudioIconButton";
 import Vocabulary from "../types/Vocabulary";
+import AudioRef from "../types/AudioRef";
 
 interface Slide3 {
   onClick?: () => void;
   voca: Vocabulary;
+  phoneticAudioRef?: React.RefObject<AudioRef>;
 }
 
-const Slide3: React.FC<Slide3> = ({ onClick, voca }) => {
+const Slide3: React.FC<Slide3> = ({ onClick, voca, phoneticAudioRef }) => {
   const parts = voca.example?.split(voca.word);
 
   const displayExample = parts ? (
@@ -53,7 +55,11 @@ const Slide3: React.FC<Slide3> = ({ onClick, voca }) => {
         alignItems="center"
         sx={{ my: "10px" }}
       >
-        <AudioIconButton iconSize={41} audioUrl={voca.phoneticAudio} />
+        <AudioIconButton
+          iconSize={41}
+          audioUrl={voca.phoneticAudio}
+          audioRef={phoneticAudioRef}
+        />
         <Typography component="span" color="#777777" sx={{ fontSize: "22px" }}>
           {voca.phonetic}
         </Typography>
