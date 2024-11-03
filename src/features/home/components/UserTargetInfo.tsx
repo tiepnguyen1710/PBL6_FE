@@ -1,5 +1,5 @@
 import { IconButton, Stack, Typography } from "@mui/material";
-import EditIcon from "./EditIcon";
+import EditIcon from "../../../components/UI/EditIcon";
 
 interface UserTargetInfoProps {
   label: string;
@@ -35,7 +35,7 @@ const UserTargetInfo: React.FC<UserTargetInfoProps> = ({
             }}
             onClick={onEdit}
           >
-            <EditIcon sx={{ fontSize: 16 }} />
+            <EditIcon sx={{ fontSize: 16, color: "primary.main" }} />
           </IconButton>
         )}
       </Stack>

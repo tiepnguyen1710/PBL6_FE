@@ -37,6 +37,10 @@ const theme = createTheme({
           fontWeight: 600,
           lineHeight: 1.2,
         },
+        h6: {
+          fontFamily: "'Roboto', sans-serif",
+          fontSize: "1.2rem",
+        },
         body2: {
           color: "rgba(84, 86, 90, 0.6)",
         },
@@ -82,6 +86,23 @@ const theme = createTheme({
             maxWidth: "1536px",
           },
         },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          "& .MuiTab-root": {
+            textTransform: "none",
+            fontSize: "1rem",
+            paddingLeft: "1.5rem",
+            paddingRight: "1.5rem",
+          },
+        },
+      },
+    },
+    MuiTab: {
+      defaultProps: {
+        disableRipple: true,
       },
     },
   },

@@ -34,9 +34,13 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./features/home/components/HomePage.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import Admin from "./components/layout/admin/Admin.tsx";
 import Dashboard from "./features/admin/dashboard/Dashboard.tsx";
 import Exam from "./features/admin/exams/components/exam.tsx";
+
+import UserProfilePage from "./features/user-profile/components/UserProfilePage.tsx";
+import VocaLibraryPage from "./features/voca/components/VocaLibraryPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -101,6 +105,26 @@ const router = createBrowserRouter([
       {
         path: "detail/part7",
         element: <Part7 />,
+      },
+    ],
+  },
+  {
+    path: "profile",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <UserProfilePage />,
+      },
+    ],
+  },
+  {
+    path: "voca",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <VocaLibraryPage />,
       },
     ],
   },
