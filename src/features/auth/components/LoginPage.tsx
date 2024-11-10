@@ -13,7 +13,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-import RoundedInput from "./RoundedInput";
+import RoundedInput from "../../../components/UI/RoundedInput";
 import RoundedPasswordInput from "./RoundedPasswordInput";
 
 import { loginAction } from "../../../stores/authSlice";

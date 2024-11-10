@@ -4,7 +4,7 @@ import Slide3 from "./Slide3";
 import Slide1 from "./Slide1";
 import AnswerForm from "./AnswerForm";
 import { useRef, useState } from "react";
-import Vocabulary from "../types/Vocabulary";
+import Vocabulary from "../../../types/Vocabulary";
 import FlashCardAnimationWrapper from "./FlashCardAnimationWrapper";
 import AudioRef from "../types/AudioRef";
 import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnimationType";
@@ -32,7 +32,7 @@ const FlashCardComposition: React.FC<FlashCardCompositionProps> = ({
 
   // Status of the answer input
   const [status, setStatus] = useState<"correct" | "wrong" | "default">(
-    "default"
+    "default",
   );
 
   const phoneticAudioRef = useRef<AudioRef>(null);
@@ -104,8 +104,8 @@ const FlashCardComposition: React.FC<FlashCardCompositionProps> = ({
                   actualActiveSide == 0
                     ? " translate3d(0px, 0px, 160px)"
                     : actualActiveSide == 1
-                    ? " translate3d(0px, 0px, 110px)"
-                    : ""
+                      ? " translate3d(0px, 0px, 110px)"
+                      : ""
                 }`,
                 display: actualActiveSide == 2 ? "none" : "block",
               }}
@@ -118,8 +118,8 @@ const FlashCardComposition: React.FC<FlashCardCompositionProps> = ({
                   actualActiveSide == 1
                     ? " translate3d(0px, 0px, 160px)"
                     : actualActiveSide == 2
-                    ? " translate3d(0px, 0px, 110px)"
-                    : ""
+                      ? " translate3d(0px, 0px, 110px)"
+                      : ""
                 }`,
                 display: actualActiveSide == 0 ? "none" : "block",
               }}
@@ -132,8 +132,8 @@ const FlashCardComposition: React.FC<FlashCardCompositionProps> = ({
                   actualActiveSide == 2
                     ? " translate3d(0px, 0px, 160px)"
                     : actualActiveSide == 0
-                    ? " translate3d(0px, 0px, 110px)"
-                    : ""
+                      ? " translate3d(0px, 0px, 110px)"
+                      : ""
                 }`,
                 display: actualActiveSide == 1 ? "none" : "block",
               }}

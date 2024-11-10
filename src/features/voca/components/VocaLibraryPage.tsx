@@ -6,7 +6,7 @@ import VocaSet from "../../../components/VocaSet";
 import TabPanel from "../../../components/UI/TabPanel";
 import { mockVocaSets } from "../utils/data";
 import VocaSetInfo from "../types/VocaSetInfo";
-import SearchInput from "./SearchInput";
+import SearchInput from "../../../components/UI/SearchInput";
 
 const VOCA_TABS = [
   {
@@ -40,7 +40,7 @@ const VocaLibraryPage: React.FC = () => {
   };
 
   const handleSearchInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setSearchValue(event.target.value);
   };

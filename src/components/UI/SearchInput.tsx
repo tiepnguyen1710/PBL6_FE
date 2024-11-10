@@ -1,11 +1,20 @@
-import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
+import {
+  FormControl,
+  InputAdornment,
+  OutlinedInput,
+  OutlinedInputProps,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 interface SearchInputProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ onChange }) => {
+const SearchInput: React.FC<SearchInputProps & OutlinedInputProps> = ({
+  onChange,
+  sx,
+  ...props
+}) => {
   return (
     <FormControl>
       <OutlinedInput
@@ -19,8 +28,10 @@ const SearchInput: React.FC<SearchInputProps> = ({ onChange }) => {
           "& .MuiOutlinedInput-notchedOutline": {
             border: "none",
           },
+          ...sx,
         }}
         onChange={onChange}
+        {...props}
       />
     </FormControl>
   );

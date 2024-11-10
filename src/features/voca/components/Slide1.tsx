@@ -1,7 +1,7 @@
 import React from "react";
 import FlashCard from "./FlashCard";
 import { Typography } from "@mui/material";
-import Vocabulary from "../types/Vocabulary";
+import Vocabulary from "../../../types/Vocabulary";
 
 interface Slide1 {
   onClick?: () => void;

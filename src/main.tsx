@@ -42,6 +42,10 @@ import Exam from "./features/admin/exams/components/exam.tsx";
 import UserProfilePage from "./features/user-profile/components/UserProfilePage.tsx";
 import VocaLibraryPage from "./features/voca/components/VocaLibraryPage.tsx";
 import LearningVocaPage from "./features/voca/components/LearningVocaPage.tsx";
+import VocaIndexPage from "./features/admin/vocasets/components/VocaIndexPage.tsx";
+import VocaSetDetailsPage from "./features/admin/vocasets/components/VocaSetDetailsPage.tsx";
+import LessonDetailsPage from "./features/admin/vocasets/components/LessonDetailsPage.tsx";
+import VocabularyDetailsPage from "./features/admin/vocasets/components/VocabularyDetailsPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -144,6 +148,22 @@ const router = createBrowserRouter([
       {
         path: "exam",
         element: <Exam />,
+      },
+      {
+        path: "voca-set",
+        element: <VocaIndexPage />,
+      },
+      {
+        path: "voca-set/:vocaSetId/details",
+        element: <VocaSetDetailsPage />,
+      },
+      {
+        path: "lesson/:lessonId",
+        element: <LessonDetailsPage />,
+      },
+      {
+        path: "voca/:vocaId",
+        element: <VocabularyDetailsPage />,
       },
     ],
   },

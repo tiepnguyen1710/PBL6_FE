@@ -3,7 +3,7 @@ import FlashCard from "./FlashCard";
 import { Stack, Typography } from "@mui/material";
 
 import AudioIconButton from "./AudioIconButton";
-import Vocabulary from "../types/Vocabulary";
+import Vocabulary from "../../../types/Vocabulary";
 
 interface Slide2 {
   onClick?: () => void;

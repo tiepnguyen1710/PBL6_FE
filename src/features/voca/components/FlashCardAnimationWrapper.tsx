@@ -1,5 +1,5 @@
 import { motion, Variants } from "framer-motion";
-import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnimationType";
+import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnimationType.ts";
 
 interface FlashCardAnimationWrapperProps {
   children: React.ReactNode;

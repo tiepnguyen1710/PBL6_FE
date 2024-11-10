@@ -11,7 +11,7 @@ import { RxCross2 } from "react-icons/rx";
 import { useRef, useState } from "react";
 import ArrowIcon from "./ArrowIcon";
 import FlashCardComposition from "./FlashCardComposition";
-import { mockVocabularies } from "../utils/data";
+import MOCK_VOCABULARIES from "../../../utils/mockVocabularies.ts";
 import WrongAnswerAudio from "../assets/learning_wrong.mp3";
 import CorrectAnswerAudio from "../assets/learning_right.mp3";
 import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnimationType";
@@ -35,7 +35,7 @@ const LearningVocaPage: React.FC = () => {
   console.log("direction", direction);
 
   // const voca = mockVocabularies[currentVocaIdx];
-  const vocaLength = mockVocabularies.length;
+  const vocaLength = MOCK_VOCABULARIES.length;
 
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
@@ -153,7 +153,7 @@ const LearningVocaPage: React.FC = () => {
           />
         </Stack>
         <div style={{ position: "relative" }}>
-          {mockVocabularies.map((voca, idx) => {
+          {MOCK_VOCABULARIES.map((voca, idx) => {
             let animate: FlashCardCompositionAnimationType = undefined;
 
             if (direction !== "Unchanged") {

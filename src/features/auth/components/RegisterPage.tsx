@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
-import RoundedInput from "./RoundedInput";
+import RoundedInput from "../../../components/UI/RoundedInput";
 import RoundedPasswordInput from "./RoundedPasswordInput";
 import { postRegister } from "../api/account-api";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";

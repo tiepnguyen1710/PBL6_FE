@@ -34,7 +34,7 @@ import { me } from "../../features/auth/api/account-api";
 
 const Header: React.FC = () => {
   const { isAuthenticated, token } = useSelector<RootState, AuthState>(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const dispatch = useDispatch<AppDispatch>();
@@ -134,7 +134,9 @@ const Header: React.FC = () => {
                 "& .MuiMenu-list > ul:focus-visible": { outline: "none" },
               }}
             >
-              <MenuList sx={{ "& a": { textDecoration: "none" } }}>
+              <MenuList
+                sx={{ "& a": { textDecoration: "none", color: "inherit" } }}
+              >
                 <Link to="/profile">
                   <MenuItem>
                     <ListItemIcon>

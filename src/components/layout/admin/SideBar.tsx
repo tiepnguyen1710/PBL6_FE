@@ -51,7 +51,13 @@ const SideBar = (props: any) => {
           <MenuItem> Exam set </MenuItem>
           <MenuItem onClick={() => navigate("/admin/exam")}>Exam</MenuItem>
         </SubMenu>
-        <MenuItem> Vocabularies </MenuItem>
+        <SubMenu label="Vocabularies">
+          <MenuItem onClick={() => navigate("/admin/voca-set")}>
+            Voca sets
+          </MenuItem>
+          <MenuItem>Lessons</MenuItem>
+          <MenuItem>Vocabularies</MenuItem>
+        </SubMenu>
         <MenuItem> Account </MenuItem>
       </Menu>
     </Sidebar>
