@@ -45,5 +45,6 @@ export default function useFileInput(defaultImage: string = "") {
     fileInputRef,
     chooseFile,
     handleChangeFileInput,
+    setFileSrc,
   };
 }

@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -23,33 +24,84 @@ import TablePaginationActions from "../../../../components/UI/TablePaginationAct
 import VocaSetRow from "./VocaSetRow";
 import AdminTableContainer from "./AdminTableContainer";
 import useAdminTablePagination from "../hooks/useAdminTablePagination.ts";
-import { Add, FilterAlt } from "@mui/icons-material";
+import { Add, AddPhotoAlternate, FilterAlt } from "@mui/icons-material";
 import CustomModal from "../../../../components/UI/CustomModal.tsx";
 import VocaSetLevel from "../../../../types/VocaSetLevel.ts";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter.ts";
 import TextFieldFileInput from "./TextFieldFileInput.tsx";
 import { useForm } from "react-hook-form";
 import { Image } from "../../../../components/UI/Image.tsx";
+import {
+  fileList2Base64,
+  getPlaceholderImage,
+} from "../../../../utils/helper.ts";
+import { useMutation } from "@tanstack/react-query";
+import { createVocaSet } from "../api/voca-set-api.ts";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import NewVocaSetResponse from "../types/NewVocaSetResponse.ts";
 
 interface NewVocaSetFormData {
   name: string;
-  thumbnail: File;
+  level: string;
+  thumbnail: string | FileList;
 }
+
+const newVocaSetRules = {
+  name: {
+    required: "Name is required",
+  },
+  level: {
+    required: "Level is required",
+  },
+  thumbnail: {
+    required: "Thumbnail is required",
+  },
+};
 
 const VocaIndexPage: React.FC = () => {
   const [filterLevel, setFilterLevel] = useState("All");
   const [openNewModal, setOpenNewModal] = useState(false);
 
-  const { register, control, formState, handleSubmit } =
-    useForm<NewVocaSetFormData>();
+  const {
+    register,
+    // control,
+    formState: { errors: validationErrors },
+    handleSubmit,
+  } = useForm<NewVocaSetFormData>();
 
-  const [newThumbnail, setNewThumbnail] = useState<string>(null);
+  const [newThumbnail, setNewThumbnail] = useState<string>(
+    getPlaceholderImage(250, 140),
+  );
+
+  const navigate = useNavigate();
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: async (data: NewVocaSetFormData) => {
+      const responseData = await createVocaSet({
+        name: data.name,
+        level: data.level,
+        thumbnail: data.thumbnail as string,
+      });
+
+      return responseData;
+    },
+    onSuccess: (responseData: NewVocaSetResponse) => {
+      console.log("Post successfull, reponseData", responseData);
+      navigate(`/admin/voca-set/${responseData.id}/details`);
+      toast.success("Create new vocabulary set successfully!");
+    },
+  });
 
   const { page, emptyRows, pageData, handleChangePage } =
     useAdminTablePagination<VocaSet>(mockVocaSets, 10);
 
-  const handleCreateVocaSet = (data: NewVocaSetFormData) => {
+  const handleCreateVocaSet = async (data: NewVocaSetFormData) => {
+    console.log("Submit new voca set");
+    data.thumbnail = await fileList2Base64(data.thumbnail as FileList);
     console.log(data);
+
+    mutate(data);
   };
 
   return (
@@ -74,7 +126,7 @@ const VocaIndexPage: React.FC = () => {
 
         <form id="filter-voca-sets-form" style={{ marginBottom: "2rem" }}>
           <Grid2 spacing={1} container sx={{ maxWidth: "800px" }}>
-            <Grid2 size={9}>
+            <Grid2 size={7}>
               <RoundedInput
                 name="name"
                 label="Name"
@@ -85,7 +137,7 @@ const VocaIndexPage: React.FC = () => {
                 labelColor="secondary.main"
               />
             </Grid2>
-            <Grid2 size={6}>
+            {/* <Grid2 size={6}>
               <RoundedInput
                 name="author"
                 label="Author"
@@ -95,7 +147,7 @@ const VocaIndexPage: React.FC = () => {
                 gap={0.5}
                 labelColor="secondary.main"
               />
-            </Grid2>
+            </Grid2> */}
             <Grid2 size={3}>
               <BootstrapSelect
                 label="Level"
@@ -105,16 +157,11 @@ const VocaIndexPage: React.FC = () => {
                 itemValues={["All", "Beginner", "Intermediate", "Advanced"]}
               />
             </Grid2>
-            <Grid2
-              size={3}
-              display="flex"
-              alignItems="end"
-              justifyContent="end"
-            >
+            <Grid2 size={2} display="flex" alignItems="end">
               <Button
                 variant="contained"
                 startIcon={<FilterAlt />}
-                sx={{ py: "12px", px: 3 }}
+                sx={{ py: "12px", px: 3, marginBottom: "3px" }}
               >
                 Filter
               </Button>
@@ -182,15 +229,17 @@ const VocaIndexPage: React.FC = () => {
             <Stack spacing={1}>
               <TextField
                 label="Name"
-                helperText="Vocabulary set's name is required"
-                error
-                {...register("name")}
+                helperText={validationErrors.name?.message}
+                error={!!validationErrors.name}
+                {...register("name", newVocaSetRules.name)}
                 sx={{ width: "100%" }}
               />
-              {/* <TextField
+              <TextField
                 label="Level"
                 select
-                {...register("level")}
+                helperText={validationErrors.level?.message}
+                error={!!validationErrors.level}
+                {...register("level", newVocaSetRules.level)}
                 sx={{ width: "100%" }}
               >
                 {Object.values(VocaSetLevel).map((level) => (
@@ -198,15 +247,22 @@ const VocaIndexPage: React.FC = () => {
                     {capitalizeFirstLetter(level)}
                   </MenuItem>
                 ))}
-              </TextField> */}
+              </TextField>
               <TextFieldFileInput
                 label="Thumbnail"
+                helperText={validationErrors.thumbnail?.message}
+                error={!!validationErrors.thumbnail}
                 sx={{ width: "100%" }}
+                iconButton={<AddPhotoAlternate />}
                 onChangeFile={(newFileSrc) => setNewThumbnail(newFileSrc)}
-                register={register("thumbnail")}
+                register={register("thumbnail", newVocaSetRules.thumbnail)}
               />
 
-              <Image src={newThumbnail} />
+              <Image
+                src={newThumbnail}
+                sx={{ width: "250px", height: "140px", mx: "auto !important" }}
+              />
+
               <Stack direction="row" spacing={0.5} justifyContent="end">
                 <Button
                   variant="outlined"
@@ -219,8 +275,9 @@ const VocaIndexPage: React.FC = () => {
                   variant="contained"
                   type="submit"
                   sx={{ px: "24px", minWidth: "110px" }}
+                  disabled={isPending}
                 >
-                  Create
+                  {isPending ? <CircularProgress size={20} /> : "Create"}
                 </Button>
               </Stack>
             </Stack>

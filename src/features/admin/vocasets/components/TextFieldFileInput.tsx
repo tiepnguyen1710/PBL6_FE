@@ -27,7 +27,7 @@ const TextFieldFileInput: React.FC<TextFieldProps & FileInputProps> = ({
       <input
         type="file"
         {...register}
-        ref={async (e) => {
+        ref={(e) => {
           register?.ref(e); // Register input with React Hook Form
           fileInputRef.current = e; // Store ref in imageInputRef
         }}

@@ -16,12 +16,13 @@ const BootstrapSelect: React.FC<BootstrapSelectProps & SelectProps> = (
   props,
 ) => {
   const { itemLabels, itemValues, gap = 0.5, label, ...rest } = props;
+
   return (
     <Stack spacing={gap}>
       <Typography component="label" htmlFor={props.id}>
         {label}
       </Typography>
-      <Select displayEmpty {...rest}>
+      <Select {...rest}>
         {itemLabels.map((label, index) => (
           <MenuItem key={index} value={itemValues[index]}>
             {label}

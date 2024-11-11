@@ -154,7 +154,7 @@ const router = createBrowserRouter([
         element: <VocaIndexPage />,
       },
       {
-        path: "voca-set/:vocaSetId/details",
+        path: "voca-set/details",
         element: <VocaSetDetailsPage />,
       },
       {
