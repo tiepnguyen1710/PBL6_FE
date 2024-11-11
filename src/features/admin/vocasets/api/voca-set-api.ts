@@ -1,6 +1,5 @@
 import axiosClient from "../../../../axios";
 import VocaSetModel from "../../../../types/VocaSetModel";
-import NewVocaSetResponse from "../types/NewVocaSetResponse";
 import UpdateVocaSetRequest from "../types/UpdateVocaSetRequest";
 
 export async function createVocaSet(data: {
@@ -8,10 +7,7 @@ export async function createVocaSet(data: {
   level: string;
   thumbnail: string;
 }) {
-  const response = await axiosClient.post<NewVocaSetResponse>(
-    "/group-topic",
-    data,
-  );
+  const response = await axiosClient.post<VocaSetModel>("/group-topic", data);
 
   return response.data;
 }
@@ -27,6 +23,12 @@ export async function updateVocaSet(data: UpdateVocaSetRequest) {
     `/group-topic/${data.id}`,
     data,
   );
+
+  return response.data;
+}
+
+export async function getAllVocaSets() {
+  const response = await axiosClient.get<VocaSetModel[]>("/group-topic");
 
   return response.data;
 }

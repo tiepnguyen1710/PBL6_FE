@@ -15,7 +15,7 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import RoundedInput from "../../../../components/UI/RoundedInput";
 import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
@@ -35,11 +35,13 @@ import {
   fileList2Base64,
   getPlaceholderImage,
 } from "../../../../utils/helper.ts";
-import { useMutation } from "@tanstack/react-query";
-import { createVocaSet } from "../api/voca-set-api.ts";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createVocaSet, getAllVocaSets } from "../api/voca-set-api.ts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import NewVocaSetResponse from "../types/NewVocaSetResponse.ts";
+import VocaSetModel from "../../../../types/VocaSetModel.ts";
+import CustomBackdrop from "../../../../components/UI/CustomBackdrop.tsx";
 
 interface NewVocaSetFormData {
   name: string;
@@ -60,7 +62,6 @@ const newVocaSetRules = {
 };
 
 const VocaIndexPage: React.FC = () => {
-  const [filterLevel, setFilterLevel] = useState("All");
   const [openNewModal, setOpenNewModal] = useState(false);
 
   const {
@@ -76,7 +77,7 @@ const VocaIndexPage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (data: NewVocaSetFormData) => {
       const responseData = await createVocaSet({
         name: data.name,
@@ -86,15 +87,26 @@ const VocaIndexPage: React.FC = () => {
 
       return responseData;
     },
-    onSuccess: (responseData: NewVocaSetResponse) => {
+    onSuccess: (responseData: VocaSetModel) => {
       console.log("Post successfull, reponseData", responseData);
-      navigate(`/admin/voca-set/${responseData.id}/details`);
+      navigate(`/admin/voca-set/details?id=${responseData.id}`);
       toast.success("Create new vocabulary set successfully!");
     },
   });
 
+  const { data: vocaSetData, isLoading } = useQuery({
+    queryKey: ["vocaSet"],
+    queryFn: getAllVocaSets,
+  });
+
+  const [vocaSets, setVocaSets] = useState<VocaSetModel[] | null>();
+
   const { page, emptyRows, pageData, handleChangePage } =
-    useAdminTablePagination<VocaSet>(mockVocaSets, 10);
+    useAdminTablePagination<VocaSetModel>(vocaSets || [], 10);
+
+  useEffect(() => {
+    setVocaSets(vocaSetData);
+  }, [vocaSetData]);
 
   const handleCreateVocaSet = async (data: NewVocaSetFormData) => {
     console.log("Submit new voca set");
@@ -102,6 +114,25 @@ const VocaIndexPage: React.FC = () => {
     console.log(data);
 
     mutate(data);
+  };
+
+  const handleFilterTable = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const { filterName, filterLevel } = Object.fromEntries(formData.entries());
+
+    console.log(filterName, filterLevel);
+    console.log(typeof filterName);
+
+    const filteredData = vocaSetData?.filter(
+      (vocaSet) =>
+        (filterName === "" ||
+          vocaSet.name.toLowerCase().includes(filterName as string)) &&
+        (filterLevel === "all" || vocaSet.level === filterLevel),
+    );
+
+    setVocaSets(filteredData);
   };
 
   return (
@@ -124,11 +155,15 @@ const VocaIndexPage: React.FC = () => {
           </Button>
         </Stack>
 
-        <form id="filter-voca-sets-form" style={{ marginBottom: "2rem" }}>
+        <form
+          id="filter-voca-sets-form"
+          style={{ marginBottom: "2rem" }}
+          onSubmit={handleFilterTable}
+        >
           <Grid2 spacing={1} container sx={{ maxWidth: "800px" }}>
             <Grid2 size={7}>
               <RoundedInput
-                name="name"
+                name="filterName"
                 label="Name"
                 placeholder="Enter the filter name"
                 padding="16.5px 14px"
@@ -137,28 +172,18 @@ const VocaIndexPage: React.FC = () => {
                 labelColor="secondary.main"
               />
             </Grid2>
-            {/* <Grid2 size={6}>
-              <RoundedInput
-                name="author"
-                label="Author"
-                placeholder="Enter the filter author"
-                padding="16.5px 14px"
-                borderRadius={4}
-                gap={0.5}
-                labelColor="secondary.main"
-              />
-            </Grid2> */}
             <Grid2 size={3}>
               <BootstrapSelect
                 label="Level"
-                value={filterLevel}
-                onChange={(e) => setFilterLevel(e.target.value as string)}
+                name="filterLevel"
+                defaultValue="all"
                 itemLabels={["All", "Beginner", "Intermediate", "Advanced"]}
-                itemValues={["All", "Beginner", "Intermediate", "Advanced"]}
+                itemValues={["all", "beginner", "intermediate", "advanced"]}
               />
             </Grid2>
             <Grid2 size={2} display="flex" alignItems="end">
               <Button
+                type="submit"
                 variant="contained"
                 startIcon={<FilterAlt />}
                 sx={{ py: "12px", px: 3, marginBottom: "3px" }}
@@ -169,45 +194,51 @@ const VocaIndexPage: React.FC = () => {
           </Grid2>
         </form>
 
-        <AdminTableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Author</TableCell>
-                <TableCell>Level</TableCell>
-                <TableCell>Taken Students</TableCell>
-                <TableCell>Lessons</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {pageData.map((vocaSet: VocaSet) => (
-                <VocaSetRow key={vocaSet.id} vocaSet={vocaSet} />
-              ))}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{ height: 53 * emptyRows, backgroundColor: "white" }}
-                >
-                  <TableCell colSpan={7} />
+        {isLoading ? (
+          <CustomBackdrop open />
+        ) : (
+          <AdminTableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Level</TableCell>
+                  <TableCell>Taken Students</TableCell>
+                  <TableCell>Lessons</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
-              )}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[10]}
-                  count={mockVocaSets.length}
-                  rowsPerPage={10}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </AdminTableContainer>
+              </TableHead>
+              <TableBody>
+                {pageData.map((vocaSet: VocaSetModel) => (
+                  <VocaSetRow key={vocaSet.id} vocaSet={vocaSet} />
+                ))}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: 53 * emptyRows,
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <TableCell colSpan={7} />
+                  </TableRow>
+                )}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[10]}
+                    count={vocaSets?.length || 0}
+                    rowsPerPage={10}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    ActionsComponent={TablePaginationActions}
+                  />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </AdminTableContainer>
+        )}
       </Box>
       <CustomModal
         open={openNewModal}
@@ -260,7 +291,11 @@ const VocaIndexPage: React.FC = () => {
 
               <Image
                 src={newThumbnail}
-                sx={{ width: "250px", height: "140px", mx: "auto !important" }}
+                sx={{
+                  width: "250px",
+                  height: "140px",
+                  mx: "auto !important",
+                }}
               />
 
               <Stack direction="row" spacing={0.5} justifyContent="end">

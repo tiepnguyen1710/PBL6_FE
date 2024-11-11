@@ -2,6 +2,7 @@ import { Menu, MenuItem, MenuList, TableCell, TableRow } from "@mui/material";
 import VocaSet from "../types/VocaSet";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 
 const VocaSetRow: React.FC<{ vocaSet: VocaSet }> = ({ vocaSet }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -18,10 +19,9 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSet }> = ({ vocaSet }) => {
     <TableRow>
       <TableCell>{vocaSet.id}</TableCell>
       <TableCell>{vocaSet.name}</TableCell>
-      <TableCell>{vocaSet.author}</TableCell>
-      <TableCell>{vocaSet.level}</TableCell>
-      <TableCell>{vocaSet.takenStudents}</TableCell>
-      <TableCell>{vocaSet.lessons}</TableCell>
+      <TableCell>{capitalizeFirstLetter(vocaSet.level)}</TableCell>
+      <TableCell align="right">{vocaSet.takenStudents || 0}</TableCell>
+      <TableCell align="right">{vocaSet.lessons || 0}</TableCell>
       <TableCell
         onClick={handleClick}
         sx={{
@@ -46,7 +46,7 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSet }> = ({ vocaSet }) => {
         }}
       >
         <MenuList dense>
-          <Link to={`${vocaSet.id}/details`}>
+          <Link to={`details?id=${vocaSet.id}`}>
             <MenuItem>Manage</MenuItem>
           </Link>
           <MenuItem>Delete</MenuItem>

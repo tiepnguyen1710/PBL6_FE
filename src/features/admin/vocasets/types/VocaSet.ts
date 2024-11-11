@@ -1,7 +1,6 @@
 export default interface VocaSet {
   id: string;
   name: string;
-  author: string;
   level: string;
   takenStudents: number;
   lessons: number;
@@ -12,7 +11,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "1",
     name: "Vocabulary Set 1",
-    author: "EngFlash",
     level: "Beginner",
     takenStudents: 10,
     lessons: 10,
@@ -22,7 +20,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "2",
     name: "Vocabulary Set 2",
-    author: "Adree",
     level: "Intermediate",
     takenStudents: 20,
     lessons: 20,
@@ -30,7 +27,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "3",
     name: "Vocabulary Set 3",
-    author: "LearnFast",
     level: "Advanced",
     takenStudents: 15,
     lessons: 25,
@@ -38,7 +34,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "4",
     name: "Vocabulary Set 4",
-    author: "EduMaster",
     level: "Beginner",
     takenStudents: 30,
     lessons: 12,
@@ -46,7 +41,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "5",
     name: "Vocabulary Set 5",
-    author: "VocabPro",
     level: "Intermediate",
     takenStudents: 40,
     lessons: 18,
@@ -54,7 +48,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "6",
     name: "Vocabulary Set 6",
-    author: "LinguaPlus",
     level: "Advanced",
     takenStudents: 25,
     lessons: 22,
@@ -62,7 +55,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "7",
     name: "Vocabulary Set 7",
-    author: "WordMaster",
     level: "Beginner",
     takenStudents: 5,
     lessons: 8,
@@ -70,7 +62,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "8",
     name: "Vocabulary Set 8",
-    author: "FlashLearn",
     level: "Intermediate",
     takenStudents: 60,
     lessons: 15,
@@ -78,7 +69,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "9",
     name: "Vocabulary Set 9",
-    author: "SpeedyWords",
     level: "Advanced",
     takenStudents: 12,
     lessons: 20,
@@ -86,7 +76,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "10",
     name: "Vocabulary Set 10",
-    author: "QuickStudy",
     level: "Beginner",
     takenStudents: 28,
     lessons: 10,
@@ -94,7 +83,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "11",
     name: "Vocabulary Set 11",
-    author: "BrightWords",
     level: "Intermediate",
     takenStudents: 22,
     lessons: 16,
@@ -102,7 +90,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "12",
     name: "Vocabulary Set 12",
-    author: "EasyVocab",
     level: "Beginner",
     takenStudents: 35,
     lessons: 14,
@@ -110,7 +97,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "13",
     name: "Vocabulary Set 13",
-    author: "ProLearner",
     level: "Advanced",
     takenStudents: 18,
     lessons: 26,
@@ -118,7 +104,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "14",
     name: "Vocabulary Set 14",
-    author: "SkillBoost",
     level: "Intermediate",
     takenStudents: 55,
     lessons: 18,
@@ -126,7 +111,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "15",
     name: "Vocabulary Set 15",
-    author: "WordWizard",
     level: "Beginner",
     takenStudents: 40,
     lessons: 9,
@@ -134,7 +118,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "16",
     name: "Vocabulary Set 16",
-    author: "LexiLearn",
     level: "Advanced",
     takenStudents: 20,
     lessons: 24,
@@ -142,7 +125,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "17",
     name: "Vocabulary Set 17",
-    author: "QuickWords",
     level: "Intermediate",
     takenStudents: 45,
     lessons: 19,
@@ -150,7 +132,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "18",
     name: "Vocabulary Set 18",
-    author: "LearnEasy",
     level: "Beginner",
     takenStudents: 32,
     lessons: 11,
@@ -158,7 +139,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "19",
     name: "Vocabulary Set 19",
-    author: "WordyWise",
     level: "Intermediate",
     takenStudents: 27,
     lessons: 13,
@@ -166,7 +146,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "20",
     name: "Vocabulary Set 20",
-    author: "SmartVocab",
     level: "Advanced",
     takenStudents: 14,
     lessons: 21,
@@ -174,7 +153,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "21",
     name: "Vocabulary Set 21",
-    author: "EngAce",
     level: "Beginner",
     takenStudents: 50,
     lessons: 12,
@@ -182,7 +160,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "22",
     name: "Vocabulary Set 22",
-    author: "StudyBuddy",
     level: "Intermediate",
     takenStudents: 33,
     lessons: 17,
@@ -190,7 +167,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "23",
     name: "Vocabulary Set 23",
-    author: "VocabKing",
     level: "Advanced",
     takenStudents: 19,
     lessons: 23,
@@ -198,7 +174,6 @@ export const mockVocaSets: VocaSet[] = [
   {
     id: "24",
     name: "Vocabulary Set 24",
-    author: "LinguaLab",
     level: "Beginner",
     takenStudents: 8,
     lessons: 10,
