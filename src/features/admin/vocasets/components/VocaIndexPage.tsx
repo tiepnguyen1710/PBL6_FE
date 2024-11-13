@@ -15,7 +15,7 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import RoundedInput from "../../../../components/UI/RoundedInput";
 import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
@@ -24,22 +24,26 @@ import TablePaginationActions from "../../../../components/UI/TablePaginationAct
 import VocaSetRow from "./VocaSetRow";
 import AdminTableContainer from "./AdminTableContainer";
 import useAdminTablePagination from "../hooks/useAdminTablePagination.ts";
-import { Add, AddPhotoAlternate, FilterAlt } from "@mui/icons-material";
+import {
+  Add,
+  AddPhotoAlternate,
+  FilterAlt,
+  FilterAltOff,
+} from "@mui/icons-material";
 import CustomModal from "../../../../components/UI/CustomModal.tsx";
 import VocaSetLevel from "../../../../types/VocaSetLevel.ts";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter.ts";
 import TextFieldFileInput from "./TextFieldFileInput.tsx";
-import { useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Image } from "../../../../components/UI/Image.tsx";
 import {
   fileList2Base64,
   getPlaceholderImage,
 } from "../../../../utils/helper.ts";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createVocaSet, getAllVocaSets } from "../api/voca-set-api.ts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import NewVocaSetResponse from "../types/NewVocaSetResponse.ts";
 import VocaSetModel from "../../../../types/VocaSetModel.ts";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop.tsx";
 
@@ -47,6 +51,11 @@ interface NewVocaSetFormData {
   name: string;
   level: string;
   thumbnail: string | FileList;
+}
+
+interface VocaSetFilterFormData {
+  filterName: string;
+  filterLevel: string;
 }
 
 const newVocaSetRules = {
@@ -61,7 +70,15 @@ const newVocaSetRules = {
   },
 };
 
+const DEFAULT_FILTER_FORM_DATA: VocaSetFilterFormData = {
+  filterName: "",
+  filterLevel: "all",
+};
+
+const VOCASET_PAGE_SIZE = 2;
+
 const VocaIndexPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const [openNewModal, setOpenNewModal] = useState(false);
 
   const {
@@ -90,6 +107,10 @@ const VocaIndexPage: React.FC = () => {
     onSuccess: (responseData: VocaSetModel) => {
       console.log("Post successfull, reponseData", responseData);
       navigate(`/admin/voca-set/details?id=${responseData.id}`);
+      queryClient.setQueryData(
+        ["vocaSet", { id: responseData.id }],
+        responseData,
+      );
       toast.success("Create new vocabulary set successfully!");
     },
   });
@@ -101,8 +122,16 @@ const VocaIndexPage: React.FC = () => {
 
   const [vocaSets, setVocaSets] = useState<VocaSetModel[] | null>();
 
-  const { page, emptyRows, pageData, handleChangePage } =
-    useAdminTablePagination<VocaSetModel>(vocaSets || [], 10);
+  const { page, setPage, emptyRows, pageData, handleChangePage } =
+    useAdminTablePagination<VocaSetModel>(vocaSets || [], VOCASET_PAGE_SIZE);
+
+  const {
+    reset: resetFilterForm,
+    control,
+    handleSubmit: handleFilter,
+  } = useForm<VocaSetFilterFormData>({
+    defaultValues: DEFAULT_FILTER_FORM_DATA,
+  });
 
   useEffect(() => {
     setVocaSets(vocaSetData);
@@ -116,14 +145,10 @@ const VocaIndexPage: React.FC = () => {
     mutate(data);
   };
 
-  const handleFilterTable = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target as HTMLFormElement);
-    const { filterName, filterLevel } = Object.fromEntries(formData.entries());
-
-    console.log(filterName, filterLevel);
-    console.log(typeof filterName);
+  const handleFilterTable: SubmitHandler<VocaSetFilterFormData> = (
+    formData,
+  ) => {
+    const { filterName, filterLevel } = formData;
 
     const filteredData = vocaSetData?.filter(
       (vocaSet) =>
@@ -133,6 +158,14 @@ const VocaIndexPage: React.FC = () => {
     );
 
     setVocaSets(filteredData);
+    setPage(0);
+  };
+
+  const handleResetFilter = () => {
+    setVocaSets(vocaSetData);
+    setPage(0);
+
+    resetFilterForm(DEFAULT_FILTER_FORM_DATA);
   };
 
   return (
@@ -158,27 +191,39 @@ const VocaIndexPage: React.FC = () => {
         <form
           id="filter-voca-sets-form"
           style={{ marginBottom: "2rem" }}
-          onSubmit={handleFilterTable}
+          onSubmit={handleFilter(handleFilterTable)}
         >
-          <Grid2 spacing={1} container sx={{ maxWidth: "800px" }}>
-            <Grid2 size={7}>
-              <RoundedInput
+          <Grid2 spacing={1} container sx={{ maxWidth: "900px" }}>
+            <Grid2 size={5}>
+              <Controller
                 name="filterName"
-                label="Name"
-                placeholder="Enter the filter name"
-                padding="16.5px 14px"
-                borderRadius={4}
-                gap={0.5}
-                labelColor="secondary.main"
+                control={control}
+                render={({ field }) => (
+                  <RoundedInput
+                    {...field}
+                    label="Name"
+                    placeholder="Enter the filter name"
+                    padding="16.5px 14px"
+                    borderRadius={4}
+                    gap={0.5}
+                    labelColor="secondary.main"
+                  />
+                )}
               />
             </Grid2>
             <Grid2 size={3}>
-              <BootstrapSelect
-                label="Level"
+              <Controller
                 name="filterLevel"
-                defaultValue="all"
-                itemLabels={["All", "Beginner", "Intermediate", "Advanced"]}
-                itemValues={["all", "beginner", "intermediate", "advanced"]}
+                control={control}
+                render={({ field }) => (
+                  <BootstrapSelect
+                    {...field}
+                    label="Level"
+                    defaultValue="all"
+                    itemLabels={["All", "Beginner", "Intermediate", "Advanced"]}
+                    itemValues={["all", "beginner", "intermediate", "advanced"]}
+                  />
+                )}
               />
             </Grid2>
             <Grid2 size={2} display="flex" alignItems="end">
@@ -189,6 +234,17 @@ const VocaIndexPage: React.FC = () => {
                 sx={{ py: "12px", px: 3, marginBottom: "3px" }}
               >
                 Filter
+              </Button>
+            </Grid2>
+            <Grid2 size={2} display="flex" alignItems="end">
+              <Button
+                onClick={handleResetFilter}
+                type="reset"
+                variant="outlined"
+                startIcon={<FilterAltOff />}
+                sx={{ py: "12px", px: 3, marginBottom: "3px" }}
+              >
+                Clear
               </Button>
             </Grid2>
           </Grid2>
@@ -227,9 +283,9 @@ const VocaIndexPage: React.FC = () => {
               <TableFooter>
                 <TableRow>
                   <TablePagination
-                    rowsPerPageOptions={[10]}
+                    rowsPerPageOptions={[VOCASET_PAGE_SIZE]}
                     count={vocaSets?.length || 0}
-                    rowsPerPage={10}
+                    rowsPerPage={VOCASET_PAGE_SIZE}
                     page={page}
                     onPageChange={handleChangePage}
                     ActionsComponent={TablePaginationActions}

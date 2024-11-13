@@ -2,10 +2,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Close } from "@mui/icons-material";
 import { Box, IconButton, Modal, Paper, SxProps } from "@mui/material";
 
-interface CustomModalProps {
+export interface CustomModalProps {
   open: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   sx?: SxProps;
 }
 const CustomModal: React.FC<CustomModalProps> = ({

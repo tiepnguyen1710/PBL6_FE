@@ -12,7 +12,6 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import RoundedInput from "../../../../components/UI/RoundedInput";
@@ -38,6 +37,7 @@ import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import UpdateVocaSetRequest from "../types/UpdateVocaSetRequest";
 import { toast } from "react-toastify";
 import { fileList2Base64 } from "../../../../utils/helper";
+import NewLessonModal from "./NewLessonModal";
 
 interface VocaSetFormData {
   id: string;
@@ -150,7 +150,6 @@ const VocaSetDetailsPage = () => {
             </Typography>
             <GoBackButton />
           </Stack>
-
           <form
             id="details-voca-set-form"
             onSubmit={handleSubmit(handleSaveVocaSet)}
@@ -241,7 +240,6 @@ const VocaSetDetailsPage = () => {
               </Grid2>
             </Stack>
           </form>
-
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -319,7 +317,6 @@ const VocaSetDetailsPage = () => {
               </TableFooter>
             </Table>
           </AdminTableContainer>
-
           <CustomModal
             open={preview}
             onClose={() => setPreview(false)}
@@ -341,54 +338,12 @@ const VocaSetDetailsPage = () => {
             />
           </CustomModal>
 
-          <CustomModal
+          <NewLessonModal
+            vocaSetId={vocaSetId}
             open={openNewModal}
             onClose={() => setOpenNewModal(false)}
-            sx={{ minWidth: "500px", padding: 4 }}
-          >
-            <Box sx={{}}>
-              <Typography
-                variant="h5"
-                sx={{ marginBottom: 2.5, textAlign: "center" }}
-              >
-                New Lesson
-              </Typography>
-
-              <form id="new-voca-set-form">
-                <Stack spacing={1}>
-                  <TextField
-                    label="Lesson Name"
-                    helperText="Lesson name is required"
-                    error
-                    sx={{ width: "100%" }}
-                  />
-                  {/* <TextField label="Level" select sx={{ width: "100%" }}>
-                {Object.values(VocaSetLevel).map((level) => (
-                  <MenuItem key={level} value={level}>
-                    {capitalizeFirstLetter(level)}
-                  </MenuItem>
-                ))}
-              </TextField> */}
-                  <Stack direction="row" spacing={0.5} justifyContent="end">
-                    <Button
-                      variant="outlined"
-                      sx={{ px: "24px" }}
-                      onClick={() => setOpenNewModal(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      sx={{ px: "24px", minWidth: "110px" }}
-                    >
-                      Create
-                    </Button>
-                  </Stack>
-                </Stack>
-              </form>
-            </Box>
-          </CustomModal>
+            onCancel={() => setOpenNewModal(false)}
+          />
         </Box>
       )}
     </>
