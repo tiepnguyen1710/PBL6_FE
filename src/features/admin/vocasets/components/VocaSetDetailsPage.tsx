@@ -94,7 +94,7 @@ const VocaSetDetailsPage = () => {
     register,
     reset,
     getValues,
-    formState: { errors },
+    // formState: { errors },
     handleSubmit,
   } = useForm<VocaSetFormData>();
 

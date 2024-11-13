@@ -23,18 +23,19 @@ import { LessonCard } from "./LessonCard";
 import AdminTableContainer from "./AdminTableContainer";
 import useAdminTablePagination from "../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
-import MOCK_VOCABULARIES from "../../../../utils/mockVocabularies";
-import Vocabulary from "../../../../types/Vocabulary";
 import { useQuery } from "@tanstack/react-query";
 import { getLessonById } from "../api/lesson-api";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import RoundedFileInput from "./RoundedFileInput";
 import { useEffect, useState } from "react";
+import VocabularyModel from "../../../../types/VocabularyModel";
 
 interface LessonFormData {
   name: string;
   thumbnail: string;
 }
+
+const VOCA_PAGE_SIZE = 2;
 
 const LessonDetailsPage = () => {
   const [searchParams] = useSearchParams();
@@ -68,8 +69,10 @@ const LessonDetailsPage = () => {
 
   const lessonName = watch("name");
 
+  const vocabularies = lesson?.__listWord__ || [];
+
   const { page, emptyRows, pageData, handleChangePage } =
-    useAdminTablePagination<Vocabulary>(MOCK_VOCABULARIES, 10);
+    useAdminTablePagination<VocabularyModel>(vocabularies, VOCA_PAGE_SIZE);
 
   const handleSaveForm: SubmitHandler<LessonFormData> = (data) => {
     console.log("Form data:", data);
@@ -209,12 +212,12 @@ const LessonDetailsPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {pageData.map((voca: Vocabulary) => (
+                {pageData.map((voca: VocabularyModel) => (
                   <TableRow>
                     <TableCell>{voca.id}</TableCell>
                     <TableCell>{voca.word}</TableCell>
-                    <TableCell>{voca.type}</TableCell>
-                    <TableCell>{voca.meaning}</TableCell>
+                    <TableCell>{voca.wordClass}</TableCell>
+                    <TableCell>{voca.translate}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5}>
                         <Link to={`/admin/voca/${voca.id}`}>
@@ -229,7 +232,7 @@ const LessonDetailsPage = () => {
                 ))}
                 {emptyRows > 0 && (
                   <TableRow
-                    style={{ height: 53 * emptyRows, backgroundColor: "white" }}
+                    style={{ height: 73 * emptyRows, backgroundColor: "white" }}
                   >
                     <TableCell colSpan={4} />
                   </TableRow>
@@ -238,9 +241,9 @@ const LessonDetailsPage = () => {
               <TableFooter>
                 <TableRow>
                   <TablePagination
-                    rowsPerPageOptions={[10]}
-                    count={MOCK_VOCABULARIES.length}
-                    rowsPerPage={10}
+                    rowsPerPageOptions={[VOCA_PAGE_SIZE]}
+                    count={vocabularies.length}
+                    rowsPerPage={VOCA_PAGE_SIZE}
                     page={page}
                     onPageChange={handleChangePage}
                     ActionsComponent={TablePaginationActions}
