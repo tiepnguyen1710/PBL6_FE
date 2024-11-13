@@ -165,6 +165,10 @@ const router = createBrowserRouter([
         path: "voca/:vocaId",
         element: <VocabularyDetailsPage />,
       },
+      {
+        path: "voca/create",
+        element: <VocabularyDetailsPage />,
+      },
     ],
   },
   //   ],

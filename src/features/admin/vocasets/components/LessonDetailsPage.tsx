@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import RoundedInput from "../../../../components/UI/RoundedInput";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { Add, AddPhotoAlternate, Delete, Edit } from "@mui/icons-material";
 import DefaultLessonImage from "../assets/default-lesson-img.webp";
@@ -39,6 +39,8 @@ interface LessonFormData {
 const LessonDetailsPage = () => {
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
+
+  const navigate = useNavigate();
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", { id: lessonId }],
@@ -73,6 +75,10 @@ const LessonDetailsPage = () => {
     console.log("Form data:", data);
   };
 
+  const handleClickNewVocaBtn = () => {
+    navigate("/admin/voca/create?lessonId=" + lessonId);
+  };
+
   useEffect(() => {
     if (lesson) {
       resetLessonForm({
@@ -82,6 +88,10 @@ const LessonDetailsPage = () => {
       setLessonImageSrc(lesson.thumbnail);
     }
   }, [lesson, resetLessonForm]);
+
+  if (!lessonId) {
+    return <Navigate to="/admin/voca-set" />;
+  }
 
   return (
     <>
@@ -176,7 +186,12 @@ const LessonDetailsPage = () => {
                 Vocabularies
               </Typography>
             </Stack>
-            <Button variant="outlined" startIcon={<Add />} size="small" sx={{}}>
+            <Button
+              variant="outlined"
+              startIcon={<Add />}
+              size="small"
+              onClick={handleClickNewVocaBtn}
+            >
               New
             </Button>
           </Stack>

@@ -1,6 +1,11 @@
 import { Box, Button, Divider, Grid2, Stack, Typography } from "@mui/material";
 import RoundedInput from "../../../../components/UI/RoundedInput";
-import { useParams } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { AddPhotoAlternate } from "@mui/icons-material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -10,19 +15,29 @@ import VocabularyCardWrapper from "./VocabularyCardWrapper";
 import VocabularyFrontSide from "./VocabularyFrontSide";
 import { useState } from "react";
 import VocabularyBackSide from "./VocabularyBackSide";
+import {
+  fileList2Base64,
+  getPlaceholderImage,
+  isValidVocaWordClass,
+  vocaWordClassAbrr2FullName,
+} from "../../../../utils/helper";
+import { useMutation } from "@tanstack/react-query";
+import { createNewVocabulary } from "../api/vocabulary-api";
+import CreateVocabularyRequest from "../types/CreateVocabularyRequest";
+import { toast } from "react-toastify";
 
 interface VocaFormData {
   word: string;
   phonetic: string;
-  phoneticAudio?: string;
+  phoneticAudio?: string | FileList;
   definition: string;
   type: string;
   meaning: string;
 
-  image?: string;
-  exampleAudio?: string;
-  example?: string;
-  exampleMeaning?: string;
+  thumbnail?: string | FileList;
+  exampleAudio?: string | FileList;
+  example: string;
+  exampleMeaning: string;
 }
 
 type MediaFileSrcs = {
@@ -37,6 +52,8 @@ const validationRules = {
   },
   type: {
     required: "Type is required",
+    validate: (value: string) =>
+      isValidVocaWordClass(value) || "Invalid vocabulary type",
   },
   phonetic: {
     required: "Phonetic is required",
@@ -64,6 +81,12 @@ const validationRules = {
 };
 
 const VocabularyDetailsPage = () => {
+  const { pathname } = useLocation();
+  const createMode = pathname.includes("create");
+
+  const [searchParams] = useSearchParams();
+  const lessonId = searchParams.get("lessonId");
+
   // Mock get vocabulary by id
   const routeParams = useParams<{ vocaId: string }>();
   const vocaId = routeParams.vocaId;
@@ -87,6 +110,13 @@ const VocabularyDetailsPage = () => {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: createNewVocabulary,
+    onSuccess: () => {
+      toast.success("Create vocabulary successfully");
+    },
+  });
+
   const [wordInput, typeInput, phoneticInput, meaningInput] = watch([
     "word",
     "type",
@@ -95,26 +125,50 @@ const VocabularyDetailsPage = () => {
   ]);
 
   const [mediaInput, setMediaInput] = useState<MediaFileSrcs>({
-    imageSrc: voca?.image || "",
+    imageSrc: voca?.image || getPlaceholderImage(150, 150),
     phoneticAudioSrc: voca?.phoneticAudio || "",
     exampleAudioSrc: voca?.exampleAudio || "",
   });
 
   console.log("Validation errors:", errors);
 
-  const handleSaveForm: SubmitHandler<VocaFormData> = (data) => {
+  const handleSaveForm: SubmitHandler<VocaFormData> = async (data) => {
     console.log("Form data:", data);
+
+    if (createMode) {
+      const request: CreateVocabularyRequest = {
+        lessonId: lessonId as string,
+        thumbnail: await fileList2Base64(data.thumbnail as FileList),
+        audio: await fileList2Base64(data.phoneticAudio as FileList),
+        translate: data.meaning,
+        pronunciation: data.phonetic,
+        wordClass: vocaWordClassAbrr2FullName(data.type),
+        word: data.word,
+        example: data.example,
+        exampleMeaning: data.exampleMeaning,
+        exampleAudio: await fileList2Base64(data.exampleAudio as FileList),
+        definition: data.definition,
+      };
+
+      console.log("CreateVocaRequest: ", request);
+
+      createMutation.mutate(request);
+    }
   };
 
   const handleChangeMediaInput = (type: keyof MediaFileSrcs, src: string) => {
     setMediaInput((prev) => ({ ...prev, [type]: src }));
   };
 
+  if (createMode && !lessonId) {
+    return <Navigate to="/admin/voca-set" />;
+  }
+
   return (
     <Box sx={{ padding: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h4" sx={{ marginBottom: 1 }}>
-          Vocabulary Details
+          {createMode ? "New Vocabulary" : "Vocabulary Details"}
         </Typography>
         <GoBackButton />
       </Stack>
@@ -167,12 +221,18 @@ const VocabularyDetailsPage = () => {
 
               <Grid2 size={8}>
                 <RoundedFileInput
-                  register={register("image")}
+                  register={register("thumbnail", {
+                    required: {
+                      value: createMode,
+                      message: "Vocabulary Thumbnail is required",
+                    },
+                  })}
+                  requiredSign
+                  validationError={errors.thumbnail?.message}
                   label="Image"
                   borderRadius={4}
                   gap={0.5}
                   padding="16.5px 14px"
-                  requiredSign
                   iconButton={<AddPhotoAlternate />}
                   defaultFileSrc={voca?.image}
                   onChangeFile={(newFileSrc) =>
@@ -220,7 +280,14 @@ const VocabularyDetailsPage = () => {
 
               <Grid2 size={8}>
                 <RoundedFileInput
-                  register={register("phoneticAudio")}
+                  register={register("phoneticAudio", {
+                    required: {
+                      value: createMode,
+                      message: "Phonetic audio is required",
+                    },
+                  })}
+                  requiredSign
+                  validationError={errors.phoneticAudio?.message}
                   label="Phonetic Audio"
                   borderRadius={4}
                   gap={0.5}
@@ -276,11 +343,18 @@ const VocabularyDetailsPage = () => {
 
               <Grid2 size={12}>
                 <RoundedFileInput
-                  register={register("exampleAudio")}
+                  register={register("exampleAudio", {
+                    required: {
+                      value: createMode,
+                      message: "Example audio is required",
+                    },
+                  })}
                   label="Example Audio"
                   borderRadius={4}
                   gap={0.5}
                   padding="16.5px 14px"
+                  requiredSign
+                  validationError={errors.exampleAudio?.message}
                   defaultFileSrc={voca?.exampleAudio}
                   onChangeFile={(newFileSrc) =>
                     handleChangeMediaInput("exampleAudioSrc", newFileSrc)
@@ -316,7 +390,7 @@ const VocabularyDetailsPage = () => {
                     type="submit"
                     sx={{ float: "right", px: "24px", minWidth: "110px" }}
                   >
-                    Save
+                    {createMode ? "Create" : "Save"}
                   </Button>
                 </Stack>
               </Grid2>
@@ -328,13 +402,16 @@ const VocabularyDetailsPage = () => {
           <Stack direction="row" spacing={3}>
             <VocabularyCardWrapper>
               <VocabularyFrontSide
-                word={wordInput}
-                phonetic={phoneticInput}
+                word={wordInput || "word"}
+                phonetic={phoneticInput || "/phonetic/"}
                 image={mediaInput.imageSrc}
               />
             </VocabularyCardWrapper>
             <VocabularyCardWrapper>
-              <VocabularyBackSide type={typeInput} meaning={meaningInput} />
+              <VocabularyBackSide
+                type={typeInput || "type"}
+                meaning={meaningInput || "meaning"}
+              />
             </VocabularyCardWrapper>
           </Stack>
 
