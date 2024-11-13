@@ -1,10 +1,10 @@
 import { Menu, MenuItem, MenuList, TableCell, TableRow } from "@mui/material";
-import VocaSet from "../types/VocaSet";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
+import VocaSetModel from "../../../../types/VocaSetModel";
 
-const VocaSetRow: React.FC<{ vocaSet: VocaSet }> = ({ vocaSet }) => {
+const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -20,8 +20,8 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSet }> = ({ vocaSet }) => {
       <TableCell>{vocaSet.id}</TableCell>
       <TableCell>{vocaSet.name}</TableCell>
       <TableCell>{capitalizeFirstLetter(vocaSet.level)}</TableCell>
-      <TableCell align="right">{vocaSet.takenStudents || 0}</TableCell>
-      <TableCell align="right">{vocaSet.lessons || 0}</TableCell>
+      <TableCell align="right">{0}</TableCell>
+      <TableCell align="right">{vocaSet?.__topics__?.length || 0}</TableCell>
       <TableCell
         onClick={handleClick}
         sx={{
