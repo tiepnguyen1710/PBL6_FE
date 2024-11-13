@@ -21,7 +21,6 @@ import React, { useEffect, useState } from "react";
 import VocaSet from "../../../../components/VocaSet";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import AdminTableContainer from "./AdminTableContainer";
-import Lesson, { MOCK_LESSONS } from "../types/Lesson";
 import useAdminTablePagination from "../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import SearchInput from "../../../../components/UI/SearchInput";
@@ -39,6 +38,7 @@ import { toast } from "react-toastify";
 import { fileList2Base64 } from "../../../../utils/helper";
 import NewLessonModal from "./NewLessonModal";
 import LessonModel from "../../../../types/LessonModel";
+import { deleteLesson } from "../api/lesson-api";
 
 interface VocaSetFormData {
   id: string;
@@ -46,9 +46,6 @@ interface VocaSetFormData {
   level: string;
   thumbnail: string | FileList;
 }
-
-// const DEFAULT_VOCA_SET_IMAGE =
-//   "https://www.voca.vn/assets/file_upload/images/lets-go.png";
 
 const LESSON_PAGE_SIZE = 2;
 
@@ -75,6 +72,23 @@ const VocaSetDetailsPage = () => {
     },
   });
 
+  const deleteLessonMutation = useMutation({
+    mutationFn: deleteLesson,
+    onSuccess: () => {
+      toast.success("Delete lesson successfully!");
+      queryClient.invalidateQueries({
+        queryKey: ["vocaSet", { id: vocaSetId }],
+        exact: true,
+      });
+      setPage(0);
+    },
+    onSettled: () => {
+      // reset state
+      setDeletedLessonId(null);
+      deleteLessonMutation.reset();
+    },
+  });
+
   const {
     control,
     register,
@@ -87,6 +101,9 @@ const VocaSetDetailsPage = () => {
   const [preview, setPreview] = useState<boolean>(false);
   const [openNewModal, setOpenNewModal] = useState<boolean>(false);
   const [searchLesson, setSearchLesson] = useState<string>("");
+  const [deletedLessonId, setDeletedLessonId] = useState<string | null>(null);
+
+  const openDeleteModal = Boolean(deletedLessonId);
 
   const lessons = data?.__topics__ || [];
 
@@ -96,9 +113,9 @@ const VocaSetDetailsPage = () => {
   const { page, setPage, emptyRows, pageData, handleChangePage } =
     useAdminTablePagination<LessonModel>(filteredlessons, LESSON_PAGE_SIZE);
 
-  console.log("pageData", pageData);
-  console.log("data.__topic__", data?.__topics__);
-  console.log("data", data);
+  // console.log("pageData", pageData);
+  // console.log("data.__topic__", data?.__topics__);
+  // console.log("data", data);
 
   const {
     fileInputRef,
@@ -145,6 +162,17 @@ const VocaSetDetailsPage = () => {
     }
 
     mutate(request);
+  };
+
+  const handleClickDeleteLesson = (lessonId: string) => {
+    setDeletedLessonId(lessonId);
+  };
+
+  const handleDeleteLesson = () => {
+    if (deletedLessonId) {
+      deleteLessonMutation.mutate(deletedLessonId);
+      // deleteLessonMutation.mutate("adjfalf");
+    }
   };
 
   if (!vocaSetId) {
@@ -307,7 +335,11 @@ const VocaSetDetailsPage = () => {
                         <Link to={`/admin/lesson?id=${lesson.id}`}>
                           <Button startIcon={<Tune />}>Manage</Button>
                         </Link>
-                        <Button startIcon={<Delete />} color="error">
+                        <Button
+                          startIcon={<Delete />}
+                          color="error"
+                          onClick={() => handleClickDeleteLesson(lesson.id)}
+                        >
                           Delete
                         </Button>
                       </Stack>
@@ -363,6 +395,37 @@ const VocaSetDetailsPage = () => {
             onClose={() => setOpenNewModal(false)}
             onCancel={() => setOpenNewModal(false)}
           />
+
+          <CustomModal
+            open={openDeleteModal}
+            onClose={() => setDeletedLessonId(null)}
+          >
+            <Box sx={{ padding: 3 }}>
+              <Typography variant="h6" sx={{ marginBottom: 1 }}>
+                Do you want to delete this lesson?
+              </Typography>
+              <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleDeleteLesson}
+                  sx={{ width: "80px" }}
+                >
+                  {deleteLessonMutation.isPending ? (
+                    <CircularProgress size={20} color="error" />
+                  ) : (
+                    "Delete"
+                  )}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setDeletedLessonId(null)}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Box>
+          </CustomModal>
         </Box>
       )}
     </>

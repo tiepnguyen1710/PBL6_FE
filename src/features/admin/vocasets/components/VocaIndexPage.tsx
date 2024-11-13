@@ -15,11 +15,10 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import RoundedInput from "../../../../components/UI/RoundedInput";
 import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
-import VocaSet, { mockVocaSets } from "../types/VocaSet";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import VocaSetRow from "./VocaSetRow";
 import AdminTableContainer from "./AdminTableContainer";

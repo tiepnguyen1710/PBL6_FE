@@ -17,3 +17,9 @@ export async function getLessonById(id: string) {
 
   return response.data;
 }
+
+export async function deleteLesson(id: string) {
+  const response = await axiosClient.delete("/topic/" + id);
+
+  return response.data;
+}
