@@ -29,7 +29,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getLessonById } from "../api/lesson-api";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import RoundedFileInput from "./RoundedFileInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface LessonFormData {
   name: string;
@@ -51,6 +51,7 @@ const LessonDetailsPage = () => {
     control,
     handleSubmit,
     watch,
+    reset: resetLessonForm,
     // formState: { errors },
   } = useForm<LessonFormData>({
     defaultValues: {
@@ -71,6 +72,16 @@ const LessonDetailsPage = () => {
   const handleSaveForm: SubmitHandler<LessonFormData> = (data) => {
     console.log("Form data:", data);
   };
+
+  useEffect(() => {
+    if (lesson) {
+      resetLessonForm({
+        name: lesson.name,
+        thumbnail: lesson.thumbnail,
+      });
+      setLessonImageSrc(lesson.thumbnail);
+    }
+  }, [lesson, resetLessonForm]);
 
   return (
     <>
