@@ -162,7 +162,7 @@ const router = createBrowserRouter([
         element: <LessonDetailsPage />,
       },
       {
-        path: "voca/:vocaId",
+        path: "voca",
         element: <VocabularyDetailsPage />,
       },
       {

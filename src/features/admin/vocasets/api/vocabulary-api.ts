@@ -4,10 +4,16 @@ import CreateVocabularyRequest from "../types/CreateVocabularyRequest";
 
 export async function createNewVocabulary(request: CreateVocabularyRequest) {
   const { lessonId, ...data } = request;
-  const responseData = await axiosClient.post<VocabularyModel>(
+  const response = await axiosClient.post<VocabularyModel>(
     "word/" + lessonId,
     data,
   );
 
-  return responseData;
+  return response.data;
+}
+
+export async function getVocaById(id: string) {
+  const response = await axiosClient.get<VocabularyModel>("word/" + id);
+
+  return response.data;
 }

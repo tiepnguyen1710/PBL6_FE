@@ -13,7 +13,7 @@ import MOCK_VOCABULARIES from "../../../../utils/mockVocabularies";
 import RoundedFileInput from "./RoundedFileInput";
 import VocabularyCardWrapper from "./VocabularyCardWrapper";
 import VocabularyFrontSide from "./VocabularyFrontSide";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import VocabularyBackSide from "./VocabularyBackSide";
 import {
   fileList2Base64,
@@ -21,8 +21,8 @@ import {
   isValidVocaWordClass,
   vocaWordClassAbrr2FullName,
 } from "../../../../utils/helper";
-import { useMutation } from "@tanstack/react-query";
-import { createNewVocabulary } from "../api/vocabulary-api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createNewVocabulary, getVocaById } from "../api/vocabulary-api";
 import CreateVocabularyRequest from "../types/CreateVocabularyRequest";
 import { toast } from "react-toastify";
 
@@ -86,29 +86,22 @@ const VocabularyDetailsPage = () => {
 
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("lessonId");
+  const vocaId = searchParams.get("id");
 
-  // Mock get vocabulary by id
-  const routeParams = useParams<{ vocaId: string }>();
-  const vocaId = routeParams.vocaId;
-  const voca = MOCK_VOCABULARIES.find((voca) => voca.id === vocaId);
+  const { data: voca, isLoading: isLoadingVoca } = useQuery({
+    queryKey: ["voca", { id: vocaId }],
+    queryFn: () => getVocaById(vocaId!),
+    enabled: !!vocaId,
+  });
 
   const {
     register,
     control,
     handleSubmit,
     watch,
+    reset: resetVocaForm,
     formState: { errors },
-  } = useForm<VocaFormData>({
-    defaultValues: {
-      word: voca?.word,
-      phonetic: voca?.phonetic,
-      definition: voca?.definition,
-      type: voca?.type,
-      meaning: voca?.meaning,
-      example: voca?.example,
-      exampleMeaning: voca?.exampleMeaning,
-    },
-  });
+  } = useForm<VocaFormData>();
 
   const createMutation = useMutation({
     mutationFn: createNewVocabulary,
@@ -125,8 +118,8 @@ const VocabularyDetailsPage = () => {
   ]);
 
   const [mediaInput, setMediaInput] = useState<MediaFileSrcs>({
-    imageSrc: voca?.image || getPlaceholderImage(150, 150),
-    phoneticAudioSrc: voca?.phoneticAudio || "",
+    imageSrc: voca?.thumbnail || getPlaceholderImage(150, 150),
+    phoneticAudioSrc: voca?.audio || "",
     exampleAudioSrc: voca?.exampleAudio || "",
   });
 
@@ -159,6 +152,27 @@ const VocabularyDetailsPage = () => {
   const handleChangeMediaInput = (type: keyof MediaFileSrcs, src: string) => {
     setMediaInput((prev) => ({ ...prev, [type]: src }));
   };
+
+  useEffect(() => {
+    if (voca) {
+      console.log("Voca changes, reset form");
+      resetVocaForm({
+        word: voca.word,
+        phonetic: voca.pronunciation,
+        definition: voca.definition,
+        type: voca.wordClass,
+        meaning: voca.translate,
+        example: voca.example,
+        exampleMeaning: voca.exampleMeaning,
+      });
+
+      setMediaInput({
+        imageSrc: voca.thumbnail,
+        phoneticAudioSrc: voca.audio,
+        exampleAudioSrc: voca.exampleAudio,
+      });
+    }
+  }, [voca, resetVocaForm]);
 
   if (createMode && !lessonId) {
     return <Navigate to="/admin/voca-set" />;
@@ -234,7 +248,7 @@ const VocabularyDetailsPage = () => {
                   gap={0.5}
                   padding="16.5px 14px"
                   iconButton={<AddPhotoAlternate />}
-                  defaultFileSrc={voca?.image}
+                  defaultFileSrc={voca?.thumbnail}
                   onChangeFile={(newFileSrc) =>
                     handleChangeMediaInput("imageSrc", newFileSrc)
                   }
@@ -292,7 +306,7 @@ const VocabularyDetailsPage = () => {
                   borderRadius={4}
                   gap={0.5}
                   padding="16.5px 14px"
-                  defaultFileSrc={voca?.phoneticAudio}
+                  defaultFileSrc={voca?.audio}
                   onChangeFile={(newFileSrc) =>
                     handleChangeMediaInput("phoneticAudioSrc", newFileSrc)
                   }
