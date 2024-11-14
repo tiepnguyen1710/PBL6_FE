@@ -49,7 +49,10 @@ const SideBar = (props: any) => {
         <MenuItem onClick={() => navigate("/admin")}>Dashboard</MenuItem>
         <SubMenu label="Exams">
           <MenuItem> Exam set </MenuItem>
-          <MenuItem onClick={() => navigate("/admin/exam")}>Exam</MenuItem>
+          {/* <MenuItem onClick={() => navigate("/admin/exam")}>Exam</MenuItem> */}
+          <MenuItem onClick={() => navigate("/admin/createExam")}>
+            Create Exam
+          </MenuItem>
         </SubMenu>
         <SubMenu label="Vocabularies">
           <MenuItem onClick={() => navigate("/admin/voca-set")}>
