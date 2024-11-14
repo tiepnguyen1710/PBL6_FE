@@ -41,6 +41,7 @@ import Exam from "./features/admin/exams/components/exam.tsx";
 
 import UserProfilePage from "./features/user-profile/components/UserProfilePage.tsx";
 import VocaLibraryPage from "./features/voca/components/VocaLibraryPage.tsx";
+import CreateExam from "./features/admin/new_exams/components/createExam.tsx";
 
 const router = createBrowserRouter([
   {
@@ -136,9 +137,13 @@ const router = createBrowserRouter([
         index: true,
         element: <Dashboard />,
       },
+      // {
+      //   path: "exam",
+      //   element: <Exam />,
+      // },
       {
-        path: "exam",
-        element: <Exam />,
+        path: "createExam",
+        element: <CreateExam />,
       },
     ],
   },
