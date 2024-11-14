@@ -23,16 +23,22 @@ import { LessonCard } from "./LessonCard";
 import AdminTableContainer from "./AdminTableContainer";
 import useAdminTablePagination from "../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
-import { useQuery } from "@tanstack/react-query";
-import { getLessonById } from "../api/lesson-api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getLessonById, updateLesson } from "../api/lesson-api";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import RoundedFileInput from "./RoundedFileInput";
 import { useEffect, useState } from "react";
 import VocabularyModel from "../../../../types/VocabularyModel";
+import UpdateLessonRequest from "../types/UpdateLessonRequest";
+import { toast } from "react-toastify";
+import { fileList2Base64 } from "../../../../utils/helper";
+import queryClient from "../../../../queryClient";
+import UpdateLessonResponse from "../types/UpdateLessonResponse";
+import LessonModel from "../../../../types/LessonModel";
 
 interface LessonFormData {
   name: string;
-  thumbnail: string;
+  thumbnail: string | FileList;
 }
 
 const VOCA_PAGE_SIZE = 2;
@@ -63,6 +69,25 @@ const LessonDetailsPage = () => {
     },
   });
 
+  const updateLessonMutation = useMutation({
+    mutationFn: updateLesson,
+    onSuccess: (responseData: UpdateLessonResponse) => {
+      toast.success("Lesson updated successfully");
+      // queryClient.invalidateQueries({
+      //   queryKey: ["lesson", { id: lessonId }],
+      //   exact: true,
+      // });
+      queryClient.setQueryData(
+        ["lesson", { id: lessonId }],
+        (oldData: LessonModel) => ({
+          ...oldData,
+          name: responseData.name,
+          thumbnail: responseData.thumbnail,
+        }),
+      );
+    },
+  });
+
   const [lessonImageSrc, setLessonImageSrc] = useState<string | null>(
     lesson?.thumbnail || DefaultLessonImage,
   );
@@ -74,8 +99,19 @@ const LessonDetailsPage = () => {
   const { page, emptyRows, pageData, handleChangePage } =
     useAdminTablePagination<VocabularyModel>(vocabularies, VOCA_PAGE_SIZE);
 
-  const handleSaveForm: SubmitHandler<LessonFormData> = (data) => {
+  const handleSaveForm: SubmitHandler<LessonFormData> = async (data) => {
     console.log("Form data:", data);
+
+    const updateRequest: UpdateLessonRequest = {
+      id: lessonId!,
+      name: data.name,
+    };
+
+    if (data.thumbnail instanceof FileList) {
+      updateRequest.thumbnail = await fileList2Base64(data.thumbnail);
+    }
+
+    updateLessonMutation.mutate(updateRequest);
   };
 
   const handleClickNewVocaBtn = () => {
@@ -84,6 +120,7 @@ const LessonDetailsPage = () => {
 
   useEffect(() => {
     if (lesson) {
+      console.log("Lesson changes, reset form and lesson image src");
       resetLessonForm({
         name: lesson.name,
         thumbnail: lesson.thumbnail,
@@ -220,7 +257,7 @@ const LessonDetailsPage = () => {
                     <TableCell>{voca.translate}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5}>
-                        <Link to={`/admin/voca/${voca.id}`}>
+                        <Link to={`/admin/voca?id=${voca.id}`}>
                           <Button startIcon={<Edit />}>Edit</Button>
                         </Link>
                         <Button startIcon={<Delete />} color="error">

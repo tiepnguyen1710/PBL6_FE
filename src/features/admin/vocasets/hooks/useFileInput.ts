@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getFileNameFromPath } from "../utils/helper";
 
 /**
@@ -11,6 +11,7 @@ export default function useFileInput(defaultImage: string = "") {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  console.log("input name:", fileInputRef.current?.files?.[0]?.name);
   const fileName = getFileNameFromPath(
     fileInputRef.current?.files?.[0]?.name || defaultImage,
   ) as string;
@@ -38,6 +39,13 @@ export default function useFileInput(defaultImage: string = "") {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    setFileSrc(defaultImage);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [defaultImage]);
 
   return {
     fileSrc,
