@@ -19,6 +19,8 @@ import {
   getPlaceholderImage,
   hasFileData,
   isValidVocaWordClass,
+  mustBeAudioIfExistValue,
+  mustBeImageIfExistValue,
   vocaWordClassAbrr2FullName,
 } from "../../../../utils/helper";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,13 +41,13 @@ import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 interface VocaFormData {
   word: string;
   phonetic: string;
-  phoneticAudio?: string | FileList;
+  phoneticAudio?: FileList;
   definition: string;
-  type: string;
+  type: VocabularyWordClass;
   meaning: string;
 
-  thumbnail?: string | FileList;
-  exampleAudio?: string | FileList;
+  thumbnail?: FileList;
+  exampleAudio?: FileList;
   example: string;
   exampleMeaning: string;
 }
@@ -245,8 +247,10 @@ const VocabularyDetailsPage = () => {
   }
 
   return (
-    <>
-      {isLoadingVoca || (updateMutation.isPending && <CustomBackdrop open />)}
+    <Box>
+      {(isLoadingVoca ||
+        updateMutation.isPending ||
+        createMutation.isPending) && <CustomBackdrop open />}
       <Box sx={{ padding: 2 }}>
         <Stack
           direction="row"
@@ -313,6 +317,9 @@ const VocabularyDetailsPage = () => {
                         value: createMode,
                         message: "Vocabulary Thumbnail is required",
                       },
+                      validate: (value) =>
+                        mustBeImageIfExistValue(value) ||
+                        "Please choose an image file",
                     })}
                     requiredSign
                     validationError={errors.thumbnail?.message}
@@ -372,6 +379,9 @@ const VocabularyDetailsPage = () => {
                         value: createMode,
                         message: "Phonetic audio is required",
                       },
+                      validate: (value) =>
+                        mustBeAudioIfExistValue(value) ||
+                        "Please choose an audio file",
                     })}
                     requiredSign
                     validationError={errors.phoneticAudio?.message}
@@ -435,6 +445,9 @@ const VocabularyDetailsPage = () => {
                         value: createMode,
                         message: "Example audio is required",
                       },
+                      validate: (value) =>
+                        mustBeAudioIfExistValue(value) ||
+                        "Please choose an audio file",
                     })}
                     label="Example Audio"
                     borderRadius={4}
@@ -513,7 +526,7 @@ const VocabularyDetailsPage = () => {
           </Stack>
         </Stack>
       </Box>
-    </>
+    </Box>
   );
 };
 

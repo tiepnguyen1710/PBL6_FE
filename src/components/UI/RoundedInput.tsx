@@ -18,7 +18,7 @@ interface CustomRoundedInputProps extends InputProps {
 export type RoundedInputProps = CustomRoundedInputProps & OutlinedInputProps;
 
 const RoundedInput = forwardRef<
-  HTMLInputElement,
+  unknown | null,
   CustomRoundedInputProps & OutlinedInputProps
 >(
   (
@@ -61,7 +61,7 @@ const RoundedInput = forwardRef<
             id={id || `#${label}`}
             name={name}
             placeholder={placeholder}
-            inputRef={ref}
+            ref={ref}
             {...props} // Spread props like value, onChange, onBlur from React Hook Form
             sx={{
               borderRadius: `${borderRadius}px`,

@@ -11,7 +11,6 @@ export default function useFileInput(defaultImage: string = "") {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  console.log("input name:", fileInputRef.current?.files?.[0]?.name);
   const fileName = getFileNameFromPath(
     fileInputRef.current?.files?.[0]?.name || defaultImage,
   ) as string;
