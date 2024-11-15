@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import OutlinedInput, { OutlinedInputProps } from "@mui/material/OutlinedInput";
@@ -17,55 +17,64 @@ interface CustomRoundedInputProps extends InputProps {
 
 export type RoundedInputProps = CustomRoundedInputProps & OutlinedInputProps;
 
-const RoundedInput: React.FC<CustomRoundedInputProps & OutlinedInputProps> = ({
-  id,
-  name,
-  label,
-  placeholder = "",
-  validationError = "",
-  gap = 1,
-  padding = "12px 32px",
-  borderRadius = 32,
-  labelColor = "secondary.dark",
-  requiredSign = false,
-  inputSx, // sx pass to OutlinedInput
-  ...props
-}) => {
-  const hasError = Boolean(validationError);
+const RoundedInput = forwardRef<
+  HTMLInputElement,
+  CustomRoundedInputProps & OutlinedInputProps
+>(
+  (
+    {
+      id,
+      name,
+      label,
+      placeholder = "",
+      validationError = "",
+      gap = 1,
+      padding = "12px 32px",
+      borderRadius = 32,
+      labelColor = "secondary.dark",
+      requiredSign = false,
+      inputSx, // sx pass to OutlinedInput
+      ...props
+    },
+    ref,
+  ) => {
+    const hasError = Boolean(validationError);
 
-  return (
-    <Stack spacing={gap}>
-      {label && (
-        <Typography
-          component="label"
-          sx={{ color: labelColor }}
-          htmlFor={id || `#${label}`}
-        >
-          {label}
-          {requiredSign && (
-            <Typography color="error" component="span">
-              *
-            </Typography>
-          )}
-        </Typography>
-      )}
-      <FormControl error={hasError}>
-        <OutlinedInput
-          id={id || `#${label}`}
-          name={name}
-          placeholder={placeholder}
-          {...props} // Spread props like value, onChange, onBlur from React Hook Form
-          sx={{
-            borderRadius: `${borderRadius}px`,
-            "& fieldset": { borderColor: "text.secondary" },
-            "& input": { padding: padding },
-            ...inputSx,
-          }}
-        />
-        {hasError && <FormHelperText>{validationError}</FormHelperText>}
-      </FormControl>
-    </Stack>
-  );
-};
+    return (
+      <Stack spacing={gap}>
+        {label && (
+          <Typography
+            component="label"
+            sx={{ color: labelColor }}
+            htmlFor={id || `#${label}`}
+          >
+            {label}
+            {requiredSign && (
+              <Typography color="error" component="span">
+                *
+              </Typography>
+            )}
+          </Typography>
+        )}
+        <FormControl error={hasError}>
+          <OutlinedInput
+            id={id || `#${label}`}
+            name={name}
+            placeholder={placeholder}
+            inputRef={ref}
+            {...props} // Spread props like value, onChange, onBlur from React Hook Form
+            sx={{
+              borderRadius: `${borderRadius}px`,
+              "& fieldset": { borderColor: "text.secondary" },
+              "& input": { padding: padding },
+              ...inputSx,
+            }}
+          />
+          {hasError && <FormHelperText>{validationError}</FormHelperText>}
+        </FormControl>
+      </Stack>
+    );
+  },
+);
 
 export default RoundedInput;

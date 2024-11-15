@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   Grid2,
   Stack,
@@ -35,6 +36,8 @@ import { fileList2Base64 } from "../../../../utils/helper";
 import queryClient from "../../../../queryClient";
 import UpdateLessonResponse from "../types/UpdateLessonResponse";
 import LessonModel from "../../../../types/LessonModel";
+import CustomModal from "../../../../components/UI/CustomModal";
+import { deleteVoca } from "../api/vocabulary-api";
 
 interface LessonFormData {
   name: string;
@@ -48,6 +51,9 @@ const LessonDetailsPage = () => {
   const lessonId = searchParams.get("id");
 
   const navigate = useNavigate();
+
+  const [deletedVocaId, setDeletedVocaId] = useState<string | null>(null);
+  const openDeleteModal = Boolean(deletedVocaId);
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", { id: lessonId }],
@@ -96,8 +102,25 @@ const LessonDetailsPage = () => {
 
   const vocabularies = lesson?.__listWord__ || [];
 
-  const { page, emptyRows, pageData, handleChangePage } =
+  const { page, setPage, emptyRows, pageData, handleChangePage } =
     useAdminTablePagination<VocabularyModel>(vocabularies, VOCA_PAGE_SIZE);
+
+  const deleteVocaMutation = useMutation({
+    mutationFn: deleteVoca,
+    onSuccess: () => {
+      toast.success("Delete word successfully!");
+      queryClient.invalidateQueries({
+        queryKey: ["lesson", { id: lessonId }],
+        exact: true,
+      });
+      setPage(0);
+    },
+    onSettled: () => {
+      // reset state
+      setDeletedVocaId(null);
+      deleteVocaMutation.reset();
+    },
+  });
 
   const handleSaveForm: SubmitHandler<LessonFormData> = async (data) => {
     console.log("Form data:", data);
@@ -116,6 +139,16 @@ const LessonDetailsPage = () => {
 
   const handleClickNewVocaBtn = () => {
     navigate("/admin/voca/create?lessonId=" + lessonId);
+  };
+
+  const handleClickDeleteVoca = (vocaId: string) => {
+    setDeletedVocaId(vocaId);
+  };
+
+  const handleDeleteLesson = () => {
+    if (deletedVocaId) {
+      deleteVocaMutation.mutate(deletedVocaId);
+    }
   };
 
   useEffect(() => {
@@ -260,7 +293,11 @@ const LessonDetailsPage = () => {
                         <Link to={`/admin/voca?id=${voca.id}`}>
                           <Button startIcon={<Edit />}>Edit</Button>
                         </Link>
-                        <Button startIcon={<Delete />} color="error">
+                        <Button
+                          startIcon={<Delete />}
+                          color="error"
+                          onClick={() => handleClickDeleteVoca(voca.id)}
+                        >
                           Delete
                         </Button>
                       </Stack>
@@ -289,6 +326,37 @@ const LessonDetailsPage = () => {
               </TableFooter>
             </Table>
           </AdminTableContainer>
+
+          <CustomModal
+            open={openDeleteModal}
+            onClose={() => setDeletedVocaId(null)}
+          >
+            <Box sx={{ padding: 3 }}>
+              <Typography variant="h6" sx={{ marginBottom: 1 }}>
+                Do you want to delete this word?
+              </Typography>
+              <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleDeleteLesson}
+                  sx={{ width: "80px" }}
+                >
+                  {deleteVocaMutation.isPending ? (
+                    <CircularProgress size={20} color="error" />
+                  ) : (
+                    "Delete"
+                  )}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setDeletedVocaId(null)}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Box>
+          </CustomModal>
         </Box>
       )}
     </>

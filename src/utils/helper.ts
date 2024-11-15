@@ -55,3 +55,7 @@ export function isValidVocaWordClass(wordClass: string) {
     )
   );
 }
+
+export function hasFileData(data: unknown) {
+  return data instanceof FileList && data.length > 0;
+}
