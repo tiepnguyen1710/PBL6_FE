@@ -20,7 +20,7 @@ import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { Add, AddPhotoAlternate, Delete, Edit } from "@mui/icons-material";
 import DefaultLessonImage from "../assets/default-lesson-img.webp";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { LessonCard } from "./LessonCard";
+import { LessonCard } from "../../../../components/LessonCard";
 import AdminTableContainer from "./AdminTableContainer";
 import useAdminTablePagination from "../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";

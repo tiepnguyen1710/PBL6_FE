@@ -148,6 +148,7 @@ img {
 
   --text-primary: #54565a;
   --text-secondary: rgba(84, 86, 90, 0.6);
+  --text-light: #afafaf;
 }
 
 * {

@@ -46,6 +46,7 @@ import VocaIndexPage from "./features/admin/vocasets/components/VocaIndexPage.ts
 import VocaSetDetailsPage from "./features/admin/vocasets/components/VocaSetDetailsPage.tsx";
 import LessonDetailsPage from "./features/admin/vocasets/components/LessonDetailsPage.tsx";
 import VocabularyDetailsPage from "./features/admin/vocasets/components/VocabularyDetailsPage.tsx";
+import LessonsPage from "./features/voca/components/LessonsPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -134,6 +135,10 @@ const router = createBrowserRouter([
       {
         path: ":vocaSetId/learn",
         element: <LearningVocaPage />,
+      },
+      {
+        path: ":vocaSetId/lessons",
+        element: <LessonsPage />,
       },
     ],
   },
