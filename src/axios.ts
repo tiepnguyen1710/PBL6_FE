@@ -19,7 +19,7 @@ axiosClient.interceptors.request.use(
   (error) => {
     console.log("Request error", error.message);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response Interceptor to handle 401 errors
@@ -45,7 +45,7 @@ axiosClient.interceptors.response.use(
 
     // If don't have response error data, then return the axios error object
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosClient;

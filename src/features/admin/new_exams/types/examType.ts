@@ -1,25 +1,39 @@
+export enum validateState {
+  blank = "BLANK",
+  pending = "PENDING",
+  fulfilled = "FULFILLED",
+}
+
 export interface partData {
   part: string;
   groupQuestionData: groupQuestionData[];
 }
 
 export interface groupQuestionData {
-  audio?: File | null;
+  validate?: validateState;
+  audioUrl?: string | null;
   audioPreview?: string;
-  image?: File[];
+  image?: { imageUrl: string; index: number }[];
   imagePreview?: string[];
-  passage: string;
+  passage?: string;
   questionData: questionData[];
 }
 
 export interface questionData {
-  number: number;
+  questionNumber: number;
   question: string;
   answer: string[];
+  correctAnswer?: string;
   // optionA?: string;
   // optionB?: string;
   // optionC?: string;
   // optionD?: string;
+}
+
+export interface part {
+  id: string;
+  name: string;
+  totalQuestion: number;
 }
 
 export const TOEIC_PARTS = {

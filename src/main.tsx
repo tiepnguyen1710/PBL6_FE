@@ -5,7 +5,7 @@ import { ThemeProvider } from "@mui/material/styles";
 // Use this workaround to make default MUI styles is overridden by the same specificity styles
 import StyledEngineProvider from "@mui/material/StyledEngineProvider";
 import theme from "./theme";
-import App from "./App.tsx";
+
 import "./index.css";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -37,7 +37,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Admin from "./components/layout/admin/Admin.tsx";
 import Dashboard from "./features/admin/dashboard/Dashboard.tsx";
-import Exam from "./features/admin/exams/components/exam.tsx";
 
 import UserProfilePage from "./features/user-profile/components/UserProfilePage.tsx";
 import VocaLibraryPage from "./features/voca/components/VocaLibraryPage.tsx";
@@ -47,6 +46,9 @@ import VocaSetDetailsPage from "./features/admin/vocasets/components/VocaSetDeta
 import LessonDetailsPage from "./features/admin/vocasets/components/LessonDetailsPage.tsx";
 import VocabularyDetailsPage from "./features/admin/vocasets/components/VocabularyDetailsPage.tsx";
 import LessonsPage from "./features/voca/components/LessonsPage.tsx";
+
+import CreateExam from "./features/admin/new_exams/components/createExam.tsx";
+import ExamSet from "./features/admin/new_exams/components/ExamIndexPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -150,9 +152,21 @@ const router = createBrowserRouter([
         index: true,
         element: <Dashboard />,
       },
+      // {
+      //   path: "exam",
+      //   element: <Exam />,
+      // },
       {
-        path: "exam",
-        element: <Exam />,
+        path: "createExam",
+        element: <CreateExam />,
+      },
+      {
+        path: "exam-set",
+        element: <ExamSet />,
+      },
+      {
+        path: "exam-set/:examId",
+        element: <CreateExam />,
       },
       {
         path: "voca-set",
