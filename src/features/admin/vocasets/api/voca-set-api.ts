@@ -26,9 +26,3 @@ export async function updateVocaSet(data: UpdateVocaSetRequest) {
 
   return response.data;
 }
-
-export async function getAllVocaSets() {
-  const response = await axiosClient.get<VocaSetModel[]>("/group-topic");
-
-  return response.data;
-}

@@ -40,11 +40,12 @@ import {
   getPlaceholderImage,
 } from "../../../../utils/helper.ts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createVocaSet, getAllVocaSets } from "../api/voca-set-api.ts";
+import { createVocaSet } from "../api/voca-set-api.ts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import VocaSetModel from "../../../../types/VocaSetModel.ts";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop.tsx";
+import { getAllVocaSets } from "../../../shared-apis/vocaset-api.ts";
 
 interface NewVocaSetFormData {
   name: string;

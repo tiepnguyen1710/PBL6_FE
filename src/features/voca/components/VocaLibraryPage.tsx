@@ -4,9 +4,11 @@ import { useState } from "react";
 import Content from "../../../components/layout/Content";
 import VocaSet from "../../../components/VocaSet";
 import TabPanel from "../../../components/UI/TabPanel";
-import { mockVocaSets } from "../utils/data";
 import VocaSetInfo from "../types/VocaSetInfo";
 import SearchInput from "../../../components/UI/SearchInput";
+import { useQuery } from "@tanstack/react-query";
+import { getAllVocaSets } from "../../shared-apis/vocaset-api";
+import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 
 const VOCA_TABS = [
   {
@@ -34,6 +36,11 @@ const VOCA_TABS = [
 const VocaLibraryPage: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [searchValue, setSearchValue] = useState("");
+
+  const { data: vocaSetData, isLoading } = useQuery({
+    queryKey: ["vocaSet"],
+    queryFn: getAllVocaSets,
+  });
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -71,6 +78,11 @@ const VocaLibraryPage: React.FC = () => {
             <SearchInput onChange={handleSearchInputChange} />
           </Box>
         </Box>
+        {isLoading && (
+          <Box sx={{ marginTop: 2 }}>
+            <DotLoadingProgress />
+          </Box>
+        )}
         {VOCA_TABS.map((tab) => (
           <TabPanel
             key={tab.index}
@@ -79,7 +91,18 @@ const VocaLibraryPage: React.FC = () => {
             sx={{ marginTop: 1 }}
           >
             <Grid2 container rowGap={1.5}>
-              {mockVocaSets
+              {vocaSetData
+                ?.map((vocaSetModel) => {
+                  const vocaSetInfo: VocaSetInfo = {
+                    id: vocaSetModel.id,
+                    title: vocaSetModel.name,
+                    qualification: vocaSetModel.level,
+                    takenNumber: "0",
+                    image: vocaSetModel.thumbnail,
+                  };
+
+                  return vocaSetInfo;
+                })
                 .filter((vocaSet: VocaSetInfo) => {
                   const title = vocaSet.title.toLowerCase();
                   const author = vocaSet.author?.toLowerCase();
