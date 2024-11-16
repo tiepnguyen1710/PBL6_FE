@@ -48,7 +48,6 @@ import VocabularyDetailsPage from "./features/admin/vocasets/components/Vocabula
 
 import CreateExam from "./features/admin/new_exams/components/createExam.tsx";
 import ExamSet from "./features/admin/new_exams/components/ExamIndexPage.tsx";
-import ExamDetailPage from "./features/admin/new_exams/components/ExamDetailPage.tsx";
 
 const router = createBrowserRouter([
   {
