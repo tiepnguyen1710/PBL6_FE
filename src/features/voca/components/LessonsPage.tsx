@@ -275,6 +275,12 @@ const LessonsPage: React.FC = () => {
                     border: "1px solid #ddd",
                     flexGrow: 1,
                     "& fieldset": { border: "none" },
+                    "& input": {
+                      cursor: "pointer !important",
+                    },
+                    "& input:hover": {
+                      textDecoration: "underline",
+                    },
                   }}
                 />
               </Stack>
