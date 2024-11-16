@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import Content from "../../../components/layout/Content";
-import { alpha, Box, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
+import {
+  alpha,
+  Box,
+  OutlinedInput,
+  Paper,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import { LessonCard } from "../../../components/LessonCard";
 import LearningLessonProgress from "./LearningLessonProgress";
 import { Image } from "../../../components/UI/Image";
@@ -11,6 +20,8 @@ import GoldStarIcon from "../assets/gold-star.svg";
 import RedStarIcon from "../assets/course-progress-star-2.svg";
 import TwoCardIcon from "../assets/course-progress-learned-1.svg";
 import TwoRedCardIcon from "../assets/course-progress-not-learn-1.svg";
+import LessonComment from "./LessonComment";
+import CommentIcon from "../assets/comment-icon.svg";
 
 const LessonsPage: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -188,10 +199,7 @@ const LessonsPage: React.FC = () => {
               </TabPanel>
             </Paper>
 
-            <Paper
-              variant="outlined"
-              sx={{ minHeight: "200px", padding: "25px 20px" }}
-            >
+            <Paper variant="outlined" sx={{ padding: "25px 20px" }}>
               <Typography
                 sx={{ fontSize: 20, fontWeight: "medium", color: "#201F1F" }}
               >
@@ -228,6 +236,48 @@ const LessonsPage: React.FC = () => {
                   quantity={10}
                 />
               </Box>
+            </Paper>
+
+            <Paper variant="outlined">
+              <Typography
+                sx={{
+                  fontSize: 20,
+                  fontWeight: "medium",
+                  color: "#201F1F",
+                  my: "10px",
+                  px: 1.25,
+                }}
+              >
+                Reviews of learners
+              </Typography>
+
+              {/* Comment container */}
+              <Box sx={{ maxHeight: "340px", overflowY: "auto" }}>
+                <LessonComment />
+                <LessonComment />
+                <LessonComment />
+              </Box>
+
+              {/* Comment button */}
+              <Stack
+                direction="row"
+                spacing="10px"
+                sx={{ padding: "20px 15px" }}
+              >
+                <Image src={CommentIcon} sx={{ width: "36px" }} />
+                <OutlinedInput
+                  placeholder="Write a comment..."
+                  disabled
+                  sx={{
+                    fontSize: "13px",
+                    height: "38px",
+                    backgroundColor: "#FAF9FC",
+                    border: "1px solid #ddd",
+                    flexGrow: 1,
+                    "& fieldset": { border: "none" },
+                  }}
+                />
+              </Stack>
             </Paper>
           </Stack>
         </Stack>
