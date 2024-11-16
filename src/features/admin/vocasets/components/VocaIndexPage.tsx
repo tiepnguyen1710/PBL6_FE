@@ -152,7 +152,7 @@ const VocaIndexPage: React.FC = () => {
     const filteredData = vocaSetData?.filter(
       (vocaSet) =>
         (filterName === "" ||
-          vocaSet.name.toLowerCase().includes(filterName as string)) &&
+          vocaSet.name.toLowerCase().includes(filterName.toLowerCase())) &&
         (filterLevel === "all" || vocaSet.level === filterLevel),
     );
 
