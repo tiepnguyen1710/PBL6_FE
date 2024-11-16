@@ -13,9 +13,14 @@ import CreatePart2 from "./CreatePart2";
 import CreatePart4 from "./CreatePart4";
 import CreatePart5 from "./CreatePart5";
 import CreatePart6 from "./CreatePart6";
-import { createExam, getListPart } from "../api/examApi";
+import { createExam, fetchExamById, getListPart } from "../api/examApi";
+import { GoBackButton } from "../../../../components/UI/GoBackButton";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CreateExam() {
+  const navigate = useNavigate();
   const initExamData: partData[] = [
     {
       part: "part1",
@@ -48,11 +53,31 @@ export default function CreateExam() {
   ];
   const [examData, setExamData] = useState<partData[]>(initExamData);
   const [name, setName] = useState<string>("");
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [listPart, setListPart] = useState<part[]>([]);
+  const routeParams = useParams<{ examId: string }>();
+  const examId = routeParams.examId;
+
+  const { isPending, data: ExamSetData } = useQuery({
+    queryKey: ["FetchExamSet", examId],
+    queryFn: () => fetchExamById(examId!),
+  });
+
+  useEffect(() => {
+    if (examId && ExamSetData) {
+      setIsUpdate(true);
+      console.log("exam ", ExamSetData?.name);
+      setName(ExamSetData?.name ?? "");
+    }
+  }, [ExamSetData]);
+
+  if (ExamSetData) {
+    console.log(ExamSetData);
+  }
 
   useEffect(() => {
     fetchListPart();
-  }, []);
+  }, [name]);
 
   const fetchListPart = async () => {
     const res = await getListPart();
@@ -97,7 +122,14 @@ export default function CreateExam() {
     };
     console.log(buildData);
     const res = await createExam(buildData);
-    console.log(res);
+    console.log("res", res);
+    if (res) {
+      setExamData(initExamData);
+      navigate("/admin/exam-set");
+      toast.success("Exam created successfully");
+    } else {
+      toast.error("Error");
+    }
   };
 
   return (
@@ -106,20 +138,23 @@ export default function CreateExam() {
         padding: 3,
       }}
     >
-      <Typography color="primary.main" variant="h5">
-        Create Exam
-      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="start">
+        <Typography color="primary.main" variant="h5">
+          Create Exam
+        </Typography>
+        <GoBackButton />
+      </Stack>
 
       <Stack spacing={0.25} sx={{ my: 1 }}>
         <Typography color="primary.main" variant="caption">
           Name
         </Typography>
         <TextField
-          label="Name"
-          variant="outlined"
+          value={name}
           size="small"
           sx={{ width: "50%" }}
           onChange={(event) => setName(event.target.value)}
+          placeholder="Name"
         />
       </Stack>
 
@@ -128,10 +163,10 @@ export default function CreateExam() {
           Tag
         </Typography>
         <TextField
-          label="Tag"
           variant="outlined"
           size="small"
           sx={{ width: "50%" }}
+          placeholder="Tag"
         />
       </Stack>
 

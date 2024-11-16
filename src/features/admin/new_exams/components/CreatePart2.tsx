@@ -166,7 +166,9 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
     let updatedData = [...part2Data];
     updatedData[groupIndex].questionData[questionDataIndex].question = value;
     updatedData[groupIndex].questionData[questionDataIndex].questionNumber =
-      group * TOEIC_PARTS.Part2.questionPerGroup + (questionDataIndex + 1);
+      TOEIC_PARTS.Part2.start +
+      group * TOEIC_PARTS.Part2.questionPerGroup +
+      questionDataIndex;
     setPart2Data(updatedData);
   };
 
@@ -245,7 +247,6 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
     if (event.target.files && event.target.files.length > 0) {
       let dataUpdate = [...part2Data];
       const filesArray = Array.from(event.target.files);
-      let index = 0;
       // Upload từng file lên Cloudinary
       for (let file of filesArray) {
         let data = await uploadFile(file);
@@ -307,7 +308,7 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
           mb: 2,
         }}
       >
-        {part2Group.map((groupE, groupIndex) => {
+        {part2Group.map((_, groupIndex) => {
           return (
             <Chip
               key={groupIndex}

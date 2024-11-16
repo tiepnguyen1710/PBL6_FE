@@ -47,6 +47,8 @@ import LessonDetailsPage from "./features/admin/vocasets/components/LessonDetail
 import VocabularyDetailsPage from "./features/admin/vocasets/components/VocabularyDetailsPage.tsx";
 
 import CreateExam from "./features/admin/new_exams/components/createExam.tsx";
+import ExamSet from "./features/admin/new_exams/components/ExamIndexPage.tsx";
+import ExamDetailPage from "./features/admin/new_exams/components/ExamDetailPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -152,6 +154,14 @@ const router = createBrowserRouter([
       // },
       {
         path: "createExam",
+        element: <CreateExam />,
+      },
+      {
+        path: "exam-set",
+        element: <ExamSet />,
+      },
+      {
+        path: "exam-set/:examId",
         element: <CreateExam />,
       },
       {

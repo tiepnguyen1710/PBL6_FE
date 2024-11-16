@@ -35,7 +35,6 @@ export interface part {
   name: string;
   totalQuestion: number;
 }
-[];
 
 export const TOEIC_PARTS = {
   Part1: {

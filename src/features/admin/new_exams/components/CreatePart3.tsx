@@ -166,7 +166,9 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
     let updatedData = [...part3Data];
     updatedData[groupIndex].questionData[questionDataIndex].question = value;
     updatedData[groupIndex].questionData[questionDataIndex].questionNumber =
-      group * TOEIC_PARTS.Part3.questionPerGroup + (questionDataIndex + 1);
+      TOEIC_PARTS.Part3.start +
+      group * TOEIC_PARTS.Part3.questionPerGroup +
+      questionDataIndex;
     setPart3Data(updatedData);
   };
 

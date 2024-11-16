@@ -166,7 +166,9 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
     let updatedData = [...part5Data];
     updatedData[groupIndex].questionData[questionDataIndex].question = value;
     updatedData[groupIndex].questionData[questionDataIndex].questionNumber =
-      group * TOEIC_PARTS.Part5.questionPerGroup + (questionDataIndex + 1);
+      TOEIC_PARTS.Part5.start +
+      group * TOEIC_PARTS.Part5.questionPerGroup +
+      (questionDataIndex + 1);
     setPart5Data(updatedData);
   };
 

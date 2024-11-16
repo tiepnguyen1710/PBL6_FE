@@ -1,4 +1,5 @@
 import axiosClient from "../../../../axios";
+import { IExamModel, IExamSetResponse } from "../types/Exam";
 const api_url = import.meta.env.VITE_API_URL;
 
 const uploadFile = async (file: File) => {
@@ -23,12 +24,25 @@ const uploadFile = async (file: File) => {
   }
 };
 
-const createExam = (data: any) => {
-  return axiosClient.post(`${api_url}/test`, data);
+const fetchAllExam = async () => {
+  const response = await axiosClient.get<IExamSetResponse>(`${api_url}/test`);
+  return response.data;
+};
+
+const fetchExamById = async (examId: string) => {
+  const response = await axiosClient.get<IExamModel>(
+    `${api_url}/test/${examId}`,
+  );
+  return response.data;
+};
+
+const createExam = async (data: any) => {
+  const response = await axiosClient.post(`${api_url}/test`, data);
+  return response.data;
 };
 
 const getListPart = () => {
   return axiosClient.get(`${api_url}/part`);
 };
 
-export { uploadFile, createExam, getListPart };
+export { uploadFile, createExam, getListPart, fetchAllExam, fetchExamById };

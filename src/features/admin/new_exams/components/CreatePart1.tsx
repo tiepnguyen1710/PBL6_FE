@@ -22,7 +22,7 @@ import { uploadFile } from "../api/examApi";
 import _ from "lodash";
 
 interface CrPartProps {
-  updateExamData: (data: groupQuestionData[], part: string) => void;
+  updateExamData?: (data: groupQuestionData[], part: string) => void;
   //partIndex: keyof typeof TOEIC_PARTS;
 }
 
@@ -155,7 +155,9 @@ const CreatePart1: React.FC<CrPartProps> = ({ updateExamData }) => {
     const part1DataUpdate = part1Data.map((item) =>
       _.omit(item, ["validate", "audioPreview", "imagePreview", "passage"]),
     );
-    updateExamData(part1DataUpdate, "part1");
+    if (updateExamData) {
+      updateExamData(part1DataUpdate, "part1");
+    }
   };
 
   const handleQuestionChange = (
