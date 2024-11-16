@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import VocaSetModel from "../../../../types/VocaSetModel";
+import { Image } from "../../../../components/UI/Image";
 
 const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -17,19 +18,39 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
 
   return (
     <TableRow>
-      <TableCell>{vocaSet.id}</TableCell>
+      <TableCell
+        sx={{
+          maxWidth: "50px",
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+        }}
+      >
+        {vocaSet.id}
+      </TableCell>
+      <TableCell>
+        <Image
+          src={vocaSet.thumbnail}
+          sx={{
+            width: "150px",
+            height: "84px",
+          }}
+        />
+      </TableCell>
       <TableCell>{vocaSet.name}</TableCell>
       <TableCell>{capitalizeFirstLetter(vocaSet.level)}</TableCell>
       <TableCell align="right">{0}</TableCell>
       <TableCell align="right">{vocaSet?.__topics__?.length || 0}</TableCell>
       <TableCell
         onClick={handleClick}
+        align="center"
         sx={{
-          color: !open ? "inherit" : "primary.main",
+          color: "primary.main",
           cursor: "pointer",
           "&:hover": {
             color: "primary.main",
           },
+          textDecoration: open ? "underline" : "none",
         }}
       >
         Action

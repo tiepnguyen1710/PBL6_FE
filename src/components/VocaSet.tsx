@@ -4,6 +4,7 @@ import CardTitle from "../features/home/components/CardTitle";
 import DefaultVocaSetImg from "../assets/images/voca/default.png";
 import StudentIcon from "../features/home/components/StudentIcon";
 import CustomCard from "../features/home/components/CustomCard";
+import { capitalizeFirstLetter } from "../utils/stringFormatter";
 
 export interface VocaSetProps {
   title: string;
@@ -48,7 +49,10 @@ const VocaSet: React.FC<VocaSetProps> = ({
       >
         <Stack direction="row" spacing={0.25}>
           {qualification && (
-            <Chip label={qualification} sx={{ ...chipStyleQualification }} />
+            <Chip
+              label={capitalizeFirstLetter(qualification)}
+              sx={{ ...chipStyleQualification }}
+            />
           )}
           {topic && <Chip label={topic} sx={{ ...chipStyleTopic }} />}
         </Stack>

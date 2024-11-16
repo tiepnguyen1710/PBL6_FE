@@ -32,12 +32,16 @@ import { useEffect, useState } from "react";
 import VocabularyModel from "../../../../types/VocabularyModel";
 import UpdateLessonRequest from "../types/UpdateLessonRequest";
 import { toast } from "react-toastify";
-import { fileList2Base64 } from "../../../../utils/helper";
+import {
+  fileList2Base64,
+  vocaWordClassFullName2Abbr,
+} from "../../../../utils/helper";
 import queryClient from "../../../../queryClient";
 import UpdateLessonResponse from "../types/UpdateLessonResponse";
 import LessonModel from "../../../../types/LessonModel";
 import CustomModal from "../../../../components/UI/CustomModal";
 import { deleteVoca } from "../api/vocabulary-api";
+import { Image } from "../../../../components/UI/Image";
 
 interface LessonFormData {
   name: string;
@@ -273,6 +277,7 @@ const LessonDetailsPage = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>ID</TableCell>
+                  <TableCell>Thumbnail</TableCell>
                   <TableCell>Word</TableCell>
                   <TableCell>Type</TableCell>
                   <TableCell>Meaning</TableCell>
@@ -284,9 +289,30 @@ const LessonDetailsPage = () => {
               <TableBody>
                 {pageData.map((voca: VocabularyModel) => (
                   <TableRow>
-                    <TableCell>{voca.id}</TableCell>
+                    <TableCell
+                      sx={{
+                        maxWidth: "50px",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {voca.id}
+                    </TableCell>
+                    <TableCell>
+                      <Image
+                        src={voca.thumbnail}
+                        sx={{
+                          width: "80px",
+                          height: "80px",
+                          borderRadius: "6px",
+                        }}
+                      />
+                    </TableCell>
                     <TableCell>{voca.word}</TableCell>
-                    <TableCell>{voca.wordClass}</TableCell>
+                    <TableCell>
+                      {vocaWordClassFullName2Abbr(voca.wordClass)}
+                    </TableCell>
                     <TableCell>{voca.translate}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5}>

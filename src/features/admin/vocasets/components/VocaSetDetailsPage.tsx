@@ -39,6 +39,7 @@ import { fileList2Base64 } from "../../../../utils/helper";
 import NewLessonModal from "./NewLessonModal";
 import LessonModel from "../../../../types/LessonModel";
 import { deleteLesson } from "../api/lesson-api";
+import { Image } from "../../../../components/UI/Image";
 
 interface VocaSetFormData {
   id: string;
@@ -317,6 +318,7 @@ const VocaSetDetailsPage = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>ID</TableCell>
+                  <TableCell>Thumbnail</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Number of vocabularies</TableCell>
                   <TableCell width={150} align="center">
@@ -327,7 +329,26 @@ const VocaSetDetailsPage = () => {
               <TableBody>
                 {pageData.map((lesson: LessonModel) => (
                   <TableRow key={lesson.id}>
-                    <TableCell>{lesson.id}</TableCell>
+                    <TableCell
+                      sx={{
+                        maxWidth: "50px",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {lesson.id}
+                    </TableCell>
+                    <TableCell>
+                      <Image
+                        src={lesson.thumbnail}
+                        sx={{
+                          width: "80px",
+                          height: "80px",
+                          borderRadius: "6px",
+                        }}
+                      />
+                    </TableCell>
                     <TableCell>{lesson.name}</TableCell>
                     <TableCell>{Math.floor(Math.random() * 20)}</TableCell>
                     <TableCell align="right">
