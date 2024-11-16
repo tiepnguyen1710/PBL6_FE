@@ -55,3 +55,27 @@ export function isValidVocaWordClass(wordClass: string) {
     )
   );
 }
+
+export function hasFileData(data: unknown) {
+  return data instanceof FileList && data.length > 0;
+}
+
+export function checkFileTypeIfExistValue(
+  fileList: FileList | undefined,
+  fileType: string,
+) {
+  if (fileList && fileList.length > 0) {
+    const file = fileList[0];
+    return file.type.includes(fileType);
+  }
+
+  return true;
+}
+
+export function mustBeImageIfExistValue(fileList?: FileList) {
+  return checkFileTypeIfExistValue(fileList, "image");
+}
+
+export function mustBeAudioIfExistValue(fileList?: FileList) {
+  return checkFileTypeIfExistValue(fileList, "audio");
+}
