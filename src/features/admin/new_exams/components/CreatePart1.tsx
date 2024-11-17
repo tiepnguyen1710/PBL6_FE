@@ -247,7 +247,7 @@ const CreatePart1: React.FC<CrPartProps> = ({ updateExamData }) => {
     if (event.target.files && event.target.files.length > 0) {
       let dataUpdate = [...part1Data];
       const filesArray = Array.from(event.target.files);
-      let index = 0;
+
       // Upload từng file lên Cloudinary
       for (let file of filesArray) {
         let data = await uploadFile(file);
@@ -256,7 +256,7 @@ const CreatePart1: React.FC<CrPartProps> = ({ updateExamData }) => {
         dataUpdate[groupIndex].image = [
           ...(dataUpdate[groupIndex].image || []),
           {
-            imageUrl: imageUrl,
+            fileUrl: imageUrl,
             index: dataUpdate[groupIndex].image
               ? dataUpdate[groupIndex].image.length
               : 0,
