@@ -1,15 +1,17 @@
 import { Menu, MenuItem, MenuList, TableCell, TableRow } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import VocaSetModel from "../../../../types/VocaSetModel";
+import { Image } from "../../../../components/UI/Image";
 
 const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
+  const actionRef = useRef<HTMLSpanElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = () => {
+    setAnchorEl(actionRef.current);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -17,22 +19,42 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
 
   return (
     <TableRow>
-      <TableCell>{vocaSet.id}</TableCell>
+      <TableCell
+        sx={{
+          maxWidth: "50px",
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+        }}
+      >
+        {vocaSet.id}
+      </TableCell>
+      <TableCell>
+        <Image
+          src={vocaSet.thumbnail}
+          sx={{
+            width: "150px",
+            height: "84px",
+          }}
+        />
+      </TableCell>
       <TableCell>{vocaSet.name}</TableCell>
       <TableCell>{capitalizeFirstLetter(vocaSet.level)}</TableCell>
       <TableCell align="right">{0}</TableCell>
       <TableCell align="right">{vocaSet?.__topics__?.length || 0}</TableCell>
       <TableCell
         onClick={handleClick}
+        align="center"
         sx={{
-          color: !open ? "inherit" : "primary.main",
+          color: "primary.main",
           cursor: "pointer",
           "&:hover": {
             color: "primary.main",
           },
+          textDecoration: open ? "underline" : "none",
         }}
       >
-        Action
+        <span ref={actionRef}>Action</span>
       </TableCell>
 
       <Menu
@@ -40,7 +62,7 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
         anchorEl={anchorEl}
         onClose={handleClose}
         sx={{
-          transform: "translateY(-10px)",
+          transform: "translateY(10px) translateX(-20px)",
           "& .MuiList-dense": { py: 0 },
           "& a": { textDecoration: "none", color: "inherit" },
         }}

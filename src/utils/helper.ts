@@ -45,6 +45,29 @@ export function vocaWordClassAbrr2FullName(abbr: string) {
   }
 }
 
+export function vocaWordClassFullName2Abbr(wordClassFullName: string) {
+  switch (wordClassFullName) {
+    case VocabularyWordClass.NOUN:
+      return VocabularyWordClassAbbr.NOUN;
+    case VocabularyWordClass.VERB:
+      return VocabularyWordClassAbbr.VERB;
+    case VocabularyWordClass.ADJECTIVE:
+      return VocabularyWordClassAbbr.ADJECTIVE;
+    case VocabularyWordClass.ADVERB:
+      return VocabularyWordClassAbbr.ADVERB;
+    case VocabularyWordClass.PRONOUN:
+      return VocabularyWordClassAbbr.PRONOUN;
+    case VocabularyWordClass.PREPOSITION:
+      return VocabularyWordClassAbbr.PREPOSITION;
+    case VocabularyWordClass.CONJUNCTION:
+      return VocabularyWordClassAbbr.CONJUNCTION;
+    case VocabularyWordClass.INTERJECTION:
+      return VocabularyWordClassAbbr.INTERJECTION;
+    default:
+      return wordClassFullName;
+  }
+}
+
 export function isValidVocaWordClass(wordClass: string) {
   return (
     Object.values(VocabularyWordClass).includes(

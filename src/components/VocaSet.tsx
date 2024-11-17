@@ -4,6 +4,8 @@ import CardTitle from "../features/home/components/CardTitle";
 import DefaultVocaSetImg from "../assets/images/voca/default.png";
 import StudentIcon from "../features/home/components/StudentIcon";
 import CustomCard from "../features/home/components/CustomCard";
+import { capitalizeFirstLetter } from "../utils/stringFormatter";
+import VocaSetLevel from "../types/VocaSetLevel";
 
 export interface VocaSetProps {
   title: string;
@@ -32,6 +34,12 @@ const VocaSet: React.FC<VocaSetProps> = ({
     color: "white",
   };
 
+  if (qualification === VocaSetLevel.INTERMEDIATE) {
+    chipStyleQualification.backgroundColor = "info.main";
+  } else if (qualification === VocaSetLevel.ADVANCED) {
+    chipStyleQualification.backgroundColor = "warning.main";
+  }
+
   return (
     <CustomCard
       sx={{
@@ -48,7 +56,10 @@ const VocaSet: React.FC<VocaSetProps> = ({
       >
         <Stack direction="row" spacing={0.25}>
           {qualification && (
-            <Chip label={qualification} sx={{ ...chipStyleQualification }} />
+            <Chip
+              label={capitalizeFirstLetter(qualification)}
+              sx={{ ...chipStyleQualification }}
+            />
           )}
           {topic && <Chip label={topic} sx={{ ...chipStyleTopic }} />}
         </Stack>

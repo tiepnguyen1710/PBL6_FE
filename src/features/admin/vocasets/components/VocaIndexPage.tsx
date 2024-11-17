@@ -40,11 +40,12 @@ import {
   getPlaceholderImage,
 } from "../../../../utils/helper.ts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createVocaSet, getAllVocaSets } from "../api/voca-set-api.ts";
+import { createVocaSet } from "../api/voca-set-api.ts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import VocaSetModel from "../../../../types/VocaSetModel.ts";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop.tsx";
+import { getAllVocaSets } from "../../../shared-apis/vocaset-api.ts";
 
 interface NewVocaSetFormData {
   name: string;
@@ -74,7 +75,7 @@ const DEFAULT_FILTER_FORM_DATA: VocaSetFilterFormData = {
   filterLevel: "all",
 };
 
-const VOCASET_PAGE_SIZE = 2;
+const VOCASET_PAGE_SIZE = 4;
 
 const VocaIndexPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -152,7 +153,7 @@ const VocaIndexPage: React.FC = () => {
     const filteredData = vocaSetData?.filter(
       (vocaSet) =>
         (filterName === "" ||
-          vocaSet.name.toLowerCase().includes(filterName as string)) &&
+          vocaSet.name.toLowerCase().includes(filterName.toLowerCase())) &&
         (filterLevel === "all" || vocaSet.level === filterLevel),
     );
 
@@ -256,12 +257,13 @@ const VocaIndexPage: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
+                  <TableCell width={100}>ID</TableCell>
+                  <TableCell>Thumbnail</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Level</TableCell>
-                  <TableCell>Taken Students</TableCell>
-                  <TableCell>Lessons</TableCell>
-                  <TableCell>Action</TableCell>
+                  <TableCell align="right">Taken Students</TableCell>
+                  <TableCell align="right">Lessons</TableCell>
+                  <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
