@@ -15,6 +15,7 @@ const LearningLessonProgress: React.FC<LearningLessonProgressProps> = ({
       <Box sx={{ position: "relative", ...sx }}>
         <LinearProgress
           variant="determinate"
+          value={100}
           color="success"
           sx={{
             width: "100%",
@@ -27,7 +28,7 @@ const LearningLessonProgress: React.FC<LearningLessonProgressProps> = ({
               background: "#8EE000",
               borderRadius: "23px",
               transform: "none",
-              width: "30%",
+              width: "30% !important",
             },
           }}
         />

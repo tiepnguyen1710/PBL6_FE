@@ -125,6 +125,7 @@ const VocaLibraryPage: React.FC = () => {
                   <Grid2 sx={{ width: "250px", marginRight: 1 }}>
                     <VocaSet
                       key={vocaSet.id}
+                      id={vocaSet.id}
                       title={vocaSet.title}
                       qualification={vocaSet.qualification}
                       topic={vocaSet.topic}

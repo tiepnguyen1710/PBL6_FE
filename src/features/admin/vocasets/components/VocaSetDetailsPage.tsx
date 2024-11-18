@@ -460,6 +460,7 @@ const VocaSetDetailsPage = () => {
           >
             <></>
             <VocaSet
+              id={formData.id}
               title={formData.name}
               author={"EngFlash"}
               takenNumber="1.23m"
