@@ -3,4 +3,6 @@ export default interface UpdateVocaSetRequest {
   name?: string;
   level?: string;
   thumbnail?: string;
+  target: string;
+  description: string;
 }
