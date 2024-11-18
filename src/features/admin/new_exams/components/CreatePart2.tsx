@@ -255,7 +255,7 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
         dataUpdate[groupIndex].image = [
           ...(dataUpdate[groupIndex].image || []),
           {
-            imageUrl: imageUrl,
+            fileUrl: imageUrl,
             index: dataUpdate[groupIndex].image
               ? dataUpdate[groupIndex].image.length
               : 0,

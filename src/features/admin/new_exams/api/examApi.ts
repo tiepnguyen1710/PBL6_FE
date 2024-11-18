@@ -1,5 +1,6 @@
 import axiosClient from "../../../../axios";
 import { IExamModel, IExamSetResponse } from "../types/Exam";
+import NewExamRequest from "../types/NewExamRequest";
 const api_url = import.meta.env.VITE_API_URL;
 
 const uploadFile = async (file: File) => {
@@ -36,7 +37,7 @@ const fetchExamById = async (examId: string) => {
   return response.data;
 };
 
-const createExam = async (data: any) => {
+const createExam = async (data: NewExamRequest) => {
   const response = await axiosClient.post(`${api_url}/test`, data);
   return response.data;
 };

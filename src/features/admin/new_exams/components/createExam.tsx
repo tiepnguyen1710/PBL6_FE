@@ -17,41 +17,46 @@ import { createExam, fetchExamById, getListPart } from "../api/examApi";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import NewExamRequest from "../types/NewExamRequest";
 
 export default function CreateExam() {
   const navigate = useNavigate();
-  const initExamData: partData[] = [
-    {
-      part: "part1",
-      groupQuestionData: [],
-    },
-    {
-      part: "part2",
-      groupQuestionData: [],
-    },
-    {
-      part: "part3",
-      groupQuestionData: [],
-    },
-    {
-      part: "part4",
-      groupQuestionData: [],
-    },
-    {
-      part: "part5",
-      groupQuestionData: [],
-    },
-    {
-      part: "part6",
-      groupQuestionData: [],
-    },
-    {
-      part: "part7",
-      groupQuestionData: [],
-    },
-  ];
-  const [examData, setExamData] = useState<partData[]>(initExamData);
+  const initExamData: NewExamRequest = {
+    name: "",
+    tag: "",
+    partData: [
+      {
+        part: "part1",
+        groupQuestionData: [],
+      },
+      {
+        part: "part2",
+        groupQuestionData: [],
+      },
+      {
+        part: "part3",
+        groupQuestionData: [],
+      },
+      {
+        part: "part4",
+        groupQuestionData: [],
+      },
+      {
+        part: "part5",
+        groupQuestionData: [],
+      },
+      {
+        part: "part6",
+        groupQuestionData: [],
+      },
+      {
+        part: "part7",
+        groupQuestionData: [],
+      },
+    ],
+  };
+  const [examData, setExamData] = useState<NewExamRequest>(initExamData);
   const [name, setName] = useState<string>("");
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [listPart, setListPart] = useState<part[]>([]);
@@ -87,13 +92,29 @@ export default function CreateExam() {
     }
   };
 
+  // const updateExamData = (data: groupQuestionData[], part: string) => {
+  //   //console.log("data", data);
+  //   let updateExamData = [...examData];
+  //   const partExamData = updateExamData.find(
+  //     (partExamDataObj) => partExamDataObj.part === part,
+  //   );
+  //   //console.log("part exam data", partExamData);
+  //   if (
+  //     partExamData?.groupQuestionData &&
+  //     partExamData.groupQuestionData.length >= 0
+  //   ) {
+  //     partExamData.groupQuestionData = data;
+  //   }
+  //   setExamData(updateExamData);
+  //   //console.log("exam data", examData);
+  // };
+
   const updateExamData = (data: groupQuestionData[], part: string) => {
-    //console.log("data", data);
-    let updateExamData = [...examData];
-    const partExamData = updateExamData.find(
+    let updateExamData = { ...examData };
+    let { partData: partDataClone } = updateExamData;
+    const partExamData = partDataClone.find(
       (partExamDataObj) => partExamDataObj.part === part,
     );
-    //console.log("part exam data", partExamData);
     if (
       partExamData?.groupQuestionData &&
       partExamData.groupQuestionData.length >= 0
@@ -101,36 +122,52 @@ export default function CreateExam() {
       partExamData.groupQuestionData = data;
     }
     setExamData(updateExamData);
-    //console.log("exam data", examData);
   };
 
-  const handleCreateTest = async () => {
-    const examDataClone = [...examData];
-    const transferPart = examDataClone.map((item) => {
+  const handleChangeName = (value: string) => {
+    const updatedExamData = { ...examData, name: value };
+    setExamData(updatedExamData);
+  };
+
+  const handleCreateTest = () => {
+    const examDataClone = { ...examData };
+    const {
+      name: nameClone,
+      tag: tagClone,
+      partData: partDataClone,
+    } = examDataClone;
+    const transferPart = partDataClone.map((item) => {
       const matchedPart = listPart.find((part) => part.name === item.part);
       return {
         ...item,
-        part: matchedPart?.id,
+        part: matchedPart?.id ?? "",
       };
     });
     const validExamData = transferPart.filter(
       (item) => item.groupQuestionData.length > 0,
     );
-    const buildData = {
-      name: name,
-      partData: validExamData,
-    };
-    console.log(buildData);
-    const res = await createExam(buildData);
-    console.log("res", res);
-    if (res) {
+    const newExam = { name: nameClone, tag: tagClone, partData: validExamData };
+    createExamMuatation.mutate(newExam);
+  };
+
+  const createExamMuatation = useMutation({
+    mutationFn: (newExam: NewExamRequest) => createExam(newExam),
+    onSuccess(data, variables, context) {
       setExamData(initExamData);
       navigate("/admin/exam-set");
       toast.success("Exam created successfully");
-    } else {
-      toast.error("Error");
-    }
-  };
+    },
+    onError(error, variables, context) {
+      console.log("error", error);
+      toast.error("Create Exam Error");
+    },
+  });
+
+  // const handleCreateTest = async () => {
+  //   handleConversePart();
+  //   console.log("examData", examData);
+  //   createExamMuatation.mutate(examData);
+  // };
 
   return (
     <Box
@@ -150,10 +187,10 @@ export default function CreateExam() {
           Name
         </Typography>
         <TextField
-          value={name}
+          value={examData.name}
           size="small"
           sx={{ width: "50%" }}
-          onChange={(event) => setName(event.target.value)}
+          onChange={(event) => handleChangeName(event.target.value)}
           placeholder="Name"
         />
       </Stack>

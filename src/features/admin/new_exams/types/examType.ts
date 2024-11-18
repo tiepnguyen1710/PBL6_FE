@@ -13,7 +13,7 @@ export interface groupQuestionData {
   validate?: validateState;
   audioUrl?: string | null;
   audioPreview?: string;
-  image?: { imageUrl: string; index: number }[];
+  image?: { fileUrl: string; index: number }[];
   imagePreview?: string[];
   passage?: string;
   questionData: questionData[];
