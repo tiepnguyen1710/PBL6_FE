@@ -135,12 +135,18 @@ const router = createBrowserRouter([
         element: <VocaLibraryPage />,
       },
       {
-        path: ":vocaSetId/learn",
-        element: <LearningVocaPage />,
-      },
-      {
         path: ":vocaSetId/lessons",
         element: <LessonsPage />,
+      },
+    ],
+  },
+  {
+    path: "lesson",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "learn",
+        element: <LearningVocaPage />,
       },
     ],
   },
