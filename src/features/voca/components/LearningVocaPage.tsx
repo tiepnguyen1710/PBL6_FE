@@ -11,13 +11,20 @@ import { RxCross2 } from "react-icons/rx";
 import { useRef, useState } from "react";
 import ArrowIcon from "./ArrowIcon";
 import FlashCardComposition from "./FlashCardComposition";
-import MOCK_VOCABULARIES from "../../../utils/mockVocabularies.ts";
 import WrongAnswerAudio from "../assets/learning_wrong.mp3";
 import CorrectAnswerAudio from "../assets/learning_right.mp3";
 import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnimationType";
 import { AnimationType } from "../types/FlashCardCompositionAnimationType";
+import { useQuery } from "@tanstack/react-query";
+import { getLessonById } from "../../admin/vocasets/api/lesson-api.ts";
+import { useSearchParams } from "react-router-dom";
+import Vocabulary from "../../../types/Vocabulary.ts";
+import CustomBackdrop from "../../../components/UI/CustomBackdrop.tsx";
 
 const LearningVocaPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const lessonId = searchParams.get("id");
+
   const [currentVocaIdx, setCurrentVocaIdx] = useState(0);
   const [prevVocaIdx, setPrevVocaIdx] = useState(0);
 
@@ -34,8 +41,14 @@ const LearningVocaPage: React.FC = () => {
 
   console.log("direction", direction);
 
-  // const voca = mockVocabularies[currentVocaIdx];
-  const vocaLength = MOCK_VOCABULARIES.length;
+  const { data: lesson, isLoading } = useQuery({
+    queryKey: ["lesson", { id: lessonId }],
+    queryFn: () => getLessonById(lessonId!),
+    enabled: !!lessonId,
+  });
+
+  const vocabularies = lesson?.__listWord__ || [];
+  const vocaLength = vocabularies.length;
 
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
@@ -122,69 +135,88 @@ const LearningVocaPage: React.FC = () => {
         </Stack>
       </Box>
 
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: "962px",
-          mx: "auto",
-          flexGrow: 1,
-        }}
-      >
-        {/* Question progress */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{ padding: "30px 15px", marginBottom: "24px" }}
-          spacing={1}
+      {isLoading ? (
+        <CustomBackdrop />
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: "962px",
+            mx: "auto",
+            flexGrow: 1,
+          }}
         >
-          <Typography fontSize={22} fontWeight={700} color="#B4B4B4">
-            {currentVocaIdx + 1}/{vocaLength}
-          </Typography>
-          <LinearProgress
-            variant="determinate"
-            value={((currentVocaIdx + 1) / vocaLength) * 100}
-            color="success"
-            sx={{
-              height: "15px",
-              borderRadius: "10px",
-              backgroundColor: "#f0f0f0",
-              flexGrow: 1,
-            }}
-          />
-        </Stack>
-        <div style={{ position: "relative" }}>
-          {MOCK_VOCABULARIES.map((voca, idx) => {
-            let animate: FlashCardCompositionAnimationType = undefined;
+          {/* Question progress */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{ padding: "30px 15px", marginBottom: "24px" }}
+            spacing={1}
+          >
+            <Typography fontSize={22} fontWeight={700} color="#B4B4B4">
+              {currentVocaIdx + 1}/{vocaLength}
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={((currentVocaIdx + 1) / vocaLength) * 100}
+              color="success"
+              sx={{
+                height: "15px",
+                borderRadius: "10px",
+                backgroundColor: "#f0f0f0",
+                flexGrow: 1,
+              }}
+            />
+          </Stack>
+          <div style={{ position: "relative" }}>
+            {vocabularies.map((voca, idx) => {
+              let animate: FlashCardCompositionAnimationType = undefined;
 
-            if (direction !== "Unchanged") {
-              if (idx === currentVocaIdx) {
-                animate =
-                  direction === "Right"
-                    ? AnimationType.EnterRight
-                    : AnimationType.EnterLeft;
-              } else if (idx === prevVocaIdx) {
-                animate =
-                  direction === "Right"
-                    ? AnimationType.ExitLeft
-                    : AnimationType.ExitRight;
+              if (direction !== "Unchanged") {
+                if (idx === currentVocaIdx) {
+                  animate =
+                    direction === "Right"
+                      ? AnimationType.EnterRight
+                      : AnimationType.EnterLeft;
+                } else if (idx === prevVocaIdx) {
+                  animate =
+                    direction === "Right"
+                      ? AnimationType.ExitLeft
+                      : AnimationType.ExitRight;
+                }
               }
-            }
 
-            return (
-              <FlashCardComposition
-                key={voca.id + (animate || "")}
-                voca={voca}
-                onCorrectAnswer={handleCorrectAnswer}
-                onWrongAnswer={handleWrongAnswer}
-                onSubmitAfterCorrectAnswer={handleNext}
-                animate={animate}
-                visible={idx === currentVocaIdx || idx === prevVocaIdx}
-                active={idx === currentVocaIdx}
-              />
-            );
-          })}
-        </div>
-      </Box>
+              const dto: Vocabulary = {
+                id: voca.id,
+                word: voca.word,
+                type: voca.wordClass,
+                definition: voca.definition,
+                example: voca.example,
+                exampleMeaning: voca.exampleMeaning,
+                meaning: voca.translate,
+                phonetic: voca.pronunciation,
+                image: voca.thumbnail,
+                phoneticAudio: voca.audio,
+                exampleAudio: voca.exampleAudio,
+              };
+
+              return (
+                <FlashCardComposition
+                  key={voca.id + (animate || "")}
+                  voca={dto}
+                  onCorrectAnswer={handleCorrectAnswer}
+                  onWrongAnswer={handleWrongAnswer}
+                  onSubmitAfterCorrectAnswer={handleNext}
+                  animate={animate}
+                  visible={idx === currentVocaIdx || idx === prevVocaIdx}
+                  active={idx === currentVocaIdx}
+                />
+              );
+            })}
+          </div>
+        </Box>
+      )}
+
       {/* Next/prev button */}
       <Box
         sx={{

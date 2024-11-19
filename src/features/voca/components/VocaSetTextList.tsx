@@ -1,7 +1,10 @@
-import { Box } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import React, { ReactNode } from "react";
 
-const VocaSetTextList: React.FC<{ children: ReactNode }> = ({ children }) => {
+const VocaSetTextList: React.FC<{ children: ReactNode; sx?: SxProps }> = ({
+  children,
+  sx,
+}) => {
   return (
     <Box
       component="ul"
@@ -20,6 +23,7 @@ const VocaSetTextList: React.FC<{ children: ReactNode }> = ({ children }) => {
           left: 0,
           top: 8,
         },
+        ...sx,
       }}
     >
       {children}

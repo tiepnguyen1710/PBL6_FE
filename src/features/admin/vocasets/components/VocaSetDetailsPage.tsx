@@ -40,12 +40,15 @@ import NewLessonModal from "./NewLessonModal";
 import LessonModel from "../../../../types/LessonModel";
 import { deleteLesson } from "../api/lesson-api";
 import { Image } from "../../../../components/UI/Image";
+import ListItemRoundedInput from "./TextListRoundedInput";
 
 interface VocaSetFormData {
   id: string;
   name: string;
   level: string;
   thumbnail: string | FileList;
+  target: string;
+  description: string;
 }
 
 const LESSON_PAGE_SIZE = 2;
@@ -94,10 +97,20 @@ const VocaSetDetailsPage = () => {
     control,
     register,
     reset,
+    setValue,
     getValues,
-    // formState: { errors },
+    formState: { errors },
     handleSubmit,
-  } = useForm<VocaSetFormData>();
+  } = useForm<VocaSetFormData>({
+    defaultValues: {
+      id: "",
+      name: "",
+      level: VocaSetLevel.BEGINNER,
+      thumbnail: "",
+      // target: "",
+      // description: "",
+    },
+  });
 
   const [preview, setPreview] = useState<boolean>(false);
   const [openNewModal, setOpenNewModal] = useState<boolean>(false);
@@ -136,6 +149,8 @@ const VocaSetDetailsPage = () => {
         name: data.name,
         level: data.level,
         thumbnail: data.thumbnail,
+        target: data.target,
+        description: data.description,
       };
       reset(vocaSetFormData);
       setFileSrc(data.thumbnail);
@@ -156,6 +171,8 @@ const VocaSetDetailsPage = () => {
       id: data.id,
       name: data.name,
       level: data.level as VocaSetLevel,
+      target: data.target,
+      description: data.description,
     };
 
     if (data.thumbnail instanceof FileList) {
@@ -172,7 +189,6 @@ const VocaSetDetailsPage = () => {
   const handleDeleteLesson = () => {
     if (deletedLessonId) {
       deleteLessonMutation.mutate(deletedLessonId);
-      // deleteLessonMutation.mutate("adjfalf");
     }
   };
 
@@ -231,28 +247,31 @@ const VocaSetDetailsPage = () => {
                   Choose Image
                 </Button>
               </Stack>
-              <Grid2 spacing={1} container sx={{ maxWidth: "500px" }}>
-                <Grid2 size={12}>
+              <Grid2 spacing={1} container sx={{ maxWidth: "1200px" }}>
+                <Grid2 size={6}>
                   <Controller
                     name="name"
                     control={control}
+                    rules={{ required: "Name is required" }}
                     render={({ field }) => (
                       <RoundedInput
                         {...field}
                         label="Name"
-                        placeholder="Enter the filter name"
+                        placeholder="Enter the voca set name"
                         padding="16.5px 14px"
                         borderRadius={4}
                         gap={0.5}
                         labelColor="secondary.main"
+                        validationError={errors.name?.message}
                       />
                     )}
                   />
                 </Grid2>
-                <Grid2 size={12}>
+                <Grid2 size={6}>
                   <Controller
                     name="level"
                     control={control}
+                    rules={{ required: "Level is required" }}
                     render={({ field }) => (
                       <BootstrapSelect
                         {...field}
@@ -262,8 +281,47 @@ const VocaSetDetailsPage = () => {
                         )}
                         itemValues={Object.values(VocaSetLevel)}
                         defaultValue={data?.level}
+                        validationError={errors.level?.message}
                       />
                     )}
+                  />
+                </Grid2>
+                <Grid2 size={12}>
+                  <ListItemRoundedInput
+                    register={register("target", {
+                      required: "Aim is required",
+                    })}
+                    defaultTextListValue={data?.target}
+                    onUpdateValue={(newValue) =>
+                      setValue("target", newValue, { shouldValidate: true })
+                    }
+                    label="Aim"
+                    placeholder="Enter new aim of voca set"
+                    padding="16.5px 14px"
+                    borderRadius={4}
+                    gap={0.5}
+                    labelColor="secondary.main"
+                    validationError={errors.target?.message}
+                  />
+                </Grid2>
+                <Grid2 size={12}>
+                  <ListItemRoundedInput
+                    register={register("description", {
+                      required: "Description is required",
+                    })}
+                    defaultTextListValue={data?.description}
+                    onUpdateValue={(newValue) =>
+                      setValue("description", newValue, {
+                        shouldValidate: true,
+                      })
+                    }
+                    label="Description"
+                    placeholder="Enter new description of voca set"
+                    padding="16.5px 14px"
+                    borderRadius={4}
+                    gap={0.5}
+                    labelColor="secondary.main"
+                    validationError={errors.description?.message}
                   />
                 </Grid2>
                 <Grid2 size={12}>
@@ -402,6 +460,7 @@ const VocaSetDetailsPage = () => {
           >
             <></>
             <VocaSet
+              id={formData.id}
               title={formData.name}
               author={"EngFlash"}
               takenNumber="1.23m"

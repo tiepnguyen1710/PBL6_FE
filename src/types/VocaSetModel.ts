@@ -5,5 +5,8 @@ export default interface VocaSetModel {
   name: string;
   level: string;
   thumbnail: string;
+  target: string;
+  description: string;
+
   __topics__: LessonModel[];
 }

@@ -1,8 +1,8 @@
 import { Box, BoxProps, Typography } from "@mui/material";
 
 export const LessonCard: React.FC<
-  { name: string; image: string } & BoxProps
-> = ({ name, image, sx, ...rest }) => {
+  { name: string; image: string; onClickCard?: () => void } & BoxProps
+> = ({ name, image, sx, onClickCard, ...rest }) => {
   return (
     <Box sx={{ width: "173px", overflow: "hidden", ...sx }} {...rest}>
       <Box
@@ -13,7 +13,9 @@ export const LessonCard: React.FC<
           backgroundColor: "#f0f0f0",
           padding: "30px",
           overflow: "hidden",
+          cursor: "pointer",
         }}
+        onClick={onClickCard}
       >
         <img src={image} style={{ height: "100%" }} />
       </Box>
