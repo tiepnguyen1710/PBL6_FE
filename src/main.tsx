@@ -13,7 +13,6 @@ import LoginPage from "./features/auth/components/LoginPage.tsx";
 import RegisterPage from "./features/auth/components/RegisterPage.tsx";
 import AuthLayout from "./features/auth/components/AuthLayout.tsx";
 import Exams from "./features/toeic-exam/components/Exams/Exams.tsx";
-import ExamsListPage from "./features/toeic-exam/components/Exams/ExamsListPage.tsx";
 import Detail from "./features/toeic-exam/components/Detail/Detail.tsx";
 import Part1 from "./features/toeic-exam/components/Part1/Part1.tsx";
 import Part2 from "./features/toeic-exam/components/Part2/Part2.tsx";
@@ -49,6 +48,7 @@ import LessonsPage from "./features/voca/components/LessonsPage.tsx";
 
 import CreateExam from "./features/admin/new_exams/components/createExam.tsx";
 import ExamSet from "./features/admin/new_exams/components/ExamIndexPage.tsx";
+import ExamsListPage from "./features/toeic-exam/components/Exams/ExamsLibraryPage.tsx";
 
 const router = createBrowserRouter([
   {

@@ -5,7 +5,7 @@ import styles from "./ExamsListPage.module.scss";
 import Paginate from "../Paginate/Paginate";
 import InforUserBox from "../InforUserBox/InforUserBox";
 
-const ExamsListPage = () => {
+const ExamsListPageTmp = () => {
   return (
     //style={{ background: "#F8F9FA" }}
     <div>
@@ -35,4 +35,4 @@ const ExamsListPage = () => {
   );
 };
 
-export default ExamsListPage;
+export default ExamsListPageTmp;
