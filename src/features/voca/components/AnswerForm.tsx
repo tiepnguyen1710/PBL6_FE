@@ -1,13 +1,17 @@
-import { Stack } from "@mui/material";
+import { Stack, SxProps } from "@mui/material";
 import AnswerInput from "./AnswerInput";
 import CuteButton from "./CuteButton";
 import { useState } from "react";
 
 interface AnswerFormProps {
-  onSubmit: (answer: string) => Promise<void>;
+  onSubmit?: (answer: string) => Promise<void> | void;
   status: "correct" | "wrong" | "default";
   active?: boolean;
   onChange?: (answer: string) => void;
+  placeholder?: string;
+  inputSx?: SxProps;
+  inputRows?: number;
+  sx?: SxProps;
 }
 
 const AnswerForm: React.FC<AnswerFormProps> = ({
@@ -15,6 +19,9 @@ const AnswerForm: React.FC<AnswerFormProps> = ({
   active = false,
   onSubmit,
   onChange,
+  placeholder,
+  inputSx,
+  sx,
 }) => {
   const [isEmpty, setIsEmpty] = useState(true);
 
@@ -32,22 +39,17 @@ const AnswerForm: React.FC<AnswerFormProps> = ({
   };
 
   return (
-    <Stack
-      direction="row"
-      spacing={0.75}
-      justifyContent="center"
-      sx={{ marginTop: 2.5 }}
-    >
+    <Stack direction="row" spacing={0.75} justifyContent="center" sx={sx}>
       <AnswerInput
-        placeholder="Type the vocabulary you guessed here."
+        placeholder={placeholder || "Type the vocabulary you guessed here."}
         status={status}
-        active={active}
-        sx={{ minWidth: "500px" }}
+        autoFocus={active}
+        sx={{ minWidth: "500px", ...inputSx }}
         value={answer}
         onChange={handleChangeInput}
         onKeyDown={async (e) => {
           if (e.key === "Enter") {
-            await onSubmit(answer);
+            await onSubmit?.(answer);
           }
         }}
       />
@@ -60,7 +62,7 @@ const AnswerForm: React.FC<AnswerFormProps> = ({
           "&:hover > span": { color: "primary.main" },
         }}
         active={!isEmpty}
-        onClick={async () => await onSubmit(answer)}
+        onClick={async () => await onSubmit?.(answer)}
       />
     </Stack>
   );

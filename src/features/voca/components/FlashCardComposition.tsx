@@ -152,6 +152,7 @@ const FlashCardComposition: React.FC<FlashCardCompositionProps> = ({
           active={active}
           onSubmit={handleSubmitAnswer}
           onChange={handleChangeInput}
+          sx={{ marginTop: 2.5 }}
         />
       </Box>
     </FlashCardAnimationWrapper>

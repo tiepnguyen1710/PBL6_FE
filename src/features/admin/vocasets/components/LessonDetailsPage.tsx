@@ -48,7 +48,7 @@ interface LessonFormData {
   thumbnail: string | FileList;
 }
 
-const VOCA_PAGE_SIZE = 2;
+const VOCA_PAGE_SIZE = 4;
 
 const LessonDetailsPage = () => {
   const [searchParams] = useSearchParams();

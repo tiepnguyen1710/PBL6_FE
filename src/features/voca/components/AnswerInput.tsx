@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 interface AnswerInputProps extends OutlinedInputProps {
   status?: "correct" | "wrong" | "default";
-  active?: boolean;
+  autoFocus?: boolean;
 }
 
 const wrongAnswerStyle = {
@@ -32,10 +32,10 @@ const AnswerInput: React.FC<AnswerInputProps> = (props) => {
   }
 
   useEffect(() => {
-    if (props.active) {
+    if (props.autoFocus) {
       inputRef.current?.focus();
     }
-  }, [props.active]);
+  }, [props.autoFocus]);
 
   return (
     <OutlinedInput
