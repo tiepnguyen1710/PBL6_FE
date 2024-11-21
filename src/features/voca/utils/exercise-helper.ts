@@ -11,12 +11,13 @@ export function generateRandomExercises(
 
   for (let i = 0; i < numberOfQuestions; i++) {
     const voca = practiceVocas[i % practiceVocas.length];
-    const type = Math.floor(Math.random() * 4) + 1;
+    const type = Math.floor(Math.random() * 9) + 1;
+    // const type = 7;
 
-    let actualType = ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO;
+    let actualType = ExerciseType.CHOOSE_WORD_BASED_ON_PHONETIC;
     switch (type) {
       case 1: {
-        actualType = ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO;
+        actualType = ExerciseType.CHOOSE_WORD_BASED_ON_PHONETIC;
         break;
       }
       case 2: {
@@ -29,6 +30,26 @@ export function generateRandomExercises(
       }
       case 4: {
         actualType = ExerciseType.FILL_WORD_BASED_ON_SUGGESTION;
+        break;
+      }
+      case 5: {
+        actualType = ExerciseType.FILL_WORD_BASED_ON_AUDIO;
+        break;
+      }
+      case 6: {
+        actualType = ExerciseType.CHOOSE_WORD_BASED_ON_DEFINITION;
+        break;
+      }
+      case 7: {
+        actualType = ExerciseType.FILL_WORD_BASED_ON_DEFINITION;
+        break;
+      }
+      case 8: {
+        actualType = ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO;
+        break;
+      }
+      case 9: {
+        actualType = ExerciseType.FILL_WORD_BASED_ON_AUDIO;
         break;
       }
     }
@@ -45,8 +66,10 @@ export function generateQuestion(
   practiceVocas: VocabularyModel[],
 ): Exercise {
   switch (type) {
-    case ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO:
-    case ExerciseType.CHOOSE_WORD_BASED_ON_SUGGESTION: {
+    case ExerciseType.CHOOSE_WORD_BASED_ON_PHONETIC:
+    case ExerciseType.CHOOSE_WORD_BASED_ON_SUGGESTION:
+    case ExerciseType.CHOOSE_WORD_BASED_ON_DEFINITION:
+    case ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO: {
       return {
         question: getQuestion(type),
         voca: voca,
@@ -64,7 +87,10 @@ export function generateQuestion(
         options: getAnswerOptions(voca, practiceVocas, "translate"),
       };
     }
-    case ExerciseType.FILL_WORD_BASED_ON_SUGGESTION: {
+    case ExerciseType.FILL_WORD_BASED_ON_SUGGESTION:
+    case ExerciseType.FILL_WORD_BASED_ON_PHONETIC:
+    case ExerciseType.FILL_WORD_BASED_ON_DEFINITION:
+    case ExerciseType.FILL_WORD_BASED_ON_AUDIO: {
       return {
         question: getQuestion(type),
         voca: voca,
@@ -101,8 +127,10 @@ export function getAnswerOptions(
 
 export function getQuestion(exerciseType: ExerciseType) {
   switch (exerciseType) {
-    case ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO:
+    case ExerciseType.CHOOSE_WORD_BASED_ON_PHONETIC:
       return "Choose the word that is correct with the following pronunciation:";
+    case ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO:
+      return "Choose the correct word with the following sound:";
     case ExerciseType.CHOOSE_MEANING_BASED_ON_WORD:
       return "Choose the correct meaning for the following vocabulary:";
     case ExerciseType.CHOOSE_WORD_BASED_ON_SUGGESTION:
@@ -113,12 +141,14 @@ export function getQuestion(exerciseType: ExerciseType) {
       return "Choose the correct word based on the meaning";
     case ExerciseType.CHOOSE_DEFINITION_BASED_ON_WORD:
       return "Choose the correct definition based on the word";
-    case ExerciseType.FILL_WORD_BASED_ON_AUDIO:
+    case ExerciseType.FILL_WORD_BASED_ON_PHONETIC:
       return "Type the correct word with the following pronunciation:";
     case ExerciseType.FILL_WORD_BASED_ON_DEFINITION:
       return "Type the word that matches the following definition:";
     case ExerciseType.FILL_WORD_BASED_ON_SUGGESTION:
       return "Type the appropriate word according to the following suggestions:";
+    case ExerciseType.FILL_WORD_BASED_ON_AUDIO:
+      return "Type the correct word with the following sound:";
     default:
       return "";
   }

@@ -1,14 +1,6 @@
 import { Clear } from "@mui/icons-material";
-import {
-  Box,
-  IconButton,
-  LinearProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
-import ClockIcon from "../assets/clock-icon.svg";
-import { Image } from "../../../components/UI/Image";
-import { useEffect, useMemo, useState } from "react";
+import { Box, IconButton, LinearProgress, Stack } from "@mui/material";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { generateRandomExercises } from "../utils/exercise-helper";
 import { useQuery } from "@tanstack/react-query";
 import { Navigate, useSearchParams } from "react-router-dom";
@@ -17,8 +9,11 @@ import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import VocabularyModel from "../../../types/VocabularyModel";
 import TestingExercise from "./TestingExercise";
 import { Exercise } from "../types/Exercise";
+import WrongAnswerAudio from "../assets/learning_wrong.mp3";
+import CorrectAnswerAudio from "../assets/learning_right.mp3";
+import ClockTimer from "./ClockTimer";
 
-const NUMBER_OF_EXERCISES = 8;
+const NUMBER_OF_EXERCISES = 20;
 
 const VocaPracticePage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -43,6 +38,29 @@ const VocaPracticePage: React.FC = () => {
   }, [vocabularies]);
 
   const activeExercise: Exercise | undefined = exercises[exerciseIdx];
+
+  const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
+  const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
+
+  const playWrongAnswerAudio = () => {
+    wrongAnswerAudioRef.current?.play();
+  };
+
+  const playCorrectAnswerAudio = async () => {
+    await correctAnswerAudioRef.current?.play();
+    // Add a little delay
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
+  };
+
+  const handleCorrectAnswer = async () => {
+    await playCorrectAnswerAudio();
+  };
+
+  const handleWrongAnswer = () => {
+    playWrongAnswerAudio();
+  };
 
   useEffect(() => {
     if (lesson) {
@@ -89,25 +107,11 @@ const VocaPracticePage: React.FC = () => {
                 },
               }}
             />
-            <Stack
-              direction="row"
-              alignItems="center"
-              spacing={0.4}
-              sx={{
-                color: "#CE82FF",
-                fontSize: "22px",
-                fontWeight: "medium",
-                paddingLeft: "8px",
-              }}
-            >
-              <Image
-                src={ClockIcon}
-                sx={{ width: "30px", display: "inline-block" }}
-              />
-              <Typography variant="inherit" component="span">
-                00:00
-              </Typography>
-            </Stack>
+            <ClockTimer
+              key={exerciseIdx}
+              duration={15}
+              sx={{ paddingLeft: "8px", minWidth: "120px" }}
+            />
           </Stack>
 
           <Box sx={{ py: "25px" }}>
@@ -116,11 +120,21 @@ const VocaPracticePage: React.FC = () => {
                 exercise={activeExercise}
                 key={exerciseIdx + "-" + activeExercise.voca.id}
                 onFulfilled={handleFulFillExercise}
+                onCorrectAnswer={handleCorrectAnswer}
+                onWrongAnswer={handleWrongAnswer}
               />
             )}
           </Box>
         </Box>
       )}
+
+      {/* Audio */}
+      <audio id="audio-answer-wrong" ref={wrongAnswerAudioRef}>
+        <source src={WrongAnswerAudio} type="audio/mpeg" />
+      </audio>
+      <audio id="audio-answer-correct" ref={correctAnswerAudioRef}>
+        <source src={CorrectAnswerAudio} type="audio/mpeg" />
+      </audio>
     </>
   );
 };

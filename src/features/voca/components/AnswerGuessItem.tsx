@@ -1,6 +1,9 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
 
+import RightAnswerGif from "../assets/right-answer.gif";
+import { Image } from "../../../components/UI/Image";
+
 interface AnswerGuessItemProps {
   answer: string;
   onClick?: (selectedAnswer: string) => void;
@@ -46,6 +49,7 @@ const AnswerGuessItem: React.FC<AnswerGuessItemProps> = ({
     <Box
       onClick={handleClick}
       sx={{
+        position: "relative",
         height: "70px",
         borderRadius: "15px",
         border: "2px solid #e5e5e5",
@@ -66,6 +70,13 @@ const AnswerGuessItem: React.FC<AnswerGuessItemProps> = ({
       }}
     >
       <Typography variant="inherit">{answer}</Typography>
+      {state === "correct" && (
+        <Image
+          key={Date.now()}
+          src={RightAnswerGif + `?cacheBuster=${Date.now()}`}
+          sx={{ position: "absolute" }}
+        />
+      )}
     </Box>
   );
 };

@@ -9,15 +9,23 @@ import PhoneticQuestionSlide from "./PhoneticQuestionSlide";
 import MeaningQuestionSlide from "./MeaningQuestionSlide";
 import WordQuestionSlide from "./WordQuestionSlide";
 import AnswerForm from "./AnswerForm";
+import DefinitionQuestionSlide from "./DefinitionQuestionSlide";
+import { Image } from "../../../components/UI/Image";
+import RightAnswerGif from "../assets/right-answer.gif";
+import PhoneticAudioQuestionSlide from "./PhoneticAudioQuestionSlide";
 
 interface TestingExerciseProps {
   exercise: Exercise;
   onFulfilled?: () => void;
+  onCorrectAnswer?: () => void;
+  onWrongAnswer?: () => void;
 }
 
 const TestingExercise: React.FC<TestingExerciseProps> = ({
   exercise,
   onFulfilled,
+  onCorrectAnswer,
+  onWrongAnswer,
 }) => {
   const [userAnswer, setUserAnswer] = useState<string>("");
 
@@ -29,14 +37,24 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
 
   const firstSlide = useMemo(() => {
     switch (exercise.type) {
-      case ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO: {
+      case ExerciseType.CHOOSE_WORD_BASED_ON_PHONETIC:
+      case ExerciseType.FILL_WORD_BASED_ON_PHONETIC: {
         return <PhoneticQuestionSlide voca={mainVoca} />;
       }
-      case ExerciseType.CHOOSE_WORD_BASED_ON_SUGGESTION: {
+      case ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO:
+      case ExerciseType.FILL_WORD_BASED_ON_AUDIO: {
+        return <PhoneticAudioQuestionSlide voca={mainVoca} />;
+      }
+      case ExerciseType.CHOOSE_WORD_BASED_ON_SUGGESTION:
+      case ExerciseType.FILL_WORD_BASED_ON_SUGGESTION: {
         return <WordQuestionSlide voca={mainVoca} />;
       }
       case ExerciseType.CHOOSE_MEANING_BASED_ON_WORD: {
         return <MeaningQuestionSlide voca={mainVoca} />;
+      }
+      case ExerciseType.CHOOSE_WORD_BASED_ON_DEFINITION:
+      case ExerciseType.FILL_WORD_BASED_ON_DEFINITION: {
+        return <DefinitionQuestionSlide voca={mainVoca} />;
       }
     }
 
@@ -47,6 +65,12 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
     console.log("selectedAnswer", selectedAnswer);
     if (!userAnswer) {
       setUserAnswer(selectedAnswer);
+
+      if (selectedAnswer === exercise.correctAnswer) {
+        onCorrectAnswer?.();
+      } else {
+        onWrongAnswer?.();
+      }
     }
   };
 
@@ -55,7 +79,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
     if (hasAnswered) {
       timeout = setTimeout(() => {
         onFulfilled?.();
-      }, 2000);
+      }, 2500);
     }
 
     return () => {
@@ -66,7 +90,10 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
   return (
     <Box>
       <Stack direction="row">
+        {/* Gif deco */}
         <Box sx={{ width: "180px" }}></Box>
+
+        {/* Question */}
         <Box sx={{ flexGrow: 1, minWidth: "360px" }}>
           <Typography
             variant="h5"
@@ -90,14 +117,16 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
                 meaning={mainVoca.translate}
                 phonetic={mainVoca.pronunciation}
                 thumbnail={mainVoca.thumbnail}
+                playAudio={hasAnswered}
+                audioDelay={500}
               />
             }
             flip={hasAnswered}
           />
-
-          <Box sx={{ mt: 2.5 }}></Box>
         </Box>
       </Stack>
+
+      {/* Answer Options */}
       {isSelectQuestion ? (
         // Select question
         <Grid2 container spacing="26px" sx={{ px: "13px", marginTop: 2.5 }}>
@@ -126,7 +155,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
         </Grid2>
       ) : (
         // Fill question
-        <Box sx={{ mt: 1 }}>
+        <Box sx={{ marginTop: 2.5, position: "relative" }}>
           <AnswerForm
             placeholder="Type your answer here"
             inputSx={{
@@ -141,6 +170,17 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
             }
             onSubmit={handleSelectAnswer}
           />
+          {isAnswerCorrect && (
+            <Image
+              src={RightAnswerGif + `?cacheBuster=${Date.now()}`}
+              sx={{
+                position: "absolute",
+                left: "20%",
+                top: "0",
+                width: "300px",
+              }}
+            />
+          )}
         </Box>
       )}
     </Box>

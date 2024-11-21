@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import PracticeSlideCard from "./PracticeSlideCard";
 import { Image } from "../../../components/UI/Image";
 import AudioIconButton from "./AudioIconButton";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 interface PracticeResultSlideProps {
   word: string;
@@ -10,6 +10,8 @@ interface PracticeResultSlideProps {
   phonetic: string;
   meaning: string;
   thumbnail: string;
+  playAudio?: boolean;
+  audioDelay?: number;
 }
 const PracticeResultSlide: React.FC<PracticeResultSlideProps> = ({
   word,
@@ -17,7 +19,23 @@ const PracticeResultSlide: React.FC<PracticeResultSlideProps> = ({
   phonetic,
   meaning,
   thumbnail,
+  playAudio = false,
+  audioDelay = 0,
 }) => {
+  const phoneticAudioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (playAudio) {
+      timeout = setTimeout(() => {
+        phoneticAudioRef.current?.play();
+      }, audioDelay);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [playAudio, audioDelay]);
   return (
     <PracticeSlideCard>
       <Stack spacing="35px" direction="row">
@@ -43,7 +61,7 @@ const PracticeResultSlide: React.FC<PracticeResultSlideProps> = ({
             <AudioIconButton
               iconSize={41}
               audioUrl={audio}
-              // audioRef={phoneticAudioRef}
+              audioRef={phoneticAudioRef}
             />
             <Typography
               component="span"
