@@ -1,5 +1,6 @@
 import axiosClient from "../../../../axios";
 import { IExamModel, IExamSetResponse } from "../types/Exam";
+import { ExamResponse } from "../types/ExamResponse";
 import NewExamRequest from "../types/NewExamRequest";
 const api_url = import.meta.env.VITE_API_URL;
 
@@ -31,7 +32,7 @@ const fetchAllExam = async () => {
 };
 
 const fetchExamById = async (examId: string) => {
-  const response = await axiosClient.get<IExamModel>(
+  const response = await axiosClient.get<ExamResponse>(
     `${api_url}/test/${examId}`,
   );
   return response.data;

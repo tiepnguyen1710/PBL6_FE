@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   groupQuestionData,
   TOEIC_PARTS,
@@ -20,13 +20,20 @@ import { Editor } from "@tinymce/tinymce-react";
 import { toast } from "react-toastify";
 import { uploadFile } from "../api/examApi";
 import _ from "lodash";
+import { convertExamData } from "../utils/helper";
 
-interface CrPartProps {
+interface CrPartProps1 {
   updateExamData?: (data: groupQuestionData[], part: string) => void;
-  //partIndex: keyof typeof TOEIC_PARTS;
+  isUpdate: boolean;
+  examData: groupQuestionData[];
 }
 
-const CreatePart1: React.FC<CrPartProps> = ({ updateExamData }) => {
+const CreatePart1: React.FC<CrPartProps1> = ({
+  updateExamData,
+  isUpdate,
+  examData,
+}) => {
+  console.log("isUpdate", isUpdate, examData);
   const [group, setGroup] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
   const part1Group = Array.from({
@@ -54,6 +61,14 @@ const CreatePart1: React.FC<CrPartProps> = ({ updateExamData }) => {
       ),
     })),
   );
+
+  useEffect(() => {
+    if (isUpdate) {
+      console.log("kkk");
+      const convertedExamData = convertExamData(examData);
+      setPart1Data(convertedExamData);
+    }
+  }, [examData]);
 
   const getChipStyle = (state: validateState = validateState.blank) => {
     switch (state) {
@@ -356,8 +371,8 @@ const CreatePart1: React.FC<CrPartProps> = ({ updateExamData }) => {
                       style={{ marginTop: "15px", width: "250px" }}
                     >
                       <source
-                        src={part1Data[group].audioPreview}
-                        type={part1Data[group].audioUrl}
+                        src={part1Data[group].audioUrl}
+                        type="audio/mpeg"
                       />
                     </audio>
                   )}
