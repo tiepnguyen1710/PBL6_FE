@@ -13,6 +13,7 @@ import DefinitionQuestionSlide from "./DefinitionQuestionSlide";
 import { Image } from "../../../components/UI/Image";
 import RightAnswerGif from "../assets/right-answer.gif";
 import PhoneticAudioQuestionSlide from "./PhoneticAudioQuestionSlide";
+import { motion } from "framer-motion";
 
 interface TestingExerciseProps {
   exercise: Exercise;
@@ -22,6 +23,18 @@ interface TestingExerciseProps {
 }
 
 const TOTAL_PERSON_DECORATIONS = 8;
+
+const animateVaraints = {
+  fadeInRight: {
+    opacity: [0, 1],
+    x: [50, 0],
+  },
+
+  fadeOutLeft: {
+    opacity: [1, 0.2, 0],
+    x: [0, -50],
+  },
+};
 
 const TestingExercise: React.FC<TestingExerciseProps> = ({
   exercise,
@@ -116,7 +129,13 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
   }, [hasAnswered, isAnswerCorrect]);
 
   return (
-    <Box>
+    <motion.div
+      variants={animateVaraints}
+      animate="fadeInRight"
+      exit="fadeOutLeft"
+      transition={{ duration: 0.3, type: "tween" }}
+      style={{ position: "absolute", top: 0, left: 0 }}
+    >
       <Stack direction="row">
         {/* Gif deco */}
         <Box sx={{ width: "180px", paddingRight: "40px", paddingTop: "75px" }}>
@@ -215,7 +234,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
           )}
         </Box>
       )}
-    </Box>
+    </motion.div>
   );
 };
 

@@ -12,6 +12,7 @@ import { Exercise } from "../types/Exercise";
 import WrongAnswerAudio from "../assets/learning_wrong.mp3";
 import CorrectAnswerAudio from "../assets/learning_right.mp3";
 import ClockTimer from "./ClockTimer";
+import { AnimatePresence } from "framer-motion";
 
 const NUMBER_OF_EXERCISES = 20;
 
@@ -114,15 +115,17 @@ const VocaPracticePage: React.FC = () => {
             />
           </Stack>
 
-          <Box sx={{ py: "25px" }}>
+          <Box sx={{ py: "25px", position: "relative" }}>
             {activeExercise && (
-              <TestingExercise
-                exercise={activeExercise}
-                key={exerciseIdx + "-" + activeExercise.voca.id}
-                onFulfilled={handleFulFillExercise}
-                onCorrectAnswer={handleCorrectAnswer}
-                onWrongAnswer={handleWrongAnswer}
-              />
+              <AnimatePresence>
+                <TestingExercise
+                  exercise={activeExercise}
+                  key={exerciseIdx + "-" + activeExercise.voca.id}
+                  onFulfilled={handleFulFillExercise}
+                  onCorrectAnswer={handleCorrectAnswer}
+                  onWrongAnswer={handleWrongAnswer}
+                />
+              </AnimatePresence>
             )}
           </Box>
         </Box>
