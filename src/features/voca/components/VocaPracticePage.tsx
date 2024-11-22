@@ -11,7 +11,7 @@ import TestingExercise from "./TestingExercise";
 import { Exercise } from "../types/Exercise";
 import WrongAnswerAudio from "../assets/learning_wrong.mp3";
 import CorrectAnswerAudio from "../assets/learning_right.mp3";
-import ClockTimer from "./ClockTimer";
+import ClockTimer, { ClockTimerRef } from "./ClockTimer";
 import { AnimatePresence } from "framer-motion";
 
 const NUMBER_OF_EXERCISES = 20;
@@ -42,6 +42,8 @@ const VocaPracticePage: React.FC = () => {
 
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
+
+  const clockTimerRef = useRef<ClockTimerRef>(null);
 
   const playWrongAnswerAudio = () => {
     wrongAnswerAudioRef.current?.play();
@@ -74,6 +76,10 @@ const VocaPracticePage: React.FC = () => {
     setExerciseIdx((prev) => prev + 1);
   };
 
+  const handleAnswerExercise = () => {
+    clockTimerRef.current?.stop();
+  };
+
   if (!lessonId) {
     return <Navigate to="/" />;
   }
@@ -84,10 +90,14 @@ const VocaPracticePage: React.FC = () => {
         <CustomBackdrop open={isLoading} />
       ) : (
         <Box sx={{ maxWidth: "962px", mx: "auto", padding: "30px 15px" }}>
+          {/* Header */}
           <Stack direction="row" spacing={0.5} alignItems="center">
+            {/* Close button */}
             <IconButton>
               <Clear />
             </IconButton>
+
+            {/* Progress bar */}
             <LinearProgress
               variant="determinate"
               value={100}
@@ -108,14 +118,17 @@ const VocaPracticePage: React.FC = () => {
                 },
               }}
             />
+
             <ClockTimer
               key={exerciseIdx}
               duration={15}
+              delay={1}
+              timerRef={clockTimerRef}
               sx={{ paddingLeft: "8px" }}
             />
           </Stack>
 
-          <Box sx={{ py: "25px", position: "relative" }}>
+          <Box sx={{ py: "25px", position: "relative", marginTop: 2 }}>
             {activeExercise && (
               <AnimatePresence>
                 <TestingExercise
@@ -124,6 +137,7 @@ const VocaPracticePage: React.FC = () => {
                   onFulfilled={handleFulFillExercise}
                   onCorrectAnswer={handleCorrectAnswer}
                   onWrongAnswer={handleWrongAnswer}
+                  onAnswered={handleAnswerExercise}
                 />
               </AnimatePresence>
             )}

@@ -17,7 +17,8 @@ import { motion } from "framer-motion";
 
 interface TestingExerciseProps {
   exercise: Exercise;
-  onFulfilled?: () => void;
+  onFulfilled?: () => void; // Trigger when the exercise has been fulfilled (after displaying the result)
+  onAnswered?: () => void; // Trigger when the user has answered the question
   onCorrectAnswer?: () => void;
   onWrongAnswer?: () => void;
 }
@@ -39,6 +40,7 @@ const animateVaraints = {
 const TestingExercise: React.FC<TestingExerciseProps> = ({
   exercise,
   onFulfilled,
+  onAnswered,
   onCorrectAnswer,
   onWrongAnswer,
 }) => {
@@ -99,6 +101,8 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (hasAnswered) {
+      onAnswered?.();
+
       timeout = setTimeout(() => {
         onFulfilled?.();
       }, 3000);
@@ -107,7 +111,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
     return () => {
       clearTimeout(timeout);
     };
-  }, [hasAnswered, onFulfilled]);
+  }, [hasAnswered, onFulfilled, onAnswered]);
 
   useEffect(() => {
     let hasShowGif = false;

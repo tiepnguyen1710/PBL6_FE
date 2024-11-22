@@ -1,21 +1,39 @@
 import { Box, Stack, SxProps, Typography } from "@mui/material";
 import { Image } from "../../../components/UI/Image";
 import ClockIcon from "../assets/clock-icon.svg";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  RefObject,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { secondToMinuteSecondFormat } from "../../../utils/helper";
 import SecondTickAudio from "../assets/second_tick.mp3";
 import ClockTickAudio from "../assets/clock_tick.mp3";
 
+export interface ClockTimerRef {
+  stop: () => void; // stop the timer
+}
+
 interface ClockTimerProps {
   sx: SxProps;
   duration: number; // in seconds
+  delay?: number; // in seconds
+  timerRef?: RefObject<ClockTimerRef>;
 }
 
-const ClockTimer: React.FC<ClockTimerProps> = ({ sx, duration }) => {
+const ClockTimer: React.FC<ClockTimerProps> = ({
+  sx,
+  duration,
+  delay = 0,
+  timerRef,
+}) => {
   const secondTickRef = useRef<HTMLAudioElement>(null);
   const clockTickRef = useRef<HTMLAudioElement>(null);
 
   const [time, setTime] = useState(duration);
+  const [isDeferring, setIsDeferring] = useState(true);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,7 +41,18 @@ const ClockTimer: React.FC<ClockTimerProps> = ({ sx, duration }) => {
     clearInterval(intervalRef.current!);
   }
 
+  // Expose the pause() method
+  useImperativeHandle(timerRef, () => ({
+    stop: () => {
+      clearInterval(intervalRef.current!);
+    },
+  }));
+
   useEffect(() => {
+    if (isDeferring) {
+      return;
+    }
+
     intervalRef.current = setInterval(() => {
       setTime((prevTime) => {
         if (prevTime <= 1) {
@@ -36,9 +65,14 @@ const ClockTimer: React.FC<ClockTimerProps> = ({ sx, duration }) => {
     return () => {
       clearInterval(intervalRef.current!);
     };
-  }, [duration]);
+  }, [duration, isDeferring]);
 
+  // Switch to warning mode if time is less than 5 seconds
   useEffect(() => {
+    if (isDeferring) {
+      return;
+    }
+
     // Based on time to do side effect
     if (time > 5) {
       if (secondTickRef.current) {
@@ -51,6 +85,17 @@ const ClockTimer: React.FC<ClockTimerProps> = ({ sx, duration }) => {
     }
   }, [time]);
 
+  // Defer the timer
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsDeferring(false);
+    }, delay * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [delay, setIsDeferring]);
+
   return (
     <Stack
       direction="row"
@@ -62,6 +107,10 @@ const ClockTimer: React.FC<ClockTimerProps> = ({ sx, duration }) => {
         fontWeight: "medium",
         minWidth: "120px",
         ...sx,
+      }}
+      onClick={() => {
+        console.log("Clickkk");
+        clearInterval(intervalRef.current!);
       }}
     >
       <Image src={ClockIcon} sx={{ width: "30px", display: "inline-block" }} />
