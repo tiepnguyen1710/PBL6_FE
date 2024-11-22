@@ -6,11 +6,13 @@ export const LessonCard: React.FC<
     name: string;
     image: string;
     onClickCard?: (e: React.MouseEvent<HTMLDivElement>) => void;
+    cardRef?: React.RefObject<HTMLDivElement>;
   } & BoxProps
-> = ({ name, image, sx, onClickCard, ...rest }) => {
+> = ({ name, image, sx, onClickCard, cardRef, ...rest }) => {
   return (
     <Box sx={{ width: "173px", overflow: "hidden", ...sx }} {...rest}>
       <Box
+        ref={cardRef}
         sx={{
           borderRadius: "20px",
           width: "173px",

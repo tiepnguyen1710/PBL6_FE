@@ -15,6 +15,8 @@ const LessonPopup: React.FC<LessonPopupProps> = ({
   open = true,
   onClose,
   sx,
+  anchorEle,
+
   lessonId,
   lessonName,
   retainedWords,
@@ -23,6 +25,7 @@ const LessonPopup: React.FC<LessonPopupProps> = ({
 }) => {
   return (
     <Popup
+      anchorEle={anchorEle}
       open={open}
       onClose={onClose}
       sx={{ top: "170px", left: "50%", transform: "translateX(-50%)" }}

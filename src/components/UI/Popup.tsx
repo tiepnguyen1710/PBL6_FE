@@ -6,6 +6,7 @@ export interface PopupProps {
   onClose: () => void;
   sx?: SxProps;
   children?: React.ReactNode;
+  anchorEle?: HTMLElement | null;
 }
 
 const Popup: React.FC<PopupProps> = ({
@@ -13,20 +14,23 @@ const Popup: React.FC<PopupProps> = ({
   onClose,
   sx,
   children,
+  anchorEle,
 }) => {
   const popupRef = useRef<HTMLDivElement>(null);
 
-  // Close popup when clicking outside or losing focus
+  // Close popup when clicking outside of popup and the anchorEle
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
+      // console.log("anchorEle", anchorEle);
       if (
         popupRef.current &&
-        !popupRef.current.contains(event.target as Node)
+        !popupRef.current.contains(event.target as Node) &&
+        (!anchorEle || !anchorEle.contains(event.target as Node))
       ) {
         onClose();
       }
     },
-    [onClose],
+    [onClose, anchorEle],
   );
 
   // Add event listener for clicks outside
