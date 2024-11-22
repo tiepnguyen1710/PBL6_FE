@@ -1,7 +1,12 @@
 import { Box, BoxProps, Typography } from "@mui/material";
+import React from "react";
 
 export const LessonCard: React.FC<
-  { name: string; image: string; onClickCard?: () => void } & BoxProps
+  {
+    name: string;
+    image: string;
+    onClickCard?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  } & BoxProps
 > = ({ name, image, sx, onClickCard, ...rest }) => {
   return (
     <Box sx={{ width: "173px", overflow: "hidden", ...sx }} {...rest}>
@@ -14,6 +19,7 @@ export const LessonCard: React.FC<
           padding: "30px",
           overflow: "hidden",
           cursor: "pointer",
+          position: "relative",
         }}
         onClick={onClickCard}
       >

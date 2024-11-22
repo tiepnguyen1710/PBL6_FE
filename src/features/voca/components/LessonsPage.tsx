@@ -85,6 +85,7 @@ const LessonsPage: React.FC = () => {
                   {lessons.length > 0 ? (
                     lessons.map((lesson) => (
                       <LessonCourse
+                        id={lesson.id}
                         name={lesson.name}
                         thumbnail={lesson.thumbnail}
                         onClick={() => handleClickLesson(lesson.id)}
