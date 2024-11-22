@@ -21,6 +21,8 @@ interface TestingExerciseProps {
   onWrongAnswer?: () => void;
 }
 
+const TOTAL_PERSON_DECORATIONS = 8;
+
 const TestingExercise: React.FC<TestingExerciseProps> = ({
   exercise,
   onFulfilled,
@@ -61,6 +63,13 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
     return <WordQuestionSlide voca={mainVoca} />;
   }, [exercise.type, mainVoca]);
 
+  const personDecoIndex = useMemo(
+    () => Math.floor(Math.random() * TOTAL_PERSON_DECORATIONS) + 1,
+    [],
+  );
+
+  const [personDecoFileName, setPersonDecoFileName] = useState("image.png");
+
   const handleSelectAnswer = (selectedAnswer: string) => {
     console.log("selectedAnswer", selectedAnswer);
     if (!userAnswer) {
@@ -79,7 +88,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
     if (hasAnswered) {
       timeout = setTimeout(() => {
         onFulfilled?.();
-      }, 2500);
+      }, 3000);
     }
 
     return () => {
@@ -87,11 +96,34 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
     };
   }, [hasAnswered, onFulfilled]);
 
+  useEffect(() => {
+    let hasShowGif = false;
+    if (isAnswerCorrect) {
+      setPersonDecoFileName("correct.gif");
+      hasShowGif = true;
+    } else if (hasAnswered) {
+      // Wrong answer
+      setPersonDecoFileName("fail.gif");
+      hasShowGif = true;
+    }
+
+    if (hasShowGif) {
+      setTimeout(() => {
+        // Set the person deco gif back to default
+        setPersonDecoFileName("image.png");
+      }, 2000);
+    }
+  }, [hasAnswered, isAnswerCorrect]);
+
   return (
     <Box>
       <Stack direction="row">
         {/* Gif deco */}
-        <Box sx={{ width: "180px" }}></Box>
+        <Box sx={{ width: "180px", paddingRight: "40px", paddingTop: "75px" }}>
+          <Image
+            src={`/src/features/voca/assets/voca-persons/${personDecoIndex}/${personDecoFileName}`}
+          />
+        </Box>
 
         {/* Question */}
         <Box sx={{ flexGrow: 1, minWidth: "360px" }}>

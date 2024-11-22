@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import PracticeSlideCard from "./PracticeSlideCard";
 import AudioIconButton from "./AudioIconButton";
 import { QuestionSlideProps } from "../types/component-props";

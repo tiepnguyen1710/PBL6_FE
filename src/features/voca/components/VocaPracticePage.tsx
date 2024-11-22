@@ -110,7 +110,7 @@ const VocaPracticePage: React.FC = () => {
             <ClockTimer
               key={exerciseIdx}
               duration={15}
-              sx={{ paddingLeft: "8px", minWidth: "120px" }}
+              sx={{ paddingLeft: "8px" }}
             />
           </Stack>
 
