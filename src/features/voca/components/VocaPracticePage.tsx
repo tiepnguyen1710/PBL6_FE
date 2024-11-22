@@ -1,7 +1,7 @@
 import { Clear } from "@mui/icons-material";
 import { Box, IconButton, LinearProgress, Stack } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { generateRandomExercises } from "../utils/exercise-helper";
+import { getExerciseSet } from "../utils/exercise-helper";
 import { useQuery } from "@tanstack/react-query";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { getLessonById } from "../../admin/vocasets/api/lesson-api";
@@ -14,13 +14,14 @@ import CorrectAnswerAudio from "../assets/learning_right.mp3";
 import ClockTimer, { ClockTimerRef } from "./ClockTimer";
 import { AnimatePresence } from "framer-motion";
 
-const NUMBER_OF_EXERCISES = 20;
+const MIN_NUMBER_OF_EXERCISES = 16;
 
 const VocaPracticePage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
 
   const [vocabularies, setVocabularies] = useState<VocabularyModel[]>([]);
+  // console.log("vocabularies", vocabularies);
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", { id: lessonId }],
@@ -35,7 +36,8 @@ const VocaPracticePage: React.FC = () => {
       return [];
     }
 
-    return generateRandomExercises(vocabularies, NUMBER_OF_EXERCISES);
+    // console.log("getExerciseSet", vocabularies, MIN_NUMBER_OF_EXERCISES);
+    return getExerciseSet(vocabularies, MIN_NUMBER_OF_EXERCISES);
   }, [vocabularies]);
 
   const activeExercise: Exercise | undefined = exercises[exerciseIdx];

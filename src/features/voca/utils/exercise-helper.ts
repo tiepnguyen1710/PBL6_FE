@@ -1,21 +1,34 @@
 import VocabularyModel from "../../../types/VocabularyModel";
-import { shuffleArray } from "../../../utils/helper";
+import { randInt, shuffleArray } from "../../../utils/helper";
 import { Exercise } from "../types/Exercise";
 import { ExerciseType } from "../types/ExerciseType";
 
+// Generate random exercises based on the practice vocas, each voca will have a random exercise
 export function generateRandomExercises(
   practiceVocas: VocabularyModel[],
-  numberOfQuestions: number,
+  exerciseKind: "guess" | "fill" | "both" = "both",
 ): Exercise[] {
+  const numExerciseType = Object.keys(ExerciseType).length;
+
+  let leftBound = 1;
+  let rightBound = numExerciseType;
+
+  if (exerciseKind === "guess") {
+    rightBound = 5;
+  } else if (exerciseKind === "fill") {
+    leftBound = 6;
+  }
+
+  const shuffledVocas = shuffleArray(practiceVocas);
   const questions = [];
 
-  for (let i = 0; i < numberOfQuestions; i++) {
-    const voca = practiceVocas[i % practiceVocas.length];
-    const type = Math.floor(Math.random() * 9) + 1;
+  for (const voca of shuffledVocas) {
+    const type = randInt(leftBound, rightBound);
     // const type = 7;
 
     let actualType = ExerciseType.CHOOSE_WORD_BASED_ON_PHONETIC;
     switch (type) {
+      // Kind of guessing
       case 1: {
         actualType = ExerciseType.CHOOSE_WORD_BASED_ON_PHONETIC;
         break;
@@ -29,23 +42,25 @@ export function generateRandomExercises(
         break;
       }
       case 4: {
-        actualType = ExerciseType.FILL_WORD_BASED_ON_SUGGESTION;
+        actualType = ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO;
         break;
       }
       case 5: {
-        actualType = ExerciseType.FILL_WORD_BASED_ON_AUDIO;
-        break;
-      }
-      case 6: {
         actualType = ExerciseType.CHOOSE_WORD_BASED_ON_DEFINITION;
         break;
       }
+
+      // Kind of filling
+      case 6: {
+        actualType = ExerciseType.FILL_WORD_BASED_ON_SUGGESTION;
+        break;
+      }
       case 7: {
-        actualType = ExerciseType.FILL_WORD_BASED_ON_DEFINITION;
+        actualType = ExerciseType.FILL_WORD_BASED_ON_AUDIO;
         break;
       }
       case 8: {
-        actualType = ExerciseType.CHOOSE_WORD_BASED_ON_AUDIO;
+        actualType = ExerciseType.FILL_WORD_BASED_ON_DEFINITION;
         break;
       }
       case 9: {
@@ -57,7 +72,37 @@ export function generateRandomExercises(
     questions.push(question);
   }
 
-  return shuffleArray(questions);
+  // console.log("questions", questions);
+
+  return questions;
+}
+
+// Generate a set of exercises, each vocabulary will have 2 exercises, one for guessing and one for filling
+export function getExerciseSet(
+  practiceVocas: VocabularyModel[],
+  atLeast: number,
+) {
+  const numOfVocabularies = practiceVocas.length;
+
+  const repeatTimes = Math.ceil(atLeast / (2 * numOfVocabularies));
+  console.log("repeat times", repeatTimes);
+
+  const guessingExercises: Exercise[] = [];
+  for (let i = 0; i < repeatTimes; i++) {
+    guessingExercises.push(...generateRandomExercises(practiceVocas, "guess"));
+  }
+
+  const fillingExercises: Exercise[] = [];
+  for (let i = 0; i < repeatTimes; i++) {
+    fillingExercises.push(...generateRandomExercises(practiceVocas, "fill"));
+  }
+
+  // console.log("guessing exercises", guessingExercises);
+  // console.log("filling exercises", fillingExercises);
+  return [
+    ...shuffleArray(guessingExercises),
+    ...shuffleArray(fillingExercises),
+  ];
 }
 
 export function generateQuestion(
@@ -137,10 +182,10 @@ export function getQuestion(exerciseType: ExerciseType) {
       return "Choose the appropriate word from the following suggestions:";
     case ExerciseType.CHOOSE_WORD_BASED_ON_DEFINITION:
       return "Choose the word that matches the following definition:";
-    case ExerciseType.CHOOSE_WORD_BASED_ON_MEANING:
-      return "Choose the correct word based on the meaning";
-    case ExerciseType.CHOOSE_DEFINITION_BASED_ON_WORD:
-      return "Choose the correct definition based on the word";
+    // case ExerciseType.CHOOSE_WORD_BASED_ON_MEANING:
+    //   return "Choose the correct word based on the meaning";
+    // case ExerciseType.CHOOSE_DEFINITION_BASED_ON_WORD:
+    //   return "Choose the correct definition based on the word";
     case ExerciseType.FILL_WORD_BASED_ON_PHONETIC:
       return "Type the correct word with the following pronunciation:";
     case ExerciseType.FILL_WORD_BASED_ON_DEFINITION:

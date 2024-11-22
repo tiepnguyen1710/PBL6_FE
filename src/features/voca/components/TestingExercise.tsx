@@ -105,7 +105,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
 
       timeout = setTimeout(() => {
         onFulfilled?.();
-      }, 3000);
+      }, 3200);
     }
 
     return () => {
