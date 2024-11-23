@@ -1,7 +1,7 @@
 import axiosClient from "../../../../axios";
 import VocabularyModel from "../../../../types/VocabularyModel";
 import CreateVocabularyRequest from "../types/CreateVocabularyRequest";
-import UpdateVocaSetRequest from "../types/UpdateVocaSetRequest";
+import UpdateVocabularyRequest from "../types/UpdateVocabularyRequest";
 
 export async function createNewVocabulary(request: CreateVocabularyRequest) {
   const { lessonId, ...data } = request;
@@ -19,7 +19,7 @@ export async function getVocaById(id: string) {
   return response.data;
 }
 
-export async function updateVoca(request: UpdateVocaSetRequest) {
+export async function updateVoca(request: UpdateVocabularyRequest) {
   const { id, ...data } = request;
   const response = await axiosClient.patch<VocabularyModel>("word/" + id, data);
 

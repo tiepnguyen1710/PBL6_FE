@@ -36,6 +36,7 @@ const LessonCourse: React.FC<LessonCourseProps> = ({
       />
       <LearningLessonProgress sx={{ width: "173px" }} fullProgress={false} />
       <LessonPopup
+        reviewable
         anchorEle={cardRef.current}
         open={openPopup}
         onClose={() => setOpenPopup(false)}

@@ -55,14 +55,14 @@ const LessonPopup: React.FC<LessonPopupProps> = ({
 
         {reviewable ? (
           <>
-            <Link to={`/lesson/practice?id=${lessonId}`}>
+            <Link to={`/lesson/confirm-start-testing?id=${lessonId}`}>
               <LessonButton variant="contained" sx={{ marginTop: "10px" }}>
                 REVIEW
               </LessonButton>
             </Link>
 
             <Link to={`/lesson/learn?id=${lessonId}`}>
-              <LessonButton variant="contained" sx={{ marginTop: "10px" }}>
+              <LessonButton variant="outlined" sx={{ marginTop: "10px" }}>
                 CONTINUE LEARNING
               </LessonButton>
             </Link>
