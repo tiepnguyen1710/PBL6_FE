@@ -20,14 +20,13 @@ import TwoCardIcon from "../assets/course-progress-learned-1.svg";
 import TwoRedCardIcon from "../assets/course-progress-not-learn-1.svg";
 import LessonComment from "./LessonComment";
 import CommentIcon from "../assets/comment-icon.svg";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getVocaSetById } from "../../admin/vocasets/api/voca-set-api";
 import LessonCourse from "./LessonCourse";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 
 const LessonsPage: React.FC = () => {
-  const navigate = useNavigate();
   const { vocaSetId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -43,10 +42,6 @@ const LessonsPage: React.FC = () => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
-  };
-
-  const handleClickLesson = (selectedLessonId: string) => {
-    navigate(`/lesson/learn?id=${selectedLessonId}`);
   };
 
   return (
@@ -88,7 +83,6 @@ const LessonsPage: React.FC = () => {
                         id={lesson.id}
                         name={lesson.name}
                         thumbnail={lesson.thumbnail}
-                        onClick={() => handleClickLesson(lesson.id)}
                       />
                     ))
                   ) : (

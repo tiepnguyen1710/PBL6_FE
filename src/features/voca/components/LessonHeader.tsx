@@ -4,10 +4,10 @@ import WhiteLogo from "../assets/logo-white.svg";
 
 interface LessonHeader {
   title: string;
-  onClick?: () => void;
+  onExit?: () => void;
 }
 
-const LessonHeader: React.FC<LessonHeader> = ({ title, onClick }) => {
+const LessonHeader: React.FC<LessonHeader> = ({ title, onExit }) => {
   return (
     <Box
       sx={{
@@ -24,7 +24,7 @@ const LessonHeader: React.FC<LessonHeader> = ({ title, onClick }) => {
         }}
         justifyContent="space-between"
       >
-        <IconButton onClick={onClick}>
+        <IconButton onClick={onExit}>
           <RxCross2 style={{ color: "white", fontSize: "2rem" }} />
         </IconButton>
         <Stack alignItems="center">

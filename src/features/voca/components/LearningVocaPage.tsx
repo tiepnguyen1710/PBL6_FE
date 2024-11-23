@@ -13,6 +13,7 @@ import Vocabulary from "../../../types/Vocabulary.ts";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop.tsx";
 import LessonHeader from "./LessonHeader.tsx";
 import LessonMainContent from "./LessonMainContent.tsx";
+import SuspendLearningDrawer from "./SuspendLearningDrawer.tsx";
 
 const LearningVocaPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -46,6 +47,8 @@ const LearningVocaPage: React.FC = () => {
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
 
+  const [openExitDrawer, setOpenExitDrawer] = useState(false);
+
   const handleNext = () => {
     setPrevVocaIdx(currentVocaIdx);
     setCurrentVocaIdx((prev) => Math.min(prev + 1, vocaLength - 1));
@@ -78,7 +81,7 @@ const LearningVocaPage: React.FC = () => {
   return (
     <Stack sx={{ minHeight: "100vh" }}>
       {/*  Header */}
-      <LessonHeader title="learn" />
+      <LessonHeader title="learn" onExit={() => setOpenExitDrawer(true)} />
 
       {isLoading ? (
         <>
@@ -188,6 +191,16 @@ const LearningVocaPage: React.FC = () => {
           />
         </Stack>
       </Box>
+
+      <SuspendLearningDrawer
+        open={openExitDrawer}
+        onClose={() => setOpenExitDrawer(false)}
+        onClickStay={() => setOpenExitDrawer(false)}
+        exitLink={
+          isLoading ? "/" : `/voca/${lesson?.__groupTopic__.id}/lessons`
+        }
+      />
+
       {/* Audio */}
       <audio id="audio-answer-wrong" ref={wrongAnswerAudioRef}>
         <source src={WrongAnswerAudio} type="audio/mpeg" />

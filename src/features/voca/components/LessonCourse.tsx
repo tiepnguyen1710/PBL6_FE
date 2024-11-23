@@ -8,15 +8,9 @@ interface LessonCourseProps {
   id: string; // lesson id
   name: string;
   thumbnail: string;
-  onClick?: () => void;
 }
 
-const LessonCourse: React.FC<LessonCourseProps> = ({
-  id,
-  name,
-  thumbnail,
-  onClick,
-}) => {
+const LessonCourse: React.FC<LessonCourseProps> = ({ id, name, thumbnail }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
