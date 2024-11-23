@@ -15,7 +15,7 @@ import ClockTimer, { ClockTimerRef } from "./ClockTimer";
 import { AnimatePresence } from "framer-motion";
 import SuspendLearningDrawer from "./SuspendLearningDrawer";
 
-const MIN_NUMBER_OF_EXERCISES = 16;
+const MIN_NUMBER_OF_EXERCISES = 10;
 
 const VocaPracticePage: React.FC = () => {
   const [searchParams] = useSearchParams();

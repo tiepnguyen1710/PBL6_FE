@@ -8,7 +8,7 @@ import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnim
 import { AnimationType } from "../types/FlashCardCompositionAnimationType";
 import { useQuery } from "@tanstack/react-query";
 import { getLessonById } from "../../admin/vocasets/api/lesson-api.ts";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Vocabulary from "../../../types/Vocabulary.ts";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop.tsx";
 import LessonHeader from "./LessonHeader.tsx";
@@ -16,6 +16,7 @@ import LessonMainContent from "./LessonMainContent.tsx";
 import SuspendLearningDrawer from "./SuspendLearningDrawer.tsx";
 
 const LearningVocaPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
 
@@ -50,7 +51,16 @@ const LearningVocaPage: React.FC = () => {
   const [openExitDrawer, setOpenExitDrawer] = useState(false);
 
   const handleNext = () => {
+    // handleNext is recreated every time the component re-renders
+    // so the currentVocaIdx is the voca index of current render
     setPrevVocaIdx(currentVocaIdx);
+
+    if (currentVocaIdx === vocaLength - 1 && lesson) {
+      // Finish learning
+      navigate(
+        `/lesson/complete-learning?id=${lesson.id}&name=${lesson.name}&vocaSetId=${lesson.__groupTopic__.id}`,
+      );
+    }
     setCurrentVocaIdx((prev) => Math.min(prev + 1, vocaLength - 1));
   };
 
@@ -78,6 +88,7 @@ const LearningVocaPage: React.FC = () => {
   const handleWrongAnswer = () => {
     playWrongAnswerAudio();
   };
+
   return (
     <Stack sx={{ minHeight: "100vh" }}>
       {/*  Header */}
