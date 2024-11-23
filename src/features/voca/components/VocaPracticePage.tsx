@@ -13,6 +13,7 @@ import WrongAnswerAudio from "../assets/learning_wrong.mp3";
 import CorrectAnswerAudio from "../assets/learning_right.mp3";
 import ClockTimer, { ClockTimerRef } from "./ClockTimer";
 import { AnimatePresence } from "framer-motion";
+import SuspendLearningDrawer from "./SuspendLearningDrawer";
 
 const MIN_NUMBER_OF_EXERCISES = 16;
 
@@ -22,6 +23,8 @@ const VocaPracticePage: React.FC = () => {
 
   const [vocabularies, setVocabularies] = useState<VocabularyModel[]>([]);
   // console.log("vocabularies", vocabularies);
+
+  const [openExitDrawer, setOpenExitDrawer] = useState(false);
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", { id: lessonId }],
@@ -95,7 +98,7 @@ const VocaPracticePage: React.FC = () => {
           {/* Header */}
           <Stack direction="row" spacing={0.5} alignItems="center">
             {/* Close button */}
-            <IconButton>
+            <IconButton onClick={() => setOpenExitDrawer(true)}>
               <Clear />
             </IconButton>
 
@@ -144,6 +147,13 @@ const VocaPracticePage: React.FC = () => {
               </AnimatePresence>
             )}
           </Box>
+
+          <SuspendLearningDrawer
+            open={openExitDrawer}
+            onClose={() => setOpenExitDrawer(false)} // onCloseDrawer
+            onClickStay={() => setOpenExitDrawer(false)}
+            exitLink={`/voca/${lesson?.__groupTopic__.id}/lessons`}
+          />
         </Box>
       )}
 

@@ -7,9 +7,9 @@ import RuleItem from "./RuleItem";
 import TargetRuleIcon from "../assets/test-rule-images/target-rule.svg";
 import ExitRuleIcon from "../assets/test-rule-images/exit-rule.svg";
 import TimeRuleIcon from "../assets/test-rule-images/time-rule.svg";
-import LessonButton from "./LessonButton";
 import { Navigate, useSearchParams } from "react-router-dom";
 import Link from "../../../components/UI/Link";
+import BoldStrokeButton from "./BoldStrokeButton";
 
 const VocaTestConfirmPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -78,30 +78,25 @@ const VocaTestConfirmPage: React.FC = () => {
           sx={{ maxWidth: "984px", mx: "auto" }}
         >
           <Link to={`/lesson/learn?id=${lessonId}`}>
-            <LessonButton
+            <BoldStrokeButton
               variant="outlined"
               sx={{
                 width: "254px",
-                borderBottomWidth: "5px",
-                border: "2px solid #e5e5e5",
-                borderBottom: "5px solid #e5e5e5",
               }}
             >
               CONTINUE LEARNING
-            </LessonButton>
+            </BoldStrokeButton>
           </Link>
 
           <Link to={`/lesson/practice?id=${lessonId}`}>
-            <LessonButton
+            <BoldStrokeButton
               variant="contained"
               sx={{
                 width: "254px",
-                backgroundColor: "primary.main",
-                borderBottomWidth: "5px",
               }}
             >
               READY
-            </LessonButton>
+            </BoldStrokeButton>
           </Link>
         </Stack>
       </Box>
