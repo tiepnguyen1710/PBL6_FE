@@ -55,7 +55,9 @@ const LessonPopup: React.FC<LessonPopupProps> = ({
 
         {reviewable ? (
           <>
-            <Link to={`/lesson/confirm-start-testing?id=${lessonId}`}>
+            <Link
+              to={`/lesson/confirm-start-testing?id=${lessonId}&name=${lessonName}`}
+            >
               <LessonButton variant="contained" sx={{ marginTop: "10px" }}>
                 REVIEW
               </LessonButton>

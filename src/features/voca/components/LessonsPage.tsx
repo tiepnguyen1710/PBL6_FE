@@ -148,7 +148,7 @@ const LessonsPage: React.FC = () => {
                     },
                   }}
                 >
-                  <Tab label="Target" />
+                  <Tab label="Aim" />
                   <Tab label="Description" />
                 </Tabs>
 

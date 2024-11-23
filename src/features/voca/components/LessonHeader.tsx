@@ -3,11 +3,16 @@ import { RxCross2 } from "react-icons/rx";
 import WhiteLogo from "../assets/logo-white.svg";
 
 interface LessonHeader {
+  lessonName?: string;
   title: string;
   onExit?: () => void;
 }
 
-const LessonHeader: React.FC<LessonHeader> = ({ title, onExit }) => {
+const LessonHeader: React.FC<LessonHeader> = ({
+  title,
+  onExit,
+  lessonName,
+}) => {
   return (
     <Box
       sx={{
@@ -24,9 +29,21 @@ const LessonHeader: React.FC<LessonHeader> = ({ title, onExit }) => {
         }}
         justifyContent="space-between"
       >
-        <IconButton onClick={onExit}>
-          <RxCross2 style={{ color: "white", fontSize: "2rem" }} />
-        </IconButton>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <IconButton onClick={onExit}>
+            <RxCross2 style={{ color: "white", fontSize: "2rem" }} />
+          </IconButton>
+          <Typography
+            sx={{
+              color: "white",
+              fontSize: "18px",
+              textTransform: "uppercase",
+              fontWeight: "bold",
+            }}
+          >
+            {lessonName}
+          </Typography>
+        </Stack>
         <Stack alignItems="center">
           <img src={WhiteLogo} style={{ height: "28px" }} />
           <Typography

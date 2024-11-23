@@ -22,6 +22,7 @@ const CompleteLearningLessonPage: React.FC = () => {
     <Stack sx={{ minHeight: "100vh" }}>
       <LessonHeader
         title="finish"
+        lessonName={lessonName || ""}
         onExit={() => navigate(`/voca/${vocaSetId}/lessons`)}
       />
       <LessonMainContent
@@ -82,7 +83,9 @@ const CompleteLearningLessonPage: React.FC = () => {
             </BoldStrokeButton>
           </Link>
 
-          <Link to={`/lesson/confirm-start-testing?id=${lessonId}`}>
+          <Link
+            to={`/lesson/confirm-start-testing?id=${lessonId}&name=${lessonName}`}
+          >
             <BoldStrokeButton
               variant="contained"
               sx={{

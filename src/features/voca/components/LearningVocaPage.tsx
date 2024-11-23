@@ -92,7 +92,11 @@ const LearningVocaPage: React.FC = () => {
   return (
     <Stack sx={{ minHeight: "100vh" }}>
       {/*  Header */}
-      <LessonHeader title="learn" onExit={() => setOpenExitDrawer(true)} />
+      <LessonHeader
+        title="learn"
+        lessonName={lesson?.name}
+        onExit={() => setOpenExitDrawer(true)}
+      />
 
       {isLoading ? (
         <>

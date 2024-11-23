@@ -14,6 +14,7 @@ import BoldStrokeButton from "./BoldStrokeButton";
 const VocaTestConfirmPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
+  const lessonName = searchParams.get("name");
 
   if (!lessonId) {
     return <Navigate to="/" />;
@@ -21,7 +22,7 @@ const VocaTestConfirmPage: React.FC = () => {
 
   return (
     <Stack sx={{ minHeight: "100vh" }}>
-      <LessonHeader title="test" />
+      <LessonHeader title="test" lessonName={lessonName || ""} />
       <LessonMainContent sx={{ paddingTop: "50px", maxWidth: "780px" }}>
         <Stack direction="row">
           <Image
