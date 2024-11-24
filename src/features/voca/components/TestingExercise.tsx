@@ -24,6 +24,7 @@ interface TestingExerciseProps {
 }
 
 const TOTAL_PERSON_DECORATIONS = 8;
+const EXERCISE_DELAY_FULFILLED = 3000;
 
 const animateVaraints = {
   fadeInRight: {
@@ -89,6 +90,11 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
     console.log("selectedAnswer", selectedAnswer);
     if (!userAnswer) {
       setUserAnswer(selectedAnswer);
+      onAnswered?.();
+
+      setTimeout(() => {
+        onFulfilled?.();
+      }, EXERCISE_DELAY_FULFILLED);
 
       if (selectedAnswer === exercise.correctAnswer) {
         onCorrectAnswer?.(exercise.voca.id, exercise.type);
@@ -97,21 +103,6 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
       }
     }
   };
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (hasAnswered) {
-      onAnswered?.();
-
-      timeout = setTimeout(() => {
-        onFulfilled?.();
-      }, 2000);
-    }
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [hasAnswered, onFulfilled, onAnswered]);
 
   useEffect(() => {
     let hasShowGif = false;

@@ -65,7 +65,9 @@ const VocaPracticePage: React.FC = () => {
     mutationFn: createLearningResult,
     onSuccess: () => {
       console.log("Post learning result successfully");
-      navigate(`/lesson/learning-result?id=${lessonId}`);
+      navigate(
+        `/lesson/learning-result?id=${lessonId}&vocaSetId=${lesson?.__groupTopic__.id}`,
+      );
     },
   });
 
@@ -82,14 +84,8 @@ const VocaPracticePage: React.FC = () => {
   };
 
   const handleCorrectAnswer = async (correctVocaId: string) => {
-    // The callback is re-defined in each render, so the `exerciseIdx` is always the latest
-    if (exercises.length > 0 && exerciseIdx + 1 >= exercises.length) {
-      // Finish lesson
-      postLearningResult();
-    } else {
-      setCorrectVocaIds((prev) => [...prev, correctVocaId]);
-      await playCorrectAnswerAudio();
-    }
+    setCorrectVocaIds((prev) => [...prev, correctVocaId]);
+    await playCorrectAnswerAudio();
   };
 
   const handleWrongAnswer = () => {
@@ -140,9 +136,14 @@ const VocaPracticePage: React.FC = () => {
   }, [lesson]);
 
   const handleFulFillExercise = useCallback(() => {
-    // setExerciseIdx((prev) => Math.min(prev + 1, exercises.length - 1));
-    setExerciseIdx((prev) => prev + 1);
-  }, []);
+    // The callback is re-defined in each time `exerciseIdx` changes, so the `exerciseIdx` is always the latest
+    if (exercises.length > 0 && exerciseIdx + 1 >= exercises.length) {
+      // Finish lesson
+      postLearningResult();
+    } else {
+      setExerciseIdx((prev) => prev + 1);
+    }
+  }, [exercises.length, exerciseIdx, postLearningResult]);
 
   const handleAnswerExercise = useCallback(() => {
     const remainingTime = clockTimerRef.current?.stop() || 0;

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -9,22 +10,32 @@ import {
   Label,
 } from "recharts";
 
-const data = [
-  { name: "Tốt nhất", value: 20 },
-  { name: "Gần nhất", value: 5 },
-  { name: "Hiện tại", value: 15 },
-];
-
 const COLORS = {
   gradientStart: "#FFA500",
   gradientEnd: "#FFA500",
 };
+type ResultHistoryBarChartProps = {
+  data: {
+    best: number;
+    mostRecent: number;
+    current: number;
+  };
+  totalWord: number;
+};
+const ResultHistoryBarChart: React.FC<ResultHistoryBarChartProps> = ({
+  data,
+  totalWord,
+}) => {
+  const chartData = [
+    { name: "Best", value: data.best },
+    { name: "Most Recent", value: data.mostRecent },
+    { name: "Current", value: data.current },
+  ];
 
-const HistoryBarChart = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
-        data={data}
+        data={chartData}
         margin={{ top: 50, right: 30, left: 0, bottom: 20 }}
         barSize={50} // Adjust the width of bars
       >
@@ -56,6 +67,7 @@ const HistoryBarChart = () => {
           tick={{ fill: "#B4B4B4", fontSize: "20px" }}
           tickLine={false}
           axisLine={false}
+          domain={[0, totalWord]}
         >
           <Label
             value="(Words)" // Your label text
@@ -83,4 +95,4 @@ const HistoryBarChart = () => {
   );
 };
 
-export default HistoryBarChart;
+export default ResultHistoryBarChart;

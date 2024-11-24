@@ -13,7 +13,7 @@ function getCardStyle(state: VocabularyCardState) {
       };
     case "error":
       return {
-        borderColor: "#D33113",
+        borderColor: "#FF7878",
         backgroundColor: "#FFEEEE",
         color: "#FF4B4B",
       };

@@ -2,7 +2,7 @@ import VocabularyFrontSide from "./VocabularyFrontSide";
 import VocabularyCardWrapper from "./VocabularyCardWrapper";
 import VocabularyBackSide from "./VocabularyBackSide";
 import { Box } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface VocabularyCardProps {
   word: string;
@@ -11,6 +11,7 @@ interface VocabularyCardProps {
   type: string;
   meaning: string;
   state?: VocabularyCardState;
+  audio?: string;
 }
 
 export enum VocabularyCardState {
@@ -26,9 +27,23 @@ const VocabularyCard: React.FC<VocabularyCardProps> = ({
   type,
   meaning,
   state,
+  audio,
 }) => {
   const [flip, setFlip] = useState(false);
 
+  useEffect(() => {
+    let audioElement: HTMLAudioElement;
+    if (flip) {
+      audioElement = new Audio(audio);
+      audioElement.play();
+    }
+
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+      }
+    };
+  }, [flip, audio]);
   return (
     <Box sx={{ perspective: "1000px" }}>
       <Box
