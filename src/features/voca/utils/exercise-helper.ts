@@ -80,11 +80,8 @@ export function generateRandomExercises(
 // Generate a set of exercises, each vocabulary will have 2 exercises, one for guessing and one for filling
 export function getExerciseSet(
   practiceVocas: VocabularyModel[],
-  atLeast: number,
+  repeatTimes: number,
 ) {
-  const numOfVocabularies = practiceVocas.length;
-
-  const repeatTimes = Math.ceil(atLeast / (2 * numOfVocabularies));
   console.log("repeat times", repeatTimes);
 
   const guessingExercises: Exercise[] = [];

@@ -19,7 +19,7 @@ interface TestingExerciseProps {
   exercise: Exercise;
   onFulfilled?: () => void; // Trigger when the exercise has been fulfilled (after displaying the result)
   onAnswered?: () => void; // Trigger when the user has answered the question
-  onCorrectAnswer?: () => void;
+  onCorrectAnswer?: (correctVocaId: string, type: ExerciseType) => void;
   onWrongAnswer?: () => void;
 }
 
@@ -91,7 +91,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
       setUserAnswer(selectedAnswer);
 
       if (selectedAnswer === exercise.correctAnswer) {
-        onCorrectAnswer?.();
+        onCorrectAnswer?.(exercise.voca.id, exercise.type);
       } else {
         onWrongAnswer?.();
       }
@@ -105,7 +105,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
 
       timeout = setTimeout(() => {
         onFulfilled?.();
-      }, 3200);
+      }, 2000);
     }
 
     return () => {

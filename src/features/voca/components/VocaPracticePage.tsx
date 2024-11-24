@@ -1,9 +1,9 @@
 import { Clear } from "@mui/icons-material";
 import { Box, IconButton, LinearProgress, Stack } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getExerciseSet } from "../utils/exercise-helper";
-import { useQuery } from "@tanstack/react-query";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { getLessonById } from "../../admin/vocasets/api/lesson-api";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import VocabularyModel from "../../../types/VocabularyModel";
@@ -14,15 +14,22 @@ import CorrectAnswerAudio from "../assets/learning_right.mp3";
 import ClockTimer, { ClockTimerRef } from "./ClockTimer";
 import { AnimatePresence } from "framer-motion";
 import SuspendLearningDrawer from "./SuspendLearningDrawer";
+import { PostLearningResultRequest } from "../types/LearningResultRequest";
+import { createLearningResult } from "../api/voca-learning";
 
-const MIN_NUMBER_OF_EXERCISES = 10;
+const MIN_NUMBER_OF_EXERCISES = 4;
+const DURATION_PER_EXERCISE = 15; // seconds
 
 const VocaPracticePage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
 
   const [vocabularies, setVocabularies] = useState<VocabularyModel[]>([]);
   // console.log("vocabularies", vocabularies);
+
+  const [correctVocaIds, setCorrectVocaIds] = useState<string[]>([]);
+  const [takenTime, setTakenTime] = useState(0);
 
   const [openExitDrawer, setOpenExitDrawer] = useState(false);
 
@@ -34,14 +41,18 @@ const VocaPracticePage: React.FC = () => {
 
   const [exerciseIdx, setExerciseIdx] = useState(0);
 
+  const repeatTimes = useMemo(() => {
+    const numOfVocabularies = vocabularies.length;
+    return Math.ceil(MIN_NUMBER_OF_EXERCISES / (2 * numOfVocabularies));
+  }, [vocabularies]);
+
   const exercises = useMemo(() => {
     if (vocabularies.length === 0) {
       return [];
     }
 
-    // console.log("getExerciseSet", vocabularies, MIN_NUMBER_OF_EXERCISES);
-    return getExerciseSet(vocabularies, MIN_NUMBER_OF_EXERCISES);
-  }, [vocabularies]);
+    return getExerciseSet(vocabularies, repeatTimes);
+  }, [vocabularies, repeatTimes]);
 
   const activeExercise: Exercise | undefined = exercises[exerciseIdx];
 
@@ -49,6 +60,14 @@ const VocaPracticePage: React.FC = () => {
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
 
   const clockTimerRef = useRef<ClockTimerRef>(null);
+
+  const postLearningResultMutation = useMutation({
+    mutationFn: createLearningResult,
+    onSuccess: () => {
+      console.log("Post learning result successfully");
+      navigate(`/lesson/learning-result?id=${lessonId}`);
+    },
+  });
 
   const playWrongAnswerAudio = () => {
     wrongAnswerAudioRef.current?.play();
@@ -62,13 +81,57 @@ const VocaPracticePage: React.FC = () => {
     });
   };
 
-  const handleCorrectAnswer = async () => {
-    await playCorrectAnswerAudio();
+  const handleCorrectAnswer = async (correctVocaId: string) => {
+    // The callback is re-defined in each render, so the `exerciseIdx` is always the latest
+    if (exercises.length > 0 && exerciseIdx + 1 >= exercises.length) {
+      // Finish lesson
+      postLearningResult();
+    } else {
+      setCorrectVocaIds((prev) => [...prev, correctVocaId]);
+      await playCorrectAnswerAudio();
+    }
   };
 
   const handleWrongAnswer = () => {
     playWrongAnswerAudio();
   };
+
+  const postLearningResult = useCallback(() => {
+    const listCorrectWord = new Set<string>();
+    const listIncorrectWord = new Set<string>();
+
+    for (const {
+      voca: { id },
+    } of exercises) {
+      // As each voca has been repeated `repeatTimes` times
+      // So, a voca is considered correct if it is answered correctly `repeatTimes` times
+      if (
+        correctVocaIds.filter((vocaId) => vocaId === id).length == repeatTimes
+      ) {
+        listCorrectWord.add(id);
+      } else {
+        listIncorrectWord.add(id);
+      }
+    }
+
+    const request: PostLearningResultRequest = {
+      idTopic: lessonId!,
+      listCorrectWord: [...listCorrectWord],
+      listIncorrectWord: [...listIncorrectWord],
+      time: takenTime,
+    };
+
+    console.log(request);
+
+    postLearningResultMutation.mutate(request);
+  }, [
+    exercises,
+    correctVocaIds,
+    lessonId,
+    postLearningResultMutation,
+    repeatTimes,
+    takenTime,
+  ]);
 
   useEffect(() => {
     if (lesson) {
@@ -76,14 +139,17 @@ const VocaPracticePage: React.FC = () => {
     }
   }, [lesson]);
 
-  const handleFulFillExercise = () => {
+  const handleFulFillExercise = useCallback(() => {
     // setExerciseIdx((prev) => Math.min(prev + 1, exercises.length - 1));
     setExerciseIdx((prev) => prev + 1);
-  };
+  }, []);
 
-  const handleAnswerExercise = () => {
-    clockTimerRef.current?.stop();
-  };
+  const handleAnswerExercise = useCallback(() => {
+    const remainingTime = clockTimerRef.current?.stop() || 0;
+    const implementTime = DURATION_PER_EXERCISE - remainingTime;
+
+    setTakenTime((prev) => prev + implementTime);
+  }, [clockTimerRef, setTakenTime]);
 
   if (!lessonId) {
     return <Navigate to="/" />;
@@ -95,6 +161,7 @@ const VocaPracticePage: React.FC = () => {
         <CustomBackdrop open={isLoading} />
       ) : (
         <Box sx={{ maxWidth: "962px", mx: "auto", padding: "30px 15px" }}>
+          {postLearningResultMutation.isPending && <CustomBackdrop open />}
           {/* Header */}
           <Stack direction="row" spacing={0.5} alignItems="center">
             {/* Close button */}
@@ -126,7 +193,7 @@ const VocaPracticePage: React.FC = () => {
 
             <ClockTimer
               key={exerciseIdx}
-              duration={15}
+              duration={DURATION_PER_EXERCISE}
               delay={1}
               timerRef={clockTimerRef}
               sx={{ paddingLeft: "8px" }}

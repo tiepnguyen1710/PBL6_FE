@@ -13,7 +13,7 @@ import SecondTickAudio from "../assets/second_tick.mp3";
 import ClockTickAudio from "../assets/clock_tick.mp3";
 
 export interface ClockTimerRef {
-  stop: () => void; // stop the timer
+  stop: () => number; // stop the timer
 }
 
 interface ClockTimerProps {
@@ -45,6 +45,7 @@ const ClockTimer: React.FC<ClockTimerProps> = ({
   useImperativeHandle(timerRef, () => ({
     stop: () => {
       clearInterval(intervalRef.current!);
+      return time;
     },
   }));
 
