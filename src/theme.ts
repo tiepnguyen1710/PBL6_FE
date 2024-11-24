@@ -107,7 +107,7 @@ const theme = createTheme({
           borderBottom: 2,
           borderStyle: "solid",
           overflow: "initial",
-          borderColor: "divider",
+          borderColor: "rgba(0, 0, 0, 0.12)",
         },
       },
     },
