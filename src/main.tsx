@@ -52,6 +52,7 @@ import ExamSet from "./features/admin/new_exams/components/ExamIndexPage.tsx";
 import VocaPracticePage from "./features/voca/components/VocaPracticePage.tsx";
 import VocaTestConfirmPage from "./features/voca/components/VocaTestConfirmPage.tsx";
 import CompleteLearningLessonPage from "./features/voca/components/CompleteLearningLessonPage.tsx";
+import LesssonLearningResult from "./features/voca/components/LessonLearningResult.tsx";
 
 const router = createBrowserRouter([
   {
@@ -162,6 +163,10 @@ const router = createBrowserRouter([
       {
         path: "complete-learning",
         element: <CompleteLearningLessonPage />,
+      },
+      {
+        path: "learning-result",
+        element: <LesssonLearningResult />,
       },
     ],
   },

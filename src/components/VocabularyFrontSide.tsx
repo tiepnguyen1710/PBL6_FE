@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { Image } from "../../../../components/UI/Image";
+import { Image } from "./UI/Image";
 
 interface VocabularyFrontSideProps {
   word: string;
@@ -17,7 +17,12 @@ const VocabularyFrontSide: React.FC<VocabularyFrontSideProps> = ({
       <Image src={image} sx={{ height: "150px", borderRadius: "6px" }} />
       <Typography
         variant="inherit"
-        sx={{ marginTop: "12px", fontSize: "18px", lineHeight: "22px" }}
+        sx={{
+          marginTop: "12px",
+          fontSize: "18px",
+          lineHeight: "22px",
+          fontWeight: 600,
+        }}
       >
         {word}
       </Typography>

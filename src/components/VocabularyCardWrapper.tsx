@@ -1,8 +1,9 @@
-import { Paper } from "@mui/material";
-import { VocaburaryCardState } from "./VocabularyCard";
+import { Box, Paper, SxProps } from "@mui/material";
+import { VocabularyCardState } from "./VocabularyCard";
 import React from "react";
+import TurnIcon from "./TurnIcon";
 
-function getCardStyle(state: VocaburaryCardState) {
+function getCardStyle(state: VocabularyCardState) {
   switch (state) {
     case "success":
       return {
@@ -25,8 +26,15 @@ function getCardStyle(state: VocaburaryCardState) {
 
 const VocabularyCardWrapper: React.FC<{
   children: React.ReactNode;
-  state?: VocaburaryCardState;
-}> = ({ children, state = VocaburaryCardState.DEFAULT }) => {
+  state?: VocabularyCardState;
+  sx?: SxProps;
+  onClickFlipButton?: () => void;
+}> = ({
+  children,
+  state = VocabularyCardState.DEFAULT,
+  sx,
+  onClickFlipButton,
+}) => {
   return (
     <Paper
       variant="outlined"
@@ -38,10 +46,29 @@ const VocabularyCardWrapper: React.FC<{
         cursor: "pointer",
         // backgroundColor: "white",
         position: "relative",
+        ...sx,
         ...getCardStyle(state),
       }}
     >
       {children}
+      <Box
+        sx={{
+          padding: "8px",
+          backgroundColor: "white",
+          position: "absolute",
+          bottom: 10,
+          right: 10,
+          cursor: "pointer",
+          borderRadius: "8px",
+        }}
+      >
+        <TurnIcon
+          onClick={onClickFlipButton}
+          sx={{
+            color: "primary.main",
+          }}
+        />
+      </Box>
     </Paper>
   );
 };

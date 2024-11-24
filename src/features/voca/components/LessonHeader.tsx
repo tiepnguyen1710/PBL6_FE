@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, SxProps, Typography } from "@mui/material";
 import { RxCross2 } from "react-icons/rx";
 import WhiteLogo from "../assets/logo-white.svg";
 
@@ -6,12 +6,14 @@ interface LessonHeader {
   lessonName?: string;
   title: string;
   onExit?: () => void;
+  containerSx?: SxProps;
 }
 
 const LessonHeader: React.FC<LessonHeader> = ({
   title,
   onExit,
   lessonName,
+  containerSx,
 }) => {
   return (
     <Box
@@ -26,6 +28,7 @@ const LessonHeader: React.FC<LessonHeader> = ({
           maxWidth: "980px",
           minHeight: "70px",
           mx: "auto",
+          ...containerSx,
         }}
         justifyContent="space-between"
       >
