@@ -29,7 +29,7 @@ import CustomModal from "../../../../components/UI/CustomModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getVocaSetById, updateVocaSet } from "../api/voca-set-api";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
-import useFileInput from "../hooks/useFileInput";
+import useFileInput from "../../../../hooks/useFileInput";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import VocaSetLevel from "../../../../types/VocaSetLevel";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";

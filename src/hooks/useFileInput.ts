@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getFileNameFromPath } from "../utils/helper";
+import { getFileNameFromPath } from "../features/admin/vocasets/utils/helper";
 
 /**
  *
