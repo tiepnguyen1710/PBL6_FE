@@ -20,19 +20,17 @@ export interface groupQuestionData {
 }
 
 export interface questionData {
+  questionId?: string;
   questionNumber: number;
   question: string;
   answer: string[];
   correctAnswer?: string;
-  // optionA?: string;
-  // optionB?: string;
-  // optionC?: string;
-  // optionD?: string;
 }
 
 export interface part {
   id: string;
   name: string;
+  key: string;
   totalQuestion: number;
 }
 

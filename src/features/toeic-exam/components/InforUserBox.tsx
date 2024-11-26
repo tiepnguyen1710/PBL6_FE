@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import userIcon from "../../assets/user_icon.webp";
+import userIcon from "../assets/user_icon.webp";
 
 const InforUserBox = () => {
   return (
@@ -15,7 +15,7 @@ const InforUserBox = () => {
 
       <Divider />
 
-      <Box sx={{ my: 1 }}>
+      <Box sx={{ mt: 1 }}>
         <Stack direction="column" spacing={0.25}>
           <Stack direction="row" justifyContent={"space-between"}>
             <Typography>Days until exam</Typography>

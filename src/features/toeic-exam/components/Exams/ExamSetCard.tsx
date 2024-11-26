@@ -1,13 +1,11 @@
 import { Button, Chip, Divider, Stack, Typography } from "@mui/material";
-import CardTitle from "./CardTitle";
-import FaClockIcon from "./FaClockIcon";
-import FaUserEditIcon from "./FaUserEditIcon";
-import FaCommentIcon from "./FaCommentIcon";
-import CustomCard from "./CustomCard";
-import { Link } from "react-router-dom";
+import CustomCard from "../../../home/components/CustomCard";
+import CardTitle from "../../../home/components/CardTitle";
+import FaClockIcon from "../../../home/components/FaClockIcon";
+import FaUserEditIcon from "../../../home/components/FaUserEditIcon";
+import FaCommentIcon from "../../../home/components/FaCommentIcon";
 
 interface ExamCardProps {
-  id: string;
   title: string;
   duration: string;
   totalParticipants: number;
@@ -17,8 +15,7 @@ interface ExamCardProps {
   tags?: string[];
 }
 
-const ExamCard: React.FC<ExamCardProps> = ({
-  id,
+const ExamSetCard: React.FC<ExamCardProps> = ({
   title,
   duration,
   totalParticipants,
@@ -35,7 +32,7 @@ const ExamCard: React.FC<ExamCardProps> = ({
         padding: 1,
         display: "inline-flex",
         flexDirection: "column",
-        gap: 1,
+        gap: 0.5,
       }}
     >
       <CardTitle>{title}</CardTitle>
@@ -94,17 +91,11 @@ const ExamCard: React.FC<ExamCardProps> = ({
           />
         ))}
       </Stack>
-
-      <Button
-        variant="outlined"
-        sx={{ borderRadius: ".35rem", marginTop: 2 }}
-        component={Link}
-        to={`/exams/${id}`}
-      >
+      <Button variant="outlined" sx={{ borderRadius: ".35rem", marginTop: 2 }}>
         Details
       </Button>
     </CustomCard>
   );
 };
 
-export default ExamCard;
+export default ExamSetCard;

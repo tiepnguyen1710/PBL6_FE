@@ -1,18 +1,20 @@
+import { Tag } from "../../../toeic-exam/types/Tags";
+
 export interface ExamResponse {
   id: string;
   name: string;
   time?: number;
-  __tag__?: string;
-  __groupQuestions__: groupQuestionResponse[];
+  tag?: Tag[];
+  groupQuestions: groupQuestionResponse[];
 }
 
 export interface groupQuestionResponse {
   id: string;
   detail?: string;
   describeAnswer?: string;
-  __questions__: questionResponse[];
-  __questionMedia__: questionMediaResponse[];
-  __part__: partResponse;
+  questions: questionResponse[];
+  questionMedia: questionMediaResponse[];
+  part: partResponse;
 }
 
 export interface questionResponse {
@@ -34,5 +36,6 @@ export interface questionMediaResponse {
 export interface partResponse {
   id: string;
   name: string;
+  key: string;
   totalQuestion: number;
 }

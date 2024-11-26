@@ -1,12 +1,14 @@
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Chip, Grid2, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import InforUserBox from "../InforUserBox/InforUserBox";
+import InforUserBox from "../InforUserBox";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllExam } from "../../../admin/new_exams/api/examApi";
 import DotLoadingProgress from "../../../../components/UI/DotLoadingProgress";
 import { ExamSetInfo } from "../../types/ExamSetInfo";
 import { tags } from "../../types/Tags";
+import ExamSetCard from "./ExamSetCard";
+import ExamCard from "../../../home/components/ExamCard";
 
 interface ITag {
   id: number;
@@ -49,16 +51,34 @@ const ExamsLibraryPage = () => {
               <DotLoadingProgress />
             </Box>
           ) : (
-            <>
-              {examSetData?.data.map((examSet) => {
-                const examSetInfo: ExamSetInfo = {
-                  id: examSet.id,
-                  name: examSet.name,
-                  time: examSet.time,
-                };
-                return examSetInfo;
-              })}
-            </>
+            <Grid2 container rowGap={1.5} my={3}>
+              {examSetData?.data
+                .map((examSet) => {
+                  const examSetInfo: ExamSetInfo = {
+                    id: examSet.id,
+                    name: examSet.name,
+                    time: examSet.time,
+                  };
+                  return examSetInfo;
+                })
+                .map((examSet) => {
+                  return (
+                    <Grid2 sx={{ width: "275px" }}>
+                      <ExamCard
+                        key={examSet.id}
+                        id={examSet.id}
+                        title={examSet.name}
+                        duration={examSet.time.toString()}
+                        totalParticipants={0}
+                        totalComments={0}
+                        numOfParts={7}
+                        numOfQuestions={200}
+                        tags={["Listening", "Reading"]}
+                      />
+                    </Grid2>
+                  );
+                })}
+            </Grid2>
           )}
         </Grid>
         <Grid size={3}>

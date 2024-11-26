@@ -19,7 +19,7 @@ export const convertExamData = (data: groupQuestionData[]) => {
 export const convertExamResponse = (data: ExamResponse) => {
   const result: NewExamRequest = {
     name: data.name,
-    tag: data.__tag__ || "",
+    tag: data.tag || [{ id: 1, name: "2024" }],
     partData: [
       { part: "part1", groupQuestionData: [] },
       { part: "part2", groupQuestionData: [] },
@@ -31,15 +31,15 @@ export const convertExamResponse = (data: ExamResponse) => {
     ],
   };
 
-  data.__groupQuestions__.forEach((group: groupQuestionResponse) => {
+  data.groupQuestions.forEach((group: groupQuestionResponse) => {
     const partIndex = result.partData.findIndex(
-      (part) => part.part === group.__part__.name,
+      (part) => part.part === group.part.key,
     );
 
-    const audioMedia = group.__questionMedia__.find(
+    const audioMedia = group.questionMedia.find(
       (audio) => audio.type === "audio",
     );
-    const imageMedia = group.__questionMedia__.filter(
+    const imageMedia = group.questionMedia.filter(
       (image) => image.type === "image",
     );
 
@@ -50,8 +50,9 @@ export const convertExamResponse = (data: ExamResponse) => {
       };
     });
 
-    const questionData = group.__questions__.map((questionItem) => {
+    const questionData = group.questions.map((questionItem) => {
       return {
+        questionId: questionItem.id,
         questionNumber: questionItem.questionNumber,
         question: questionItem.question,
         answer: questionItem.answer,
@@ -70,4 +71,13 @@ export const convertExamResponse = (data: ExamResponse) => {
   });
 
   return result;
+};
+
+export const sortPartArray = (partArray: string[]) => {
+  return partArray.slice().sort((a, b) => {
+    const numA = parseInt(a.replace("part", ""), 10);
+    const numB = parseInt(b.replace("part", ""), 10);
+
+    return numA - numB;
+  });
 };

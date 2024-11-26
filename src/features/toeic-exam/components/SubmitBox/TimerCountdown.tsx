@@ -1,8 +1,13 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores";
 
 const TimerCountdown = (props: any) => {
-  const [count, setCount] = useState<number>(10);
+  const limitTime = useSelector(
+    (state: RootState) => state.selectedParts.limitTime,
+  );
+  const [count, setCount] = useState<number>(+limitTime);
 
   useEffect(() => {
     if (count === 0) {

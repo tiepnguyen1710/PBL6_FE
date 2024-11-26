@@ -17,7 +17,7 @@ function createData(
   dateTest: TestDate,
   result: string,
   time: number,
-  action: string
+  action: string,
 ) {
   return { dateTest, result, time, action };
 }
@@ -63,7 +63,7 @@ const rows = [
     },
     "12/18",
     5000,
-    "Detail"
+    "Detail",
   ),
   createData(
     {
@@ -73,7 +73,7 @@ const rows = [
     },
     "120/200",
     5000,
-    "Detail"
+    "Detail",
   ),
 ];
 
@@ -90,8 +90,9 @@ export default function ResultTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.map((row, rowIndex) => (
             <TableRow
+              key={rowIndex}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">

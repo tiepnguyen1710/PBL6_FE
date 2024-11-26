@@ -22,15 +22,13 @@ import NewExamRequest from "../types/NewExamRequest";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import { convertExamResponse } from "../utils/helper";
 import { tags } from "../../../toeic-exam/types/Tags";
-
-import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 import TagSelect from "./TagSelect";
 
 export default function CreateExam() {
   const navigate = useNavigate();
   const initExamData: NewExamRequest = {
     name: "",
-    tag: { id: 1, name: "2024" },
+    tag: [{ id: 1, name: "2024" }],
     partData: [
       {
         part: "part1",
@@ -88,12 +86,13 @@ export default function CreateExam() {
 
   useEffect(() => {
     fetchListPart();
+    console.log(listPart);
   }, []);
 
   const fetchListPart = async () => {
     const res = await getListPart();
     if (res.status === 200) {
-      //console.log("part", res.data);
+      console.log("part", res.data);
       setListPart(res.data);
     }
   };
@@ -121,9 +120,13 @@ export default function CreateExam() {
   const handleChangeTag = (value: number) => {
     const selectedTag = tags.find((tag) => tag.id === value);
     console.log(selectedTag);
+    if (!selectedTag) {
+      console.log("cannot find tag");
+      return;
+    }
     const updatedExamData = {
       ...examData,
-      tag: selectedTag || { id: 1, name: "2024" },
+      tag: [selectedTag],
     };
     setExamData(updatedExamData);
   };
@@ -151,7 +154,7 @@ export default function CreateExam() {
       partData: partDataClone,
     } = examDataClone;
     const transferPart = partDataClone.map((item) => {
-      const matchedPart = listPart.find((part) => part.name === item.part);
+      const matchedPart = listPart.find((part) => part.key === item.part);
       return {
         ...item,
         part: matchedPart?.id ?? "",
@@ -203,9 +206,8 @@ export default function CreateExam() {
         <TagSelect
           labels={tags.map((tag) => tag.name)}
           values={tags.map((tag) => tag.id)}
-          selectedValue={examData.tag.id}
+          selectedValue={examData.tag[0].id}
           onChange={handleChangeTag}
-          label="Select Tag"
           sx={{
             width: "50%",
           }}

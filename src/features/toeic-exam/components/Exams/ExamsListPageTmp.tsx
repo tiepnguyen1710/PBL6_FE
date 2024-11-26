@@ -3,7 +3,7 @@ import ExamsList from "../ExamsList/ExamsList";
 import Skills from "../Skills/Skills";
 import styles from "./ExamsListPage.module.scss";
 import Paginate from "../Paginate/Paginate";
-import InforUserBox from "../InforUserBox/InforUserBox";
+import InforUserBox from "../InforUserBox";
 
 const ExamsListPageTmp = () => {
   return (

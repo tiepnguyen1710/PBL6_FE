@@ -1,21 +1,27 @@
-import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
 import {
   Button,
   Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
-  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
   Stack,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../stores";
+import {
+  setLimitTime,
+  setSelectedParts,
+} from "../../../../stores/selectedPartsSlice";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { sortPartArray } from "../../../admin/new_exams/utils/helper";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -47,31 +53,57 @@ function a11yProps(index: number) {
 }
 
 export default function PracticeTabs() {
-  const [value, setValue] = React.useState(0);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const selectedParts = useSelector(
+    (state: RootState) => state.selectedParts.selectedParts,
+  );
+  const limitTime = useSelector(
+    (state: RootState) => state.selectedParts.limitTime,
+  );
+  const [tabIndex, setTabIndex] = useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const routeParams = useParams<{ examId: string }>();
+  const examId = routeParams.examId;
+
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+    setTabIndex(newValue);
   };
 
-  const [limit, setLimit] = React.useState("");
-
   const handleChangeLimit = (event: SelectChangeEvent) => {
-    setLimit(event.target.value as string);
+    dispatch(setLimitTime(event.target.value));
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const part = event.target.name;
+    const checked = event.target.checked;
+    if (checked) {
+      dispatch(setSelectedParts([...selectedParts, part]));
+    } else {
+      dispatch(setSelectedParts(selectedParts.filter((p) => p !== part)));
+    }
+  };
+
+  const handlePractice = () => {
+    const selectedPartsClone = [...selectedParts];
+    const sortedSelectedParts = sortPartArray(selectedPartsClone);
+    const query = sortedSelectedParts.map((part) => `part=${part}`).join("&");
+    navigate(`/exams/${examId}/partIndex?${query}`);
   };
 
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
-          value={value}
-          onChange={handleChange}
+          value={tabIndex}
+          onChange={handleChangeTab}
           aria-label="basic tabs example"
         >
           <Tab label="Practice" {...a11yProps(0)} />
           <Tab label="Full test" {...a11yProps(1)} />
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
+      <CustomTabPanel value={tabIndex} index={0}>
         <Stack>
           <Box
             sx={{
@@ -92,31 +124,45 @@ export default function PracticeTabs() {
           </Box>
           <FormGroup>
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox name="part1" onChange={handleCheckboxChange} />
+              }
               label="Part 1 (6 questions)"
             />
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox name="part2" onChange={handleCheckboxChange} />
+              }
               label="Part 2 (25 questions)"
             />
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox name="part3" onChange={handleCheckboxChange} />
+              }
               label="Part 3 (39 questions)"
             />
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox name="part4" onChange={handleCheckboxChange} />
+              }
               label="Part 4 (30 questions)"
             />
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox name="part5" onChange={handleCheckboxChange} />
+              }
               label="Part 5 (30 questions)"
             />
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox name="part6" onChange={handleCheckboxChange} />
+              }
               label="Part 6 (16 questions)"
             />
             <FormControlLabel
-              control={<Checkbox />}
+              control={
+                <Checkbox name="part7" onChange={handleCheckboxChange} />
+              }
               label="Part 7 (54 questions)"
             />
           </FormGroup>
@@ -127,31 +173,27 @@ export default function PracticeTabs() {
 
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
-              {/* <InputLabel id="demo-simple-select-label">Limit</InputLabel> */}
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={limit}
-                label="Age"
+                value={limitTime}
                 onChange={handleChangeLimit}
-                placeholder="Time limit"
-                displayEmpty
               >
-                <MenuItem value="">
-                  <em>Time limit</em> {/* Placeholder option */}
+                <MenuItem value={0}>
+                  <em>Time limit</em>
                 </MenuItem>
-                <MenuItem value={10}>10 minutes</MenuItem>
-                <MenuItem value={20}>20 minutes</MenuItem>
-                <MenuItem value={30}>30 minutes</MenuItem>
-                <MenuItem value={40}>40 minutes</MenuItem>
-                <MenuItem value={50}>50 minutes</MenuItem>
-                <MenuItem value={60}>60 minutes</MenuItem>
-                <MenuItem value={70}>70 minutes</MenuItem>
-                <MenuItem value={80}>80 minutes</MenuItem>
-                <MenuItem value={90}>90 minutes</MenuItem>
-                <MenuItem value={100}>100 minutes</MenuItem>
-                <MenuItem value={110}>110 minutes</MenuItem>
-                <MenuItem value={120}>120 minutes</MenuItem>
+                <MenuItem value={600}>10 minutes</MenuItem>
+                <MenuItem value={1200}>20 minutes</MenuItem>
+                <MenuItem value={1800}>30 minutes</MenuItem>
+                <MenuItem value={2400}>40 minutes</MenuItem>
+                <MenuItem value={3000}>50 minutes</MenuItem>
+                <MenuItem value={3600}>60 minutes</MenuItem>
+                <MenuItem value={4200}>70 minutes</MenuItem>
+                <MenuItem value={4800}>80 minutes</MenuItem>
+                <MenuItem value={5600}>90 minutes</MenuItem>
+                <MenuItem value={6000}>100 minutes</MenuItem>
+                <MenuItem value={6600}>110 minutes</MenuItem>
+                <MenuItem value={7200}>120 minutes</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -163,12 +205,13 @@ export default function PracticeTabs() {
               px: 2,
               py: 0.5,
             }}
+            onClick={handlePractice}
           >
             Practice
           </Button>
         </Stack>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
+      <CustomTabPanel value={tabIndex} index={1}>
         <Stack>
           <Box
             sx={{
@@ -194,6 +237,8 @@ export default function PracticeTabs() {
               px: 2,
               py: 0.5,
             }}
+            component={Link}
+            to={`/`}
           >
             Start
           </Button>
