@@ -42,7 +42,7 @@ const LearningVocaPage: React.FC = () => {
     enabled: !!lessonId,
   });
 
-  const vocabularies = lesson?.__listWord__ || [];
+  const vocabularies = lesson?.listWord || [];
   const vocaLength = vocabularies.length;
 
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
@@ -58,7 +58,7 @@ const LearningVocaPage: React.FC = () => {
     if (currentVocaIdx === vocaLength - 1 && lesson) {
       // Finish learning
       navigate(
-        `/lesson/complete-learning?id=${lesson.id}&name=${lesson.name}&vocaSetId=${lesson.__groupTopic__.id}`,
+        `/lesson/complete-learning?id=${lesson.id}&name=${lesson.name}&vocaSetId=${lesson.groupTopic.id}`,
       );
     }
     setCurrentVocaIdx((prev) => Math.min(prev + 1, vocaLength - 1));
@@ -211,9 +211,7 @@ const LearningVocaPage: React.FC = () => {
         open={openExitDrawer}
         onClose={() => setOpenExitDrawer(false)}
         onClickStay={() => setOpenExitDrawer(false)}
-        exitLink={
-          isLoading ? "/" : `/voca/${lesson?.__groupTopic__.id}/lessons`
-        }
+        exitLink={isLoading ? "/" : `/voca/${lesson?.groupTopic.id}/lessons`}
       />
 
       {/* Audio */}

@@ -15,7 +15,7 @@ import ListWords from "./ListWords";
 
 const PIE_COLORS = ["#32CD32", "#E5E5E5"]; // Green and Grey
 
-const LesssonLearningResult = () => {
+const LessonLearningResultPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
@@ -28,7 +28,7 @@ const LesssonLearningResult = () => {
   });
 
   const currentResult = learningResult?.current;
-  const lessonName = learningResult?.current.__topic__.name;
+  const lessonName = learningResult?.current.topic.name;
   const accuracy = currentResult
     ? (currentResult.numCorrect / currentResult.totalWord) * 100
     : 0;
@@ -183,13 +183,13 @@ const LesssonLearningResult = () => {
           <ListWords
             status={VocabularyCardState.ERROR}
             title="Unfamiliar words"
-            vocabularies={currentResult?.__incorrectWord__ || []}
+            vocabularies={currentResult?.incorrectWord || []}
             sx={{ marginTop: 2 }}
           />
           <ListWords
             status={VocabularyCardState.SUCCESS}
             title="Words you know well"
-            vocabularies={currentResult?.__correctWord__ || []}
+            vocabularies={currentResult?.correctWord || []}
             sx={{ marginTop: 2 }}
           />
         </LessonMainContent>
@@ -198,4 +198,4 @@ const LesssonLearningResult = () => {
   );
 };
 
-export default LesssonLearningResult;
+export default LessonLearningResultPage;

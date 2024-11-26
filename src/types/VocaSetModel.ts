@@ -8,9 +8,9 @@ export default interface VocaSetModel {
   target: string;
   description: string;
 
-  __topics__: LessonModel[];
+  topics: LessonModel[];
 }
 
 export interface VocaSetWithUserProgress extends VocaSetModel {
-  __topics__: LessonWithUserProgress[];
+  topics: LessonWithUserProgress[];
 }

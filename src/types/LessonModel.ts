@@ -5,8 +5,8 @@ export default interface LessonModel {
   id: string;
   name: string;
   thumbnail: string;
-  __listWord__: VocabularyModel[];
-  __groupTopic__: VocaSetModel;
+  listWord: VocabularyModel[];
+  groupTopic: VocaSetModel;
 }
 
 export interface LessonWithUserProgress extends LessonModel {

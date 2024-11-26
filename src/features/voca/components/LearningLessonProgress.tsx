@@ -12,6 +12,7 @@ const LearningLessonProgress: React.FC<LearningLessonProgressProps> = ({
   totalWords,
   retainedWords,
 }) => {
+  const progress = (retainedWords / totalWords) * 100;
   return (
     <Stack spacing={0.5} direction="row">
       <Box sx={{ position: "relative", ...sx }}>
@@ -30,14 +31,14 @@ const LearningLessonProgress: React.FC<LearningLessonProgressProps> = ({
               background: "#8EE000",
               borderRadius: "23px",
               transform: "none",
-              width: `${(retainedWords / totalWords) * 100}% !important`,
+              width: `${progress}% !important`,
             },
           }}
         />
         <Typography
           fontSize={12}
           sx={{
-            color: "var(--text-light)",
+            color: "var(--text-main)",
             position: "absolute",
             left: "50%",
             top: "50%",

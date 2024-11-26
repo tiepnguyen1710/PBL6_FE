@@ -66,7 +66,7 @@ const VocaPracticePage: React.FC = () => {
     onSuccess: () => {
       console.log("Post learning result successfully");
       navigate(
-        `/lesson/learning-result?id=${lessonId}&vocaSetId=${lesson?.__groupTopic__.id}`,
+        `/lesson/learning-result?id=${lessonId}&vocaSetId=${lesson?.groupTopic.id}`,
       );
     },
   });
@@ -131,7 +131,7 @@ const VocaPracticePage: React.FC = () => {
 
   useEffect(() => {
     if (lesson) {
-      setVocabularies(lesson.__listWord__ || []);
+      setVocabularies(lesson.listWord || []);
     }
   }, [lesson]);
 
@@ -220,7 +220,7 @@ const VocaPracticePage: React.FC = () => {
             open={openExitDrawer}
             onClose={() => setOpenExitDrawer(false)} // onCloseDrawer
             onClickStay={() => setOpenExitDrawer(false)}
-            exitLink={`/voca/${lesson?.__groupTopic__.id}/lessons`}
+            exitLink={`/voca/${lesson?.groupTopic.id}/lessons`}
           />
         </Box>
       )}

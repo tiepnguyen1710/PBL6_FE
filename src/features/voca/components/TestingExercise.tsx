@@ -129,7 +129,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
       animate="fadeInRight"
       exit="fadeOutLeft"
       transition={{ duration: 0.3, type: "tween" }}
-      style={{ position: "absolute", top: 0, left: 0 }}
+      style={{ position: "absolute", top: 0, left: 0, width: "100%" }}
     >
       <Stack direction="row">
         {/* Gif deco */}

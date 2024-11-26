@@ -5,13 +5,13 @@ export type LearningResult = {
   numCorrect: number;
   totalWord: number;
   time: number;
-  __topic__: {
+  topic: {
     id: string;
     name: string;
     thumbnail: string;
   };
-  __correctWord__: VocabularyModel[];
-  __incorrectWord__: VocabularyModel[];
+  correctWord: VocabularyModel[];
+  incorrectWord: VocabularyModel[];
 };
 
 export type LearningResultResponse = {

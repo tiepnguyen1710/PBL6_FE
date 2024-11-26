@@ -38,10 +38,10 @@ const LessonsPage: React.FC = () => {
   });
 
   const userProgress: UserProgress = useMemo(() => {
-    const lessons = vocaSet?.__topics__ || [];
+    const lessons = vocaSet?.topics || [];
 
     const totalWords = lessons.reduce(
-      (acc, lesson) => acc + lesson.__listWord__.length,
+      (acc, lesson) => acc + lesson.listWord.length,
       0,
     );
 
@@ -63,11 +63,11 @@ const LessonsPage: React.FC = () => {
       retainedWords,
       newWords: totalWords - retainedWords,
     };
-  }, [vocaSet?.__topics__]);
+  }, [vocaSet?.topics]);
 
   console.log("vocaset", vocaSet);
 
-  const lessons = vocaSet?.__topics__ || [];
+  const lessons = vocaSet?.topics || [];
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -112,7 +112,7 @@ const LessonsPage: React.FC = () => {
                         id={lesson.id}
                         name={lesson.name}
                         thumbnail={lesson.thumbnail}
-                        totalWords={lesson.__listWord__.length}
+                        totalWords={lesson.listWord.length}
                         retainedWords={lesson.retainedWord}
                       />
                     ))

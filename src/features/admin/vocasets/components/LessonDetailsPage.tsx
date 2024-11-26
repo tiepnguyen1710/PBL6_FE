@@ -104,7 +104,7 @@ const LessonDetailsPage = () => {
 
   const lessonName = watch("name");
 
-  const vocabularies = lesson?.__listWord__ || [];
+  const vocabularies = lesson?.listWord || [];
 
   const { page, setPage, emptyRows, pageData, handleChangePage } =
     useAdminTablePagination<VocabularyModel>(vocabularies, VOCA_PAGE_SIZE);
