@@ -5,7 +5,7 @@ import RegisterRequest from "../types/RegisterRequest";
 
 export async function postLogin(
   username: string,
-  password: string
+  password: string,
 ): Promise<LoginResponse> {
   const response = await axios.post<LoginResponse>("/auth/login", {
     username,
@@ -23,5 +23,11 @@ export async function me(token: string) {
   const response = await axios.get<User>("/auth/me", {
     headers: { Authorization: `Bearer ${token}` },
   });
+  return response.data;
+}
+
+export async function loginGoggle(ggToken: string) {
+  const response = await axios.post("/auth/google", { token: ggToken });
+
   return response.data;
 }

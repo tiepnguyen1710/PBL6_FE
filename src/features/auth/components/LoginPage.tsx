@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -16,11 +16,13 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import RoundedInput from "../../../components/UI/RoundedInput";
 import RoundedPasswordInput from "./RoundedPasswordInput";
 
-import { loginAction } from "../../../stores/authSlice";
+import { authActions, loginAction } from "../../../stores/authSlice";
 import { AppDispatch } from "../../../stores";
 import LoginRequest from "../types/LoginRequest";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import { Alert } from "@mui/material";
+import { loginGoggle } from "../api/account-api";
+import LoginResponse from "../types/LoginResponse";
 
 // Interface for form data
 interface FormData {
@@ -61,9 +63,42 @@ const LoginPage: React.FC = () => {
     },
   });
 
+  const loginGoogleMutation = useMutation({
+    mutationFn: loginGoggle,
+    onSuccess: (responseData: LoginResponse) => {
+      dispatch(
+        authActions.login({
+          token: responseData.token,
+          user: responseData.user,
+        }),
+      );
+
+      navigate("/");
+      toast.success("Login successful!");
+    },
+  });
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     console.log("Form submitted with data:", data);
     mutate(data);
+  };
+
+  useEffect(() => {
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleCredentialResponse,
+    });
+
+    window.google.accounts.id.renderButton(
+      document.getElementById("google-signin-button"),
+      { theme: "outline", size: "large" },
+    );
+  }, []);
+
+  const handleCredentialResponse = (response: { credential: string }) => {
+    console.log("Encoded JWT ID Token:", response.credential);
+    // Send this token to your backend for verification
+    loginGoogleMutation.mutate(response.credential);
   };
 
   return (
@@ -132,12 +167,15 @@ const LoginPage: React.FC = () => {
             backgroundColor: "success.main",
             borderRadius: "32px",
             py: "12px",
-            width: { xs: "100%", lg: "230px" },
+            width: "100%",
             alignSelf: { lg: "flex-end" },
           }}
         >
-          Submit
+          Login
         </Button>
+        <div style={{ marginTop: "-12px" }}>
+          <div id="google-signin-button"></div>
+        </div>
       </Stack>
     </>
   );
