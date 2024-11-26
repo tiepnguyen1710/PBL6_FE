@@ -2,13 +2,15 @@ import { Box, LinearProgress, Stack, SxProps, Typography } from "@mui/material";
 import StarIcon from "./StarIcon";
 
 interface LearningLessonProgressProps {
-  fullProgress?: boolean;
   sx?: SxProps;
+  totalWords: number;
+  retainedWords: number;
 }
 
 const LearningLessonProgress: React.FC<LearningLessonProgressProps> = ({
   sx,
-  fullProgress = false,
+  totalWords,
+  retainedWords,
 }) => {
   return (
     <Stack spacing={0.5} direction="row">
@@ -28,7 +30,7 @@ const LearningLessonProgress: React.FC<LearningLessonProgressProps> = ({
               background: "#8EE000",
               borderRadius: "23px",
               transform: "none",
-              width: "30% !important",
+              width: `${(retainedWords / totalWords) * 100}% !important`,
             },
           }}
         />
@@ -40,12 +42,13 @@ const LearningLessonProgress: React.FC<LearningLessonProgressProps> = ({
             left: "50%",
             top: "50%",
             transform: "translate(-50%, -50%)",
+            fontWeight: "medium",
           }}
         >
-          12/20
+          {retainedWords}/{totalWords}
         </Typography>
       </Box>
-      <StarIcon active={fullProgress} />
+      <StarIcon active={retainedWords == totalWords} />
     </Stack>
   );
 };

@@ -8,3 +8,8 @@ export default interface LessonModel {
   __listWord__: VocabularyModel[];
   __groupTopic__: VocaSetModel;
 }
+
+export interface LessonWithUserProgress extends LessonModel {
+  isLearned: boolean;
+  retainedWord: number;
+}

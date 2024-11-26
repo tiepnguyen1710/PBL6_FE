@@ -1,4 +1,4 @@
-import LessonModel from "./LessonModel";
+import LessonModel, { LessonWithUserProgress } from "./LessonModel";
 
 export default interface VocaSetModel {
   id: string;
@@ -9,4 +9,8 @@ export default interface VocaSetModel {
   description: string;
 
   __topics__: LessonModel[];
+}
+
+export interface VocaSetWithUserProgress extends VocaSetModel {
+  __topics__: LessonWithUserProgress[];
 }

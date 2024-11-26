@@ -8,9 +8,17 @@ interface LessonCourseProps {
   id: string; // lesson id
   name: string;
   thumbnail: string;
+  totalWords: number;
+  retainedWords: number;
 }
 
-const LessonCourse: React.FC<LessonCourseProps> = ({ id, name, thumbnail }) => {
+const LessonCourse: React.FC<LessonCourseProps> = ({
+  id,
+  name,
+  thumbnail,
+  totalWords,
+  retainedWords,
+}) => {
   const [openPopup, setOpenPopup] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +36,11 @@ const LessonCourse: React.FC<LessonCourseProps> = ({ id, name, thumbnail }) => {
         onClickCard={handleClickCard}
         cardRef={cardRef}
       />
-      <LearningLessonProgress sx={{ width: "173px" }} fullProgress={false} />
+      <LearningLessonProgress
+        sx={{ width: "173px" }}
+        totalWords={totalWords}
+        retainedWords={retainedWords}
+      />
       <LessonPopup
         reviewable
         anchorEle={cardRef.current}

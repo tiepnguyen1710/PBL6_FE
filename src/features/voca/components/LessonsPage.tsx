@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Content from "../../../components/layout/Content";
 import {
   alpha,
@@ -22,9 +22,10 @@ import LessonComment from "./LessonComment";
 import CommentIcon from "../assets/comment-icon.svg";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getVocaSetById } from "../../admin/vocasets/api/voca-set-api";
 import LessonCourse from "./LessonCourse";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
+import { getVocaSetWithUserProgress } from "../api/voca-domain";
+import { UserProgress } from "../types/UserProgress";
 
 const LessonsPage: React.FC = () => {
   const { vocaSetId } = useParams();
@@ -32,9 +33,37 @@ const LessonsPage: React.FC = () => {
 
   const { data: vocaSet, isLoading } = useQuery({
     queryKey: ["vocaSet", { id: vocaSetId }],
-    queryFn: () => getVocaSetById(vocaSetId!),
+    queryFn: () => getVocaSetWithUserProgress(vocaSetId!),
     enabled: !!vocaSetId,
   });
+
+  const userProgress: UserProgress = useMemo(() => {
+    const lessons = vocaSet?.__topics__ || [];
+
+    const totalWords = lessons.reduce(
+      (acc, lesson) => acc + lesson.__listWord__.length,
+      0,
+    );
+
+    const retainedWords = lessons.reduce(
+      (acc, lesson) => acc + lesson.retainedWord,
+      0,
+    );
+
+    const learnedLessons = lessons.reduce((acc, lesson) => {
+      if (lesson.isLearned) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+
+    return {
+      learnedLessons,
+      unlearnedLessons: lessons.length - learnedLessons,
+      retainedWords,
+      newWords: totalWords - retainedWords,
+    };
+  }, [vocaSet?.__topics__]);
 
   console.log("vocaset", vocaSet);
 
@@ -83,6 +112,8 @@ const LessonsPage: React.FC = () => {
                         id={lesson.id}
                         name={lesson.name}
                         thumbnail={lesson.thumbnail}
+                        totalWords={lesson.__listWord__.length}
+                        retainedWords={lesson.retainedWord}
                       />
                     ))
                   ) : (
@@ -223,22 +254,22 @@ const LessonsPage: React.FC = () => {
                   <LessonProgressCard
                     label="Learned lessons"
                     icon={GoldStarIcon}
-                    quantity={0}
+                    quantity={userProgress.learnedLessons}
                   />
                   <LessonProgressCard
                     label="Unlearned lessons"
                     icon={RedStarIcon}
-                    quantity={4}
+                    quantity={userProgress.unlearnedLessons}
                   />
                   <LessonProgressCard
                     label="Retained words"
                     icon={TwoCardIcon}
-                    quantity={5}
+                    quantity={userProgress.retainedWords}
                   />
                   <LessonProgressCard
                     label="New words"
                     icon={TwoRedCardIcon}
-                    quantity={10}
+                    quantity={userProgress.newWords}
                   />
                 </Box>
               </Paper>
