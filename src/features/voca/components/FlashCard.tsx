@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import { ReactNode } from "react";
 
-import TurnIcon from "./TurnIcon";
+import TurnIcon from "../../../components/TurnIcon";
 import CuteButton from "./CuteButton";
 
 interface FlashCardProps {

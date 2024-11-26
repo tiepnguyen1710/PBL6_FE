@@ -1,13 +1,4 @@
-import {
-  Box,
-  IconButton,
-  LinearProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
-
-import WhiteLogo from "../assets/logo-white.svg";
-import { RxCross2 } from "react-icons/rx";
+import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import { useRef, useState } from "react";
 import ArrowIcon from "./ArrowIcon";
 import FlashCardComposition from "./FlashCardComposition";
@@ -17,11 +8,15 @@ import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnim
 import { AnimationType } from "../types/FlashCardCompositionAnimationType";
 import { useQuery } from "@tanstack/react-query";
 import { getLessonById } from "../../admin/vocasets/api/lesson-api.ts";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Vocabulary from "../../../types/Vocabulary.ts";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop.tsx";
+import LessonHeader from "./LessonHeader.tsx";
+import LessonMainContent from "./LessonMainContent.tsx";
+import SuspendLearningDrawer from "./SuspendLearningDrawer.tsx";
 
 const LearningVocaPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
 
@@ -47,14 +42,25 @@ const LearningVocaPage: React.FC = () => {
     enabled: !!lessonId,
   });
 
-  const vocabularies = lesson?.__listWord__ || [];
+  const vocabularies = lesson?.listWord || [];
   const vocaLength = vocabularies.length;
 
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
 
+  const [openExitDrawer, setOpenExitDrawer] = useState(false);
+
   const handleNext = () => {
+    // handleNext is recreated every time the component re-renders
+    // so the currentVocaIdx is the voca index of current render
     setPrevVocaIdx(currentVocaIdx);
+
+    if (currentVocaIdx === vocaLength - 1 && lesson) {
+      // Finish learning
+      navigate(
+        `/lesson/complete-learning?id=${lesson.id}&name=${lesson.name}&vocaSetId=${lesson.groupTopic.id}`,
+      );
+    }
     setCurrentVocaIdx((prev) => Math.min(prev + 1, vocaLength - 1));
   };
 
@@ -82,70 +88,25 @@ const LearningVocaPage: React.FC = () => {
   const handleWrongAnswer = () => {
     playWrongAnswerAudio();
   };
+
   return (
     <Stack sx={{ minHeight: "100vh" }}>
       {/*  Header */}
-      <Box
-        sx={{
-          backgroundColor: "primary.main",
-        }}
-      >
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{
-            maxWidth: "980px",
-            minHeight: "70px",
-            mx: "auto",
-          }}
-          justifyContent="space-between"
-        >
-          <IconButton>
-            <RxCross2 style={{ color: "white", fontSize: "2rem" }} />
-          </IconButton>
-          <Stack alignItems="center">
-            <img src={WhiteLogo} style={{ height: "28px" }} />
-            <Typography
-              color="white"
-              sx={{
-                fontFamily: '"Potta One"',
-                fontSize: "12px",
-              }}
-            >
-              Learn by heart
-            </Typography>
-          </Stack>
-          <Box
-            sx={{
-              borderRadius: "12px",
-              border: "2px solid white",
-              display: "inline-block",
-              minWidth: "110px",
-              textAlign: "center",
-            }}
-            onClick={() => {
-              setCurrentVocaIdx(0);
-              setPrevVocaIdx(0);
-            }}
-          >
-            <Typography color="white" sx={{ fontSize: 18, lineHeight: "52px" }}>
-              LEARN
-            </Typography>
-          </Box>
-        </Stack>
-      </Box>
+      <LessonHeader
+        title="learn"
+        lessonName={lesson?.name}
+        onExit={() => setOpenExitDrawer(true)}
+      />
 
       {isLoading ? (
-        <CustomBackdrop />
+        <>
+          <CustomBackdrop />
+
+          {/* Placeholder space */}
+          <Box sx={{ flexGrow: 1 }}></Box>
+        </>
       ) : (
-        <Box
-          sx={{
-            width: "100%",
-            maxWidth: "962px",
-            mx: "auto",
-            flexGrow: 1,
-          }}
-        >
+        <LessonMainContent>
           {/* Question progress */}
           <Stack
             direction="row"
@@ -214,7 +175,7 @@ const LearningVocaPage: React.FC = () => {
               );
             })}
           </div>
-        </Box>
+        </LessonMainContent>
       )}
 
       {/* Next/prev button */}
@@ -245,6 +206,14 @@ const LearningVocaPage: React.FC = () => {
           />
         </Stack>
       </Box>
+
+      <SuspendLearningDrawer
+        open={openExitDrawer}
+        onClose={() => setOpenExitDrawer(false)}
+        onClickStay={() => setOpenExitDrawer(false)}
+        exitLink={isLoading ? "/" : `/voca/${lesson?.groupTopic.id}/lessons`}
+      />
+
       {/* Audio */}
       <audio id="audio-answer-wrong" ref={wrongAnswerAudioRef}>
         <source src={WrongAnswerAudio} type="audio/mpeg" />

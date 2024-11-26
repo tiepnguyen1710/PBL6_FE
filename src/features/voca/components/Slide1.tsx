@@ -2,6 +2,7 @@ import React from "react";
 import FlashCard from "./FlashCard";
 import { Typography } from "@mui/material";
 import Vocabulary from "../../../types/Vocabulary";
+import { vocaWordClassFullName2Abbr } from "../../../utils/helper";
 
 interface Slide1 {
   onClick?: () => void;
@@ -17,13 +18,13 @@ const Slide1: React.FC<Slide1> = ({ onClick, voca }) => {
       <Typography
         sx={{
           my: "10px",
-          fontSize: "25px",
+          fontSize: "24px",
           lineHeight: "29px",
           color: "#4C4C4C",
         }}
       >
         <Typography variant="inherit" component="span" color="primary.main">
-          {`(${voca.type})` + " "}
+          {`(${vocaWordClassFullName2Abbr(voca.type)})` + " "}
         </Typography>
         {voca.definition}
       </Typography>

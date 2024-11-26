@@ -10,10 +10,10 @@ import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { AddPhotoAlternate } from "@mui/icons-material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import RoundedFileInput from "./RoundedFileInput";
-import VocabularyCardWrapper from "./VocabularyCardWrapper";
-import VocabularyFrontSide from "./VocabularyFrontSide";
+import VocabularyCardWrapper from "../../../../components/VocabularyCardWrapper";
+import VocabularyFrontSide from "../../../../components/VocabularyFrontSide";
 import { useEffect, useState } from "react";
-import VocabularyBackSide from "./VocabularyBackSide";
+import VocabularyBackSide from "../../../../components/VocabularyBackSide";
 import {
   fileList2Base64,
   getPlaceholderImage,

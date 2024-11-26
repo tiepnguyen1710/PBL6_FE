@@ -49,6 +49,11 @@ import ExamsListPage from "./features/toeic-exam/components/Exams/ExamsLibraryPa
 import PartIndex from "./features/toeic-exam/components/PartIndex.tsx";
 import ResultPage from "./features/toeic-exam/components/ResultPage.tsx";
 
+import VocaPracticePage from "./features/voca/components/VocaPracticePage.tsx";
+import VocaTestConfirmPage from "./features/voca/components/VocaTestConfirmPage.tsx";
+import CompleteLearningLessonPage from "./features/voca/components/CompleteLearningLessonPage.tsx";
+import LessonLearningResultPage from "./features/voca/components/LessonLearningResultPage.tsx";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -154,6 +159,22 @@ const router = createBrowserRouter([
       {
         path: "learn",
         element: <LearningVocaPage />,
+      },
+      {
+        path: "practice",
+        element: <VocaPracticePage />,
+      },
+      {
+        path: "confirm-start-testing",
+        element: <VocaTestConfirmPage />,
+      },
+      {
+        path: "complete-learning",
+        element: <CompleteLearningLessonPage />,
+      },
+      {
+        path: "learning-result",
+        element: <LessonLearningResultPage />,
       },
     ],
   },

@@ -29,7 +29,7 @@ import CustomModal from "../../../../components/UI/CustomModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getVocaSetById, updateVocaSet } from "../api/voca-set-api";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
-import useFileInput from "../hooks/useFileInput";
+import useFileInput from "../../../../hooks/useFileInput";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import VocaSetLevel from "../../../../types/VocaSetLevel";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
@@ -119,7 +119,7 @@ const VocaSetDetailsPage = () => {
 
   const openDeleteModal = Boolean(deletedLessonId);
 
-  const lessons = data?.__topics__ || [];
+  const lessons = data?.topics || [];
 
   const filteredlessons = lessons.filter((lesson) =>
     lesson.name.toLowerCase().includes(searchLesson),
@@ -128,7 +128,7 @@ const VocaSetDetailsPage = () => {
     useAdminTablePagination<LessonModel>(filteredlessons, LESSON_PAGE_SIZE);
 
   // console.log("pageData", pageData);
-  // console.log("data.__topic__", data?.__topics__);
+  // console.log("data.topic", data?.topics);
   // console.log("data", data);
 
   const {
@@ -437,7 +437,7 @@ const VocaSetDetailsPage = () => {
                 <TableRow>
                   <TablePagination
                     rowsPerPageOptions={[LESSON_PAGE_SIZE]}
-                    count={data?.__topics__?.length || 0}
+                    count={data?.topics?.length || 0}
                     rowsPerPage={LESSON_PAGE_SIZE}
                     page={page}
                     onPageChange={handleChangePage}

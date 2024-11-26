@@ -3,7 +3,7 @@ import RoundedInput, {
 } from "../../../../components/UI/RoundedInput";
 import { IconButton } from "@mui/material";
 import { Upload } from "@mui/icons-material";
-import useFileInput from "../hooks/useFileInput";
+import useFileInput from "../../../../hooks/useFileInput";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 interface FileInputProps {

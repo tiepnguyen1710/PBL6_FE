@@ -1,22 +1,56 @@
 import { Stack } from "@mui/material";
 import { LessonCard } from "../../../components/LessonCard";
 import LearningLessonProgress from "./LearningLessonProgress";
+import LessonPopup from "./LessonPopup";
+import { useRef, useState } from "react";
 
 interface LessonCourseProps {
+  id: string; // lesson id
   name: string;
   thumbnail: string;
-  onClick?: () => void;
+  totalWords: number;
+  retainedWords: number;
 }
 
 const LessonCourse: React.FC<LessonCourseProps> = ({
+  id,
   name,
   thumbnail,
-  onClick,
+  totalWords,
+  retainedWords,
 }) => {
+  const [openPopup, setOpenPopup] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleClickCard = (event: React.MouseEvent<HTMLDivElement>) => {
+    setOpenPopup(!openPopup);
+
+    // onClick?.();
+  };
+
   return (
-    <Stack spacing={1.25} sx={{ width: "205px" }}>
-      <LessonCard name={name} image={thumbnail} onClickCard={onClick} />
-      <LearningLessonProgress sx={{ width: "173px" }} fullProgress={false} />
+    <Stack spacing={1.25} sx={{ width: "205px", position: "relative" }}>
+      <LessonCard
+        name={name}
+        image={thumbnail}
+        onClickCard={handleClickCard}
+        cardRef={cardRef}
+      />
+      <LearningLessonProgress
+        sx={{ width: "173px" }}
+        totalWords={totalWords}
+        retainedWords={retainedWords}
+      />
+      <LessonPopup
+        reviewable
+        anchorEle={cardRef.current}
+        open={openPopup}
+        onClose={() => setOpenPopup(false)}
+        lessonId={id}
+        lessonName={name}
+        retainedWords={0}
+        totalWords={0}
+      />
     </Stack>
   );
 };

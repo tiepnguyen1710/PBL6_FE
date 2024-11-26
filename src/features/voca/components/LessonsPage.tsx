@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Content from "../../../components/layout/Content";
 import {
   alpha,
@@ -20,33 +20,57 @@ import TwoCardIcon from "../assets/course-progress-learned-1.svg";
 import TwoRedCardIcon from "../assets/course-progress-not-learn-1.svg";
 import LessonComment from "./LessonComment";
 import CommentIcon from "../assets/comment-icon.svg";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getVocaSetById } from "../../admin/vocasets/api/voca-set-api";
 import LessonCourse from "./LessonCourse";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
+import { getVocaSetWithUserProgress } from "../api/voca-domain";
+import { UserProgress } from "../types/UserProgress";
 
 const LessonsPage: React.FC = () => {
-  const navigate = useNavigate();
   const { vocaSetId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
 
   const { data: vocaSet, isLoading } = useQuery({
     queryKey: ["vocaSet", { id: vocaSetId }],
-    queryFn: () => getVocaSetById(vocaSetId!),
+    queryFn: () => getVocaSetWithUserProgress(vocaSetId!),
     enabled: !!vocaSetId,
   });
 
+  const userProgress: UserProgress = useMemo(() => {
+    const lessons = vocaSet?.topics || [];
+
+    const totalWords = lessons.reduce(
+      (acc, lesson) => acc + lesson.listWord.length,
+      0,
+    );
+
+    const retainedWords = lessons.reduce(
+      (acc, lesson) => acc + lesson.retainedWord,
+      0,
+    );
+
+    const learnedLessons = lessons.reduce((acc, lesson) => {
+      if (lesson.isLearned) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+
+    return {
+      learnedLessons,
+      unlearnedLessons: lessons.length - learnedLessons,
+      retainedWords,
+      newWords: totalWords - retainedWords,
+    };
+  }, [vocaSet?.topics]);
+
   console.log("vocaset", vocaSet);
 
-  const lessons = vocaSet?.__topics__ || [];
+  const lessons = vocaSet?.topics || [];
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
-  };
-
-  const handleClickLesson = (selectedLessonId: string) => {
-    navigate(`/lesson/learn?id=${selectedLessonId}`);
   };
 
   return (
@@ -85,9 +109,11 @@ const LessonsPage: React.FC = () => {
                   {lessons.length > 0 ? (
                     lessons.map((lesson) => (
                       <LessonCourse
+                        id={lesson.id}
                         name={lesson.name}
                         thumbnail={lesson.thumbnail}
-                        onClick={() => handleClickLesson(lesson.id)}
+                        totalWords={lesson.listWord.length}
+                        retainedWords={lesson.retainedWord}
                       />
                     ))
                   ) : (
@@ -153,7 +179,7 @@ const LessonsPage: React.FC = () => {
                     },
                   }}
                 >
-                  <Tab label="Target" />
+                  <Tab label="Aim" />
                   <Tab label="Description" />
                 </Tabs>
 
@@ -228,22 +254,22 @@ const LessonsPage: React.FC = () => {
                   <LessonProgressCard
                     label="Learned lessons"
                     icon={GoldStarIcon}
-                    quantity={0}
+                    quantity={userProgress.learnedLessons}
                   />
                   <LessonProgressCard
                     label="Unlearned lessons"
                     icon={RedStarIcon}
-                    quantity={4}
+                    quantity={userProgress.unlearnedLessons}
                   />
                   <LessonProgressCard
                     label="Retained words"
                     icon={TwoCardIcon}
-                    quantity={5}
+                    quantity={userProgress.retainedWords}
                   />
                   <LessonProgressCard
                     label="New words"
                     icon={TwoRedCardIcon}
-                    quantity={10}
+                    quantity={userProgress.newWords}
                   />
                 </Box>
               </Paper>

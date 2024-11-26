@@ -160,3 +160,10 @@ body {
   font-weight: 400;
   color: var(--text-primary);
 }
+
+#google-signin-button div[role="button"] {
+  border-radius: 32px;
+  min-height: 52px;
+  padding-left: 16px;
+  padding-right: 16px;
+}

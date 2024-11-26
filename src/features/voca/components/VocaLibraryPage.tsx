@@ -122,9 +122,11 @@ const VocaLibraryPage: React.FC = () => {
                   return isRendered;
                 })
                 .map((vocaSet: VocaSetInfo) => (
-                  <Grid2 sx={{ width: "250px", marginRight: 1 }}>
+                  <Grid2
+                    key={vocaSet.id}
+                    sx={{ width: "250px", marginRight: 1 }}
+                  >
                     <VocaSet
-                      key={vocaSet.id}
                       id={vocaSet.id}
                       title={vocaSet.title}
                       qualification={vocaSet.qualification}
