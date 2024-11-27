@@ -1,5 +1,5 @@
 import axios from "../../../axios";
-import { User } from "../types/auth";
+import { User } from "../../../types/auth";
 import LoginResponse from "../types/LoginResponse";
 import RegisterRequest from "../types/RegisterRequest";
 
