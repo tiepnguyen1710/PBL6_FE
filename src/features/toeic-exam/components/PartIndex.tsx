@@ -13,6 +13,7 @@ import Part5 from "./Part5";
 import Part7 from "./Part7";
 import Part6 from "./Part6";
 import SubMitBox from "./SubmitBox/SubmitBox";
+import Content from "../../../components/layout/Content";
 
 const PartIndex = () => {
   const [searchParams] = useSearchParams();
@@ -61,63 +62,65 @@ const PartIndex = () => {
       case "part7":
         return <Part7 partData={examData?.partData[6]} />;
       default:
-        return <div>Không tìm thấy part này.</div>;
+        return <div>Cannot find this part</div>;
     }
   };
   return (
-    <Container maxWidth="sm">
-      <Box my={2}>
-        <Grid2 container spacing={2}>
-          <Grid2 size={9}>
-            {isPending ? (
-              "...Loading"
-            ) : (
+    <Content>
+      <Container maxWidth="sm">
+        <Box my={2}>
+          <Grid2 container spacing={2}>
+            <Grid2 size={9}>
+              {isPending ? (
+                "...Loading"
+              ) : (
+                <Box
+                  sx={{
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    borderRadius: 3,
+                  }}
+                  padding={3}
+                >
+                  {renderPart()}
+                </Box>
+              )}
+            </Grid2>
+            <Grid2 size={3}>
               <Box
+                padding={2}
                 sx={{
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                   borderRadius: 3,
+                  position: "sticky",
+                  top: "50px",
+                  alignSelf: "flex-start",
                 }}
-                padding={3}
               >
-                {renderPart()}
+                <SubMitBox partData={examData?.partData || []} />
               </Box>
-            )}
+            </Grid2>
           </Grid2>
-          <Grid2 size={3}>
-            <Box
-              padding={2}
-              sx={{
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                borderRadius: 3,
-                position: "sticky",
-                top: "50px",
-                alignSelf: "flex-start",
-              }}
-            >
-              <SubMitBox partData={examData?.partData || []} />
-            </Box>
-          </Grid2>
-        </Grid2>
-      </Box>
+        </Box>
 
-      <div style={{ marginTop: "2rem" }}>
-        <Button
-          variant="outlined"
-          disabled={currentIndex === 0}
-          onClick={handlePrevious}
-          sx={{ marginRight: 1 }}
-        >
-          Back
-        </Button>
-        <Button
-          variant="contained"
-          disabled={currentIndex === selectedParts.length - 1}
-          onClick={handleNext}
-        >
-          Next
-        </Button>
-      </div>
-    </Container>
+        <div style={{ marginTop: "2rem" }}>
+          <Button
+            variant="outlined"
+            disabled={currentIndex === 0}
+            onClick={handlePrevious}
+            sx={{ marginRight: 1 }}
+          >
+            Back
+          </Button>
+          <Button
+            variant="contained"
+            disabled={currentIndex === selectedParts.length - 1}
+            onClick={handleNext}
+          >
+            Next
+          </Button>
+        </div>
+      </Container>
+    </Content>
   );
 };
 

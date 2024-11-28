@@ -17,7 +17,6 @@ import {
 } from "../types/examType";
 import Grid from "@mui/material/Grid2";
 import { Editor } from "@tinymce/tinymce-react";
-import { toast } from "react-toastify";
 import { uploadFile } from "../api/examApi";
 import _ from "lodash";
 import { convertExamData } from "../utils/helper";
@@ -40,7 +39,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
     length: TOEIC_PARTS.Part1.groupQuestion,
   });
   const [part1Data, setPart1Data] = useState<groupQuestionData[]>(
-    Array.from({ length: TOEIC_PARTS.Part1.groupQuestion }, (_, index) => ({
+    Array.from({ length: TOEIC_PARTS.Part1.groupQuestion }, (_) => ({
       validate: validateState.blank,
       audioUrl: null,
       audioPreview: "",
@@ -49,12 +48,12 @@ const CreatePart1: React.FC<CrPartProps1> = ({
       passage: "",
       questionData: Array.from(
         { length: TOEIC_PARTS.Part1.questionPerGroup },
-        (_, index) => ({
+        (_) => ({
           questionNumber: 0,
           question: "",
           answer: Array.from(
             { length: TOEIC_PARTS.Part1.answerCount },
-            (_, index) => "",
+            (_) => "",
           ),
           correctAnswer: "",
         }),
@@ -112,7 +111,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
 
     //validate answer
     let isValidAnswer = true;
-    let isFullBlank = true;
+    //let isFullBlank = true;
     let indexA = -1;
     for (let i = 0; i < part1Data[groupPara].questionData.length; i++) {
       for (
@@ -125,7 +124,8 @@ const CreatePart1: React.FC<CrPartProps1> = ({
           indexA = j;
           break;
         } else {
-          isFullBlank = false;
+          break;
+          // isFullBlank = false;
         }
       }
       indexQ = i;

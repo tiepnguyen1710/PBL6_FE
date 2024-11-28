@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logos/logo.svg";
 import LogoMini from "../../../assets/logos/logomini.png";
 

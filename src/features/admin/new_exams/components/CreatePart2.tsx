@@ -33,7 +33,7 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
     length: TOEIC_PARTS.Part2.groupQuestion,
   });
   const [part2Data, setPart2Data] = useState<groupQuestionData[]>(
-    Array.from({ length: TOEIC_PARTS.Part2.groupQuestion }, (_, index) => ({
+    Array.from({ length: TOEIC_PARTS.Part2.groupQuestion }, (_) => ({
       validate: validateState.blank,
       audioUrl: null,
       audioPreview: "",
@@ -42,12 +42,12 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
       passage: "",
       questionData: Array.from(
         { length: TOEIC_PARTS.Part2.questionPerGroup },
-        (_, index) => ({
+        (_) => ({
           questionNumber: 0,
           question: "",
           answer: Array.from(
             { length: TOEIC_PARTS.Part2.answerCount },
-            (_, index) => "",
+            (_) => "",
           ),
           correctAnswer: "",
         }),
@@ -97,7 +97,7 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
 
     //validate answer
     let isValidAnswer = true;
-    let isFullBlank = true;
+    //let isFullBlank = true;
     let indexA = -1;
     for (let i = 0; i < part2Data[groupPara].questionData.length; i++) {
       for (
@@ -110,7 +110,8 @@ const CreatePart2: React.FC<CrPartProps> = ({ updateExamData }) => {
           indexA = j;
           break;
         } else {
-          isFullBlank = false;
+          break;
+          //isFullBlank = false;
         }
       }
       indexQ = i;

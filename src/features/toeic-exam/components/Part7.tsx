@@ -45,7 +45,7 @@ const Part7: React.FC<Part7Props> = ({ partData }) => {
       }),
     );
 
-    dispatch(setAnswer({ questionId, answer }));
+    dispatch(setAnswer({ idQuestion: questionId, answer }));
   };
   return (
     <>

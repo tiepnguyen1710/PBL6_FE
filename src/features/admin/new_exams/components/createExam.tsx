@@ -135,12 +135,12 @@ export default function CreateExam() {
     mutationFn: async (newExam: NewExamRequest) => {
       return await createExam(newExam);
     },
-    onSuccess(data, variables, context) {
+    onSuccess() {
       setExamData(initExamData);
       navigate("/admin/exam-set");
       toast.success("Exam created successfully");
     },
-    onError(error, variables, context) {
+    onError(error) {
       console.log("error", error);
       toast.error("Create Exam Error");
     },
