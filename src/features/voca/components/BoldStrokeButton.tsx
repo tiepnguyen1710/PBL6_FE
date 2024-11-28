@@ -1,6 +1,6 @@
 import { Button, styled } from "@mui/material";
 
-const BoldStrokeButton = styled(Button)(({ theme, variant }) => ({
+const BoldStrokeButton = styled(Button)(({ theme, variant, disabled }) => ({
   boxShadow: "none",
   width: "100%",
   fontSize: "15px",
@@ -18,6 +18,7 @@ const BoldStrokeButton = styled(Button)(({ theme, variant }) => ({
   ...(variant === "contained" && {
     backgroundColor: theme.palette.primary.main,
     borderBottom: `5px solid ${theme.palette.primary.dark}`,
+    ...(disabled && { borderBottomColor: "inherit" }),
   }),
 }));
 

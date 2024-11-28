@@ -134,7 +134,7 @@ const UserHomePage = () => {
 
               <UserTargetInfo
                 label="Target Score"
-                figure={user?.targetScore.toString() || "450"}
+                figure={user?.targetScore?.toString() || "450"}
                 icon={<TargetIcon sx={{ fontSize: 28 }} />}
                 onEdit={() => setOpenChangeTargetModal(true)}
               />
