@@ -30,6 +30,7 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./features/home/components/HomePage.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setupAxiosInterceptors } from "./axios.ts";
 
 import Admin from "./components/layout/admin/Admin.tsx";
 import Dashboard from "./features/admin/dashboard/Dashboard.tsx";
@@ -227,6 +228,8 @@ const router = createBrowserRouter([
   //   ],
   // },
 ]);
+
+setupAxiosInterceptors(store);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
