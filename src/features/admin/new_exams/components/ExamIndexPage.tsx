@@ -15,7 +15,7 @@ import { Box, Stack } from "@mui/system";
 import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import RoundedInput from "../../../../components/UI/RoundedInput";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchAllExam } from "../api/examApi";
 import { useNavigate } from "react-router-dom";
 import { IExamModel } from "../types/Exam";
@@ -28,7 +28,6 @@ import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 
 const ExamSet = () => {
   const EXAMSET_PAGE_SIZE = 3;
-  const queryClient = new QueryClient();
   const navigate = useNavigate();
   const [examSets, setExamSets] = useState<IExamModel[] | null>();
 

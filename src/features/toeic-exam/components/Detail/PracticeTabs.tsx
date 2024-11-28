@@ -66,7 +66,7 @@ export default function PracticeTabs() {
   const routeParams = useParams<{ examId: string }>();
   const examId = routeParams.examId;
 
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 

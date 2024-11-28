@@ -1,5 +1,5 @@
 import axiosClient from "../../../../axios";
-import { IExamModel, IExamSetResponse } from "../types/Exam";
+import { IExamSetResponse } from "../types/Exam";
 import { ExamResponse } from "../types/ExamResponse";
 import NewExamRequest from "../types/NewExamRequest";
 const api_url = import.meta.env.VITE_API_URL;

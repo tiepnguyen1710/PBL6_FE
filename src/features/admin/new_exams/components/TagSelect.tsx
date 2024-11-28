@@ -1,5 +1,5 @@
 import React from "react";
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select, MenuItem, FormControl } from "@mui/material";
 
 interface TagSelectProps {
   labels: string[]; // Danh sách tên tag (labels)

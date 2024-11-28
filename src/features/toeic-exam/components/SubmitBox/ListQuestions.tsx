@@ -15,7 +15,7 @@ const ListQuestion: React.FC<partDataChosenProps> = ({ partDataChosen }) => {
     <>
       {partDataChosen.map((partChosen, PartChosenIndex) => {
         return (
-          <>
+          <Box key={PartChosenIndex}>
             <Typography
               sx={{
                 fontWeight: "600",
@@ -59,7 +59,7 @@ const ListQuestion: React.FC<partDataChosenProps> = ({ partDataChosen }) => {
                 });
               })}
             </Box>
-          </>
+          </Box>
         );
       })}
     </>

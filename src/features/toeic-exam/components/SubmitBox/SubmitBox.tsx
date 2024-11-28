@@ -48,7 +48,7 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
     setPartDataChosen(partDataChosen);
   }, [partData]);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: async (data: PracticeRequest) => {
       const responseData = await postPractice(data);
       return responseData;
