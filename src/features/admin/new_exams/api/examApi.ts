@@ -2,12 +2,11 @@ import axiosClient from "../../../../axios";
 import { IExamSetResponse } from "../types/Exam";
 import { ExamResponse } from "../types/ExamResponse";
 import NewExamRequest from "../types/NewExamRequest";
-const api_url = import.meta.env.VITE_API_URL;
 
 const uploadFile = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET_NAME); // Cấu hình trong Cloudinary
+  formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET_NAME);
 
   try {
     const isAudio = file.type.startsWith("audio/");
@@ -27,24 +26,22 @@ const uploadFile = async (file: File) => {
 };
 
 const fetchAllExam = async () => {
-  const response = await axiosClient.get<IExamSetResponse>(`${api_url}/test`);
+  const response = await axiosClient.get<IExamSetResponse>(`test`);
   return response.data;
 };
 
 const fetchExamById = async (examId: string) => {
-  const response = await axiosClient.get<ExamResponse>(
-    `${api_url}/test/${examId}`,
-  );
+  const response = await axiosClient.get<ExamResponse>(`test/${examId}`);
   return response.data;
 };
 
 const createExam = async (data: NewExamRequest) => {
-  const response = await axiosClient.post(`${api_url}/test`, data);
+  const response = await axiosClient.post(`test`, data);
   return response.data;
 };
 
 const getListPart = () => {
-  return axiosClient.get(`${api_url}/part`);
+  return axiosClient.get(`part`);
 };
 
 export { uploadFile, createExam, getListPart, fetchAllExam, fetchExamById };
