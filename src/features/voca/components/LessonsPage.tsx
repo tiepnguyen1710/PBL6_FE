@@ -69,7 +69,7 @@ const LessonsPage: React.FC = () => {
 
   const lessons = vocaSet?.topics || [];
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 

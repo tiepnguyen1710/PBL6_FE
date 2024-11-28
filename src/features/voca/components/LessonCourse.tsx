@@ -22,7 +22,7 @@ const LessonCourse: React.FC<LessonCourseProps> = ({
   const [openPopup, setOpenPopup] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleClickCard = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleClickCard = () => {
     setOpenPopup(!openPopup);
 
     // onClick?.();

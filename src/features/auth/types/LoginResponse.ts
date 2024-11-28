@@ -1,4 +1,4 @@
-import { User } from "./auth";
+import { User } from "../../../types/auth";
 
 export default interface LoginResponse {
   token: string;

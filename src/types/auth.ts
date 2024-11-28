@@ -6,6 +6,11 @@ export interface User {
   avatar?: string | null;
   phone?: string | null;
   roles: Role[];
+
+  targetScore: number;
+  testDate: string;
+
+  createdAt: string;
 }
 
 export type Role = "admin" | "user";

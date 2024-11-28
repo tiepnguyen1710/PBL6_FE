@@ -1,4 +1,4 @@
-import { Role } from "./auth";
+import { Role } from "../../../types/auth";
 
 export default interface RegisterRequest {
   username: string;
