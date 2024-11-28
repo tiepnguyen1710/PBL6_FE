@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import OutlinedInput, { OutlinedInputProps } from "@mui/material/OutlinedInput";

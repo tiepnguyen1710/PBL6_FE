@@ -66,7 +66,7 @@ const UserProfilePage: React.FC = () => {
     },
   });
 
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
 

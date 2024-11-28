@@ -1,6 +1,6 @@
 import AppBar from "@mui/material/AppBar";
 import { Toolbar } from "@mui/material";
-import { FaBars } from "react-icons/fa6";
+// import { FaBars } from "react-icons/fa6";
 
 const HeaderAdmin = () => {
   return (

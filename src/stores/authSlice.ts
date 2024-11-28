@@ -3,6 +3,7 @@ import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Dispatch } from "redux";
 import { postLogin } from "../features/auth/api/account-api";
 import { RootState } from "./index";
+import { User } from "../types/auth";
 
 export interface AuthState {
   token: string | null;
@@ -41,7 +42,7 @@ const authSlice = createSlice({
 export const loginAction =
   (
     username: string,
-    password: string
+    password: string,
   ): ThunkAction<Promise<void>, RootState, unknown, AnyAction> =>
   async (dispatch: Dispatch) => {
     const response = await postLogin(username, password);
