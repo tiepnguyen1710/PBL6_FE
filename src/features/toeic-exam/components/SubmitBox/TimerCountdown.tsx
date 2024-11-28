@@ -1,41 +1,55 @@
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores";
+import {
+  RefObject,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import { toHHMMSS } from "../../helper";
 
-const TimerCountdown = (props: any) => {
-  const limitTime = useSelector(
-    (state: RootState) => state.selectedParts.limitTime,
-  );
-  const [count, setCount] = useState<number>(+limitTime);
+export interface TimerCountdownRef {
+  submit: () => number;
+}
+
+interface TimerCountdownProps {
+  duration: string;
+  timerRef?: RefObject<TimerCountdownRef>;
+}
+
+const TimerCountdown: React.FC<TimerCountdownProps> = ({
+  duration,
+  timerRef,
+}) => {
+  const [time, setTime] = useState<number>(+duration);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useImperativeHandle(timerRef, () => ({
+    submit: () => {
+      clearInterval(intervalRef.current!);
+      return time;
+    },
+  }));
 
   useEffect(() => {
-    if (count === 0) {
-      props.handleSubmit();
+    if (time === 0) {
+      //props.handleSubmit();
       return;
     }
 
-    const timer = setInterval(() => {
-      setCount(count - 1);
+    intervalRef.current = setInterval(() => {
+      setTime((prevTime) => {
+        if (prevTime <= 1) {
+          return 0;
+        }
+        return prevTime - 1;
+      });
     }, 1000);
 
     return () => {
-      clearInterval(timer);
+      clearInterval(intervalRef.current!);
     };
-  }, [count]);
-
-  const toHHMMSS = (secs: number) => {
-    //const sec_num = parseInt(secs, 10);
-    const sec_num = secs;
-    const hours = Math.floor(sec_num / 3600);
-    const minutes = Math.floor(sec_num / 60) % 60;
-    const seconds = sec_num % 60;
-
-    return [hours, minutes, seconds]
-      .map((v) => (v < 10 ? "0" + v : v))
-      .filter((v, i) => v !== "00" || i > 0)
-      .join(":");
-  };
+  }, []);
 
   return (
     <>
@@ -45,7 +59,7 @@ const TimerCountdown = (props: any) => {
           fontWeight: "600",
         }}
       >
-        {toHHMMSS(count)}
+        {toHHMMSS(time)}
       </Box>
     </>
   );
