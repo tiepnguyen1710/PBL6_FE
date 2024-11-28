@@ -2,7 +2,6 @@ import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 import PersonIcon from "@mui/icons-material/Person";
 import ResultTable from "./ResultTable";
-
 import PracticeTabs from "./PracticeTabs";
 
 const DetailContent = () => {

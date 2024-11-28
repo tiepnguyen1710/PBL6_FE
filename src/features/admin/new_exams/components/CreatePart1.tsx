@@ -134,11 +134,11 @@ const CreatePart1: React.FC<CrPartProps1> = ({
       }
     }
 
-    if (!isValidAnswer) {
-      toast.error(
-        `Answer ${indexA + 1} Question ${indexQ + 1} group ${groupPara + 1}  cannot blank `,
-      );
-    }
+    // if (!isValidAnswer) {
+    //   toast.error(
+    //     `Answer ${indexA + 1} Question ${indexQ + 1} group ${groupPara + 1}  cannot blank `,
+    //   );
+    // }
 
     // if (!isValidQuestion) {
     //   toast.error(
@@ -324,7 +324,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
           mb: 2,
         }}
       >
-        {part1Group.map((groupE, groupIndex) => {
+        {part1Group.map((_, groupIndex) => {
           return (
             <Chip
               key={groupIndex}
@@ -508,7 +508,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
                             }}
                           />
                           <TextField
-                            label={`Answer ${String.fromCharCode(65 + answerIndex)}`} // A, B, C, D
+                            label={`Answer ${String.fromCharCode(65 + answerIndex)}`}
                             value={answer || ""}
                             onChange={(e) =>
                               handleAnswerChange(

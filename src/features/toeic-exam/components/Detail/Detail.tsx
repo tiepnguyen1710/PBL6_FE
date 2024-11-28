@@ -1,6 +1,6 @@
 import { Box, Container } from "@mui/material";
 import DetailContent from "./DetailContent";
-import InforUserBox from "../InforUserBox/InforUserBox";
+import InforUserBox from "../InforUserBox";
 
 const Detail = () => {
   return (

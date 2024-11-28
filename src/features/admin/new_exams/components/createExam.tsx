@@ -6,7 +6,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useEffect, useState } from "react";
 import _ from "lodash";
 import { Box, Button, Stack, TextField } from "@mui/material";
-import { groupQuestionData, part, questionData } from "../types/examType";
+import { groupQuestionData, part } from "../types/examType";
 import CreatePart1 from "./CreatePart1";
 import CreatePart3 from "./CreatePart3";
 import CreatePart2 from "./CreatePart2";
@@ -20,18 +20,15 @@ import { toast } from "react-toastify";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import NewExamRequest from "../types/NewExamRequest";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
-import {
-  ExamResponse,
-  groupQuestionResponse,
-  questionResponse,
-} from "../types/ExamResponse";
 import { convertExamResponse } from "../utils/helper";
+import { tags } from "../../../toeic-exam/types/Tags";
+import TagSelect from "./TagSelect";
 
 export default function CreateExam() {
   const navigate = useNavigate();
   const initExamData: NewExamRequest = {
     name: "",
-    tag: "",
+    tag: [{ id: 1, name: "2024" }],
     partData: [
       {
         part: "part1",
@@ -66,7 +63,6 @@ export default function CreateExam() {
   const [examData, setExamData] = useState<NewExamRequest>(initExamData);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [listPart, setListPart] = useState<part[]>([]);
-  const [examSet, setExamSet] = useState<NewExamRequest>();
   const routeParams = useParams<{ examId: string }>();
   const examId = routeParams.examId;
 
@@ -90,12 +86,13 @@ export default function CreateExam() {
 
   useEffect(() => {
     fetchListPart();
+    console.log(listPart);
   }, []);
 
   const fetchListPart = async () => {
     const res = await getListPart();
     if (res.status === 200) {
-      //console.log("part", res.data);
+      console.log("part", res.data);
       setListPart(res.data);
     }
   };
@@ -117,6 +114,20 @@ export default function CreateExam() {
 
   const handleChangeName = (value: string) => {
     const updatedExamData = { ...examData, name: value };
+    setExamData(updatedExamData);
+  };
+
+  const handleChangeTag = (value: number) => {
+    const selectedTag = tags.find((tag) => tag.id === value);
+    console.log(selectedTag);
+    if (!selectedTag) {
+      console.log("cannot find tag");
+      return;
+    }
+    const updatedExamData = {
+      ...examData,
+      tag: [selectedTag],
+    };
     setExamData(updatedExamData);
   };
 
@@ -143,7 +154,7 @@ export default function CreateExam() {
       partData: partDataClone,
     } = examDataClone;
     const transferPart = partDataClone.map((item) => {
-      const matchedPart = listPart.find((part) => part.name === item.part);
+      const matchedPart = listPart.find((part) => part.key === item.part);
       return {
         ...item,
         part: matchedPart?.id ?? "",
@@ -186,11 +197,20 @@ export default function CreateExam() {
         <Typography color="primary.main" variant="caption">
           Tag
         </Typography>
-        <TextField
+        {/* <TextField
           variant="outlined"
           size="small"
           sx={{ width: "50%" }}
           placeholder="Tag"
+        /> */}
+        <TagSelect
+          labels={tags.map((tag) => tag.name)}
+          values={tags.map((tag) => tag.id)}
+          selectedValue={examData.tag[0].id}
+          onChange={handleChangeTag}
+          sx={{
+            width: "50%",
+          }}
         />
       </Stack>
 

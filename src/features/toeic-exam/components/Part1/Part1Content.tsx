@@ -9,8 +9,6 @@ import { useState } from "react";
 const answers = [1, 2, 3, 4];
 const Item = styled(Paper)(({ isActive }: { isActive: boolean }) => ({
   backgroundColor: isActive ? "#EBF5FF" : "#fff",
-  //...theme.typography.body2,
-  //padding: theme.spacing(1),
   padding: "15px",
   border: isActive ? "1px solid #0071F9" : "1px solid #f0f0f0",
   borderRadius: "10px",
@@ -93,7 +91,11 @@ const Part1Content = () => {
               <img
                 src={image}
                 alt="Test"
-                style={{ maxWidth: "100%", height: "auto", objectFit: "cover" }}
+                style={{
+                  maxWidth: "100%",
+                  height: "400px",
+                  objectFit: "cover",
+                }}
               />
             </Box>
 
