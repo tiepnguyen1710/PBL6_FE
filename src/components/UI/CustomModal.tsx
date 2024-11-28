@@ -27,6 +27,9 @@ const CustomModal: React.FC<CustomModalProps> = ({
               sx: { display: "none" },
             },
           }}
+          sx={{
+            overflowY: "scroll",
+          }}
         >
           <>
             {/* Custom faded backdrop  */}

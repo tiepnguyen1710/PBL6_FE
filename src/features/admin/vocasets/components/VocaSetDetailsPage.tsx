@@ -408,7 +408,7 @@ const VocaSetDetailsPage = () => {
                       />
                     </TableCell>
                     <TableCell>{lesson.name}</TableCell>
-                    <TableCell>{Math.floor(Math.random() * 20)}</TableCell>
+                    <TableCell>{lesson?.listWord.length || 0}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5}>
                         <Link to={`/admin/lesson?id=${lesson.id}`}>
