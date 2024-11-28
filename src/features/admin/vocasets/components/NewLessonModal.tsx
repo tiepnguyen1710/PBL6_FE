@@ -10,7 +10,7 @@ import CustomModal, {
   CustomModalProps,
 } from "../../../../components/UI/CustomModal";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createNewLesson } from "../api/lesson-api";
 import NewLessonRequest from "../types/NewLessonRequest";
 import TextFieldFileInput from "./TextFieldFileInput";

@@ -1,12 +1,12 @@
 import { Box, Button } from "@mui/material";
-import TimerCountdown from "./TimerCountdown";
+import TimerCountdown, { TimerCountdownRef } from "./TimerCountdown";
 import ListQuestion from "./ListQuestions";
 import { partData } from "../../../admin/new_exams/types/examType";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sortPartArray } from "../../../admin/new_exams/utils/helper";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { PracticeRequest } from "../../types/PracticeRequest";
 import { useMutation } from "@tanstack/react-query";
 import { postPractice } from "../../api/api";
@@ -14,19 +14,29 @@ import { toast } from "react-toastify";
 
 interface PartDataProps {
   partData: partData[];
+  // selectedPartsQuery: string[];
 }
 const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
   console.log("submit box", partData);
   const [partDataChosen, setPartDataChosen] = useState<partData[]>([]);
+  const limitTime = useSelector(
+    (state: RootState) => state.selectedParts.limitTime,
+  );
   const selectedParts = useSelector(
     (state: RootState) => state.selectedParts.selectedParts,
   );
   const userAnswers = useSelector(
     (state: RootState) => state.userAnswers.userAnswers,
   );
+  const [searchParams] = useSearchParams();
+  const selectedPartsQuery = searchParams.getAll("part");
+
+  const timerCountDownRef = useRef<TimerCountdownRef>(null);
+
   const routeParams = useParams<{ examId: string }>();
   const examId = routeParams.examId;
   const navigate = useNavigate();
+  console.log("part", selectedPartsQuery);
 
   useEffect(() => {
     const selectedPartsClone = [...selectedParts];
@@ -38,14 +48,16 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
     setPartDataChosen(partDataChosen);
   }, [partData]);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: async (data: PracticeRequest) => {
       const responseData = await postPractice(data);
       return responseData;
     },
     onSuccess: (responseData) => {
       console.log("Post successfull, reponseData", responseData);
-      navigate(`/exams/result/${responseData.id}`);
+      navigate(`/exams/result/${responseData.id}`, {
+        state: { responseData, selectedPartsQuery },
+      });
       // queryClient.setQueryData(
       //   responseData,
       // );
@@ -58,10 +70,12 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
   });
 
   const handleSubmit = () => {
+    const remainingTime = timerCountDownRef.current?.submit() || 0;
+    const implementTime = +limitTime - remainingTime;
     const practiceRequest: PracticeRequest = {
-      userId: "7ac83074-3128-4a1b-a802-9c35f941f6b1",
+      userId: "4d6fffbc-72e7-4895-a0bb-eba4b17f0615",
       testId: examId || "",
-      time: 2240,
+      time: implementTime,
       userAnswer: userAnswers,
     };
 
@@ -75,7 +89,7 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
           marginBottom: "15px",
         }}
       >
-        <TimerCountdown handleSubmit={handleSubmit} />
+        <TimerCountdown duration={limitTime} timerRef={timerCountDownRef} />
       </Box>
       <Box
         sx={{

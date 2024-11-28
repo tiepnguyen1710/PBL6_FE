@@ -3,6 +3,12 @@ import InforUserBox from "./InforUserBox";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import DoneIcon from "@mui/icons-material/Done";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
+import { useLocation } from "react-router-dom";
+import { ResponseResultData } from "../types/ResponseResultData";
+import { toHHMMSS } from "../helper";
 const ResultPage = () => {
   const BoxStyle = {
     borderRadius: "10px",
@@ -10,6 +16,13 @@ const ResultPage = () => {
     height: "fit-content",
     padding: "30px",
   };
+
+  const location = useLocation();
+  const responseResultData: ResponseResultData = location.state?.responseData;
+  const selectedPartsQuery = location.state?.selectedPartsQuery;
+
+  console.log("Received responseData:", responseResultData);
+  console.log("part data chosen", selectedPartsQuery);
   return (
     <Container maxWidth="sm">
       <Box my={2}>
@@ -36,7 +49,7 @@ const ResultPage = () => {
                       padding: "30px",
                     }}
                   >
-                    <Stack direction="column" spacing={1}>
+                    <Stack direction="column" spacing={2}>
                       <Stack direction="row" justifyContent="space-between">
                         <Stack direction="row" spacing={0.25}>
                           <DoneIcon fontSize="small" />
@@ -50,14 +63,16 @@ const ResultPage = () => {
                           <Typography>Accurracy</Typography>
                         </Stack>
 
-                        <Typography>%</Typography>
+                        <Typography>{`${(responseResultData.numCorrect / responseResultData.totalQuestion) * 100}%`}</Typography>
                       </Stack>
                       <Stack direction="row" justifyContent="space-between">
                         <Stack direction="row" spacing={0.25}>
                           <AccessTimeIcon fontSize="small" />
                           <Typography>Time</Typography>
                         </Stack>
-                        <Typography>12:00</Typography>
+                        <Typography>
+                          {toHHMMSS(responseResultData.time)}
+                        </Typography>
                       </Stack>
                     </Stack>
                   </Box>
@@ -75,9 +90,22 @@ const ResultPage = () => {
                       direction="column"
                       justifyContent="center"
                       alignItems="center"
+                      spacing={0.75}
                     >
-                      <Typography>Correct</Typography>
-                      <Typography>6</Typography>
+                      <Stack direction="row" spacing={0.5}>
+                        <Typography
+                          sx={{
+                            fontSize: "18px",
+                            color: "green",
+                            fontWeight: "500",
+                          }}
+                        >
+                          Correct
+                        </Typography>
+                        <CheckCircleIcon color="success"></CheckCircleIcon>
+                      </Stack>
+
+                      <Typography>{responseResultData.numCorrect}</Typography>
                     </Stack>
                   </Box>
                 </Grid2>
@@ -87,9 +115,24 @@ const ResultPage = () => {
                       direction="column"
                       justifyContent="center"
                       alignItems="center"
+                      spacing={0.75}
                     >
-                      <Typography>Incorrect</Typography>
-                      <Typography>0</Typography>
+                      <Stack direction="row" spacing={0.5}>
+                        <Typography
+                          sx={{
+                            fontSize: "18px",
+                            color: "red",
+                            fontWeight: "500",
+                          }}
+                        >
+                          Incorrect
+                        </Typography>
+                        <CancelIcon color="error"></CancelIcon>
+                      </Stack>
+                      <Typography>
+                        {responseResultData.totalQuestion -
+                          responseResultData.numCorrect}
+                      </Typography>
                     </Stack>
                   </Box>
                 </Grid2>
@@ -99,8 +142,20 @@ const ResultPage = () => {
                       direction="column"
                       justifyContent="center"
                       alignItems="center"
+                      spacing={0.75}
                     >
-                      <Typography>Skip</Typography>
+                      <Stack direction="row" spacing={0.5}>
+                        <Typography
+                          sx={{
+                            fontSize: "18px",
+                            color: "gray",
+                            fontWeight: "500",
+                          }}
+                        >
+                          Skip
+                        </Typography>
+                        <DoNotDisturbOnIcon color="secondary"></DoNotDisturbOnIcon>
+                      </Stack>
                       <Typography>0</Typography>
                     </Stack>
                   </Box>

@@ -7,7 +7,6 @@ import { fetchAllExam } from "../../../admin/new_exams/api/examApi";
 import DotLoadingProgress from "../../../../components/UI/DotLoadingProgress";
 import { ExamSetInfo } from "../../types/ExamSetInfo";
 import { tags } from "../../types/Tags";
-import ExamSetCard from "./ExamSetCard";
 import ExamCard from "../../../home/components/ExamCard";
 
 interface ITag {

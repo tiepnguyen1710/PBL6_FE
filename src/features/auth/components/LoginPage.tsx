@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -83,6 +83,15 @@ const LoginPage: React.FC = () => {
     mutate(data);
   };
 
+  const handleCredentialResponse = useCallback(
+    (response: { credential: string }) => {
+      console.log("Encoded JWT ID Token:", response.credential);
+      // Send this token to your backend for verification
+      loginGoogleMutation.mutate(response.credential);
+    },
+    [loginGoogleMutation],
+  );
+
   useEffect(() => {
     window.google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
@@ -93,13 +102,7 @@ const LoginPage: React.FC = () => {
       document.getElementById("google-signin-button"),
       { theme: "outline", size: "large" },
     );
-  }, []);
-
-  const handleCredentialResponse = (response: { credential: string }) => {
-    console.log("Encoded JWT ID Token:", response.credential);
-    // Send this token to your backend for verification
-    loginGoogleMutation.mutate(response.credential);
-  };
+  }, [handleCredentialResponse]);
 
   return (
     <>

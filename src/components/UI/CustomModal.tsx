@@ -7,11 +7,13 @@ export interface CustomModalProps {
   onClose: () => void;
   children?: React.ReactNode;
   sx?: SxProps;
+  containerSx?: SxProps;
 }
 const CustomModal: React.FC<CustomModalProps> = ({
   open,
   onClose,
   sx,
+  containerSx,
   children,
 }) => {
   return (
@@ -46,6 +48,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
+                ...containerSx,
               }}
             >
               <motion.div

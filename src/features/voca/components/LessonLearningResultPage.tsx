@@ -106,7 +106,7 @@ const LessonLearningResultPage = () => {
                         startAngle={0}
                         endAngle={-360}
                       >
-                        {pieChartData.map((entry, index) => (
+                        {pieChartData.map((_entry, index) => (
                           <Cell
                             key={`cell-${index}`}
                             fill={PIE_COLORS[index]}

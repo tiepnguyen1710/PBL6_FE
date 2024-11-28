@@ -33,7 +33,7 @@ const CreatePart4: React.FC<CrPartProps> = ({ updateExamData }) => {
     length: TOEIC_PARTS.Part4.groupQuestion,
   });
   const [part4Data, setPart4Data] = useState<groupQuestionData[]>(
-    Array.from({ length: TOEIC_PARTS.Part4.groupQuestion }, (_, index) => ({
+    Array.from({ length: TOEIC_PARTS.Part4.groupQuestion }, (_) => ({
       validate: validateState.blank,
       audioUrl: null,
       audioPreview: "",
@@ -42,12 +42,12 @@ const CreatePart4: React.FC<CrPartProps> = ({ updateExamData }) => {
       passage: "",
       questionData: Array.from(
         { length: TOEIC_PARTS.Part4.questionPerGroup },
-        (_, index) => ({
+        (_) => ({
           questionNumber: 0,
           question: "",
           answer: Array.from(
             { length: TOEIC_PARTS.Part4.answerCount },
-            (_, index) => "",
+            (_) => "",
           ),
           correctAnswer: "",
         }),
@@ -97,7 +97,7 @@ const CreatePart4: React.FC<CrPartProps> = ({ updateExamData }) => {
 
     //validate answer
     let isValidAnswer = true;
-    let isFullBlank = true;
+    //let isFullBlank = true;
     let indexA = -1;
     for (let i = 0; i < part4Data[groupPara].questionData.length; i++) {
       for (
@@ -110,7 +110,8 @@ const CreatePart4: React.FC<CrPartProps> = ({ updateExamData }) => {
           indexA = j;
           break;
         } else {
-          isFullBlank = false;
+          break;
+          //isFullBlank = false;
         }
       }
       indexQ = i;
@@ -247,7 +248,7 @@ const CreatePart4: React.FC<CrPartProps> = ({ updateExamData }) => {
     if (event.target.files && event.target.files.length > 0) {
       let dataUpdate = [...part4Data];
       const filesArray = Array.from(event.target.files);
-      let index = 0;
+      //let index = 0;
       // Upload từng file lên Cloudinary
       for (let file of filesArray) {
         let data = await uploadFile(file);
@@ -309,7 +310,7 @@ const CreatePart4: React.FC<CrPartProps> = ({ updateExamData }) => {
           mb: 2,
         }}
       >
-        {part4Group.map((groupE, groupIndex) => {
+        {part4Group.map((_, groupIndex) => {
           return (
             <Chip
               key={groupIndex}
