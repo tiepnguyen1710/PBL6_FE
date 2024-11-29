@@ -201,7 +201,7 @@ const RegisterPage: React.FC = () => {
           sx={{
             backgroundColor: "success.main",
             borderRadius: "32px",
-            py: "12px",
+            py: "6px",
             width: { xs: "100%", lg: "230px" },
             alignSelf: { lg: "flex-end" },
           }}

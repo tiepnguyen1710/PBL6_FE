@@ -46,6 +46,7 @@ import VocaPracticePage from "./features/voca/components/VocaPracticePage.tsx";
 import VocaTestConfirmPage from "./features/voca/components/VocaTestConfirmPage.tsx";
 import CompleteLearningLessonPage from "./features/voca/components/CompleteLearningLessonPage.tsx";
 import LessonLearningResultPage from "./features/voca/components/LessonLearningResultPage.tsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const router = createBrowserRouter([
   {
@@ -197,8 +198,12 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider theme={theme}>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-            <ToastContainer />
+            <GoogleOAuthProvider
+              clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+            >
+              <RouterProvider router={router} />
+              <ToastContainer />
+            </GoogleOAuthProvider>
           </QueryClientProvider>
         </Provider>
       </ThemeProvider>
