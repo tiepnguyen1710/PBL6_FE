@@ -111,7 +111,7 @@ const PinWordModalModal: React.FC<PinWordModalModalProps> = ({
               fontSize: "19px",
               mx: "auto",
               "& .MuiSvgIcon-root": {
-                fontSize: "48px",
+                fontSize: "48px !important",
               },
             }}
             onClick={onClickNewFolderButton}

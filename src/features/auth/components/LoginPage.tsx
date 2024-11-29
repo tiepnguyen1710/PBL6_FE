@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import { Alert } from "@mui/material";
 import { loginGoggle } from "../api/account-api";
 import LoginResponse from "../types/LoginResponse";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 // Interface for form data
 interface FormData {
@@ -84,25 +85,12 @@ const LoginPage: React.FC = () => {
   };
 
   const handleCredentialResponse = useCallback(
-    (response: { credential: string }) => {
-      console.log("Encoded JWT ID Token:", response.credential);
-      // Send this token to your backend for verification
-      loginGoogleMutation.mutate(response.credential);
+    (response: CredentialResponse) => {
+      // Send to backend
+      loginGoogleMutation.mutate(response.credential as string);
     },
     [loginGoogleMutation],
   );
-
-  useEffect(() => {
-    window.google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleCredentialResponse,
-    });
-
-    window.google.accounts.id.renderButton(
-      document.getElementById("google-signin-button"),
-      { theme: "outline", size: "large" },
-    );
-  }, [handleCredentialResponse]);
 
   return (
     <>
@@ -169,16 +157,23 @@ const LoginPage: React.FC = () => {
           sx={{
             backgroundColor: "success.main",
             borderRadius: "32px",
-            py: "12px",
+            py: "6px",
             width: "100%",
             alignSelf: { lg: "flex-end" },
+            marginBottom: "-16px",
           }}
         >
           Login
         </Button>
-        <div style={{ marginTop: "-12px" }}>
-          <div id="google-signin-button"></div>
-        </div>
+        <GoogleLogin
+          onSuccess={handleCredentialResponse}
+          onError={() => console.log("Oauth error")}
+          useOneTap
+          theme="outline"
+          size="large"
+          shape="circle"
+          text="signin_with" // Tùy chỉnh văn bản
+        />
       </Stack>
     </>
   );
