@@ -3,7 +3,7 @@ import { authActions } from "./stores/authSlice.ts";
 import { AppDispatch, RootState } from "./stores/index.ts";
 
 const axiosClient = axios.create({
-  baseURL: "https://api.engflash.io.vn/api/v1",
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
