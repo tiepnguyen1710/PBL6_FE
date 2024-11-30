@@ -10,6 +10,8 @@ interface LessonCourseProps {
   thumbnail: string;
   totalWords: number;
   retainedWords: number;
+  reviewable: boolean;
+  vocaSetId?: string;
 }
 
 const LessonCourse: React.FC<LessonCourseProps> = ({
@@ -18,6 +20,8 @@ const LessonCourse: React.FC<LessonCourseProps> = ({
   thumbnail,
   totalWords,
   retainedWords,
+  reviewable,
+  vocaSetId,
 }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -42,14 +46,15 @@ const LessonCourse: React.FC<LessonCourseProps> = ({
         retainedWords={retainedWords}
       />
       <LessonPopup
-        reviewable
+        reviewable={reviewable}
         anchorEle={cardRef.current}
         open={openPopup}
         onClose={() => setOpenPopup(false)}
         lessonId={id}
         lessonName={name}
-        retainedWords={0}
-        totalWords={0}
+        retainedWords={retainedWords}
+        totalWords={totalWords}
+        vocaSetId={vocaSetId}
       />
     </Stack>
   );

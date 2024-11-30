@@ -8,12 +8,16 @@ import FlashCardCompositionAnimationType from "../types/FlashCardCompositionAnim
 import { AnimationType } from "../types/FlashCardCompositionAnimationType";
 import { useQuery } from "@tanstack/react-query";
 import { getLessonById } from "../../admin/vocasets/api/lesson-api.ts";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import Vocabulary from "../../../types/Vocabulary.ts";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop.tsx";
 import LessonHeader from "./LessonHeader.tsx";
 import LessonMainContent from "./LessonMainContent.tsx";
 import SuspendLearningDrawer from "./SuspendLearningDrawer.tsx";
+import CuteButton from "./CuteButton.tsx";
+import PinIcon from "./PinIcon.tsx";
+import NewWordFolderModal from "./NewFolderModal.tsx";
+import PinWordModalModal from "./PinWordModal.tsx";
 
 const LearningVocaPage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,21 +38,29 @@ const LearningVocaPage: React.FC = () => {
     direction = "Left";
   }
 
-  console.log("direction", direction);
+  // console.log("direction", direction);
 
-  const { data: lesson, isLoading } = useQuery({
+  const {
+    data: lesson,
+    isLoading,
+    isSuccess,
+  } = useQuery({
     queryKey: ["lesson", { id: lessonId }],
     queryFn: () => getLessonById(lessonId!),
     enabled: !!lessonId,
+    refetchOnWindowFocus: false,
   });
 
   const vocabularies = lesson?.listWord || [];
   const vocaLength = vocabularies.length;
 
+  const currentVocaId = vocabularies[currentVocaIdx]?.id;
+
   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
 
   const [openExitDrawer, setOpenExitDrawer] = useState(false);
+  const [pinModal, setPinModal] = useState<string>(""); // pin to folder modal, new folder modal
 
   const handleNext = () => {
     // handleNext is recreated every time the component re-renders
@@ -88,6 +100,18 @@ const LearningVocaPage: React.FC = () => {
   const handleWrongAnswer = () => {
     playWrongAnswerAudio();
   };
+
+  if (
+    isSuccess &&
+    (!lesson?.listWord || lesson.listWord.length === 0 || !currentVocaId)
+  ) {
+    let redirectLink = "/";
+    if (lesson.groupTopic) {
+      redirectLink = `/voca/${lesson.groupTopic.id}/lessons`;
+    }
+
+    return <Navigate to={redirectLink} />;
+  }
 
   return (
     <Stack sx={{ minHeight: "100vh" }}>
@@ -200,6 +224,12 @@ const LearningVocaPage: React.FC = () => {
             }}
             onClick={handlePrev}
           />
+          <CuteButton
+            label="Pin Word"
+            sx={{ color: "primary.main" }}
+            icon={<PinIcon color="primary" />}
+            onClick={() => setPinModal("pinToFolder")}
+          />
           <ArrowIcon
             sx={{ color: "primary.main", fontSize: "70px", cursor: "pointer" }}
             onClick={handleNext}
@@ -213,6 +243,21 @@ const LearningVocaPage: React.FC = () => {
         onClickStay={() => setOpenExitDrawer(false)}
         exitLink={isLoading ? "/" : `/voca/${lesson?.groupTopic.id}/lessons`}
       />
+      {pinModal === "newFolder" && (
+        <NewWordFolderModal
+          open
+          onClose={() => setPinModal("")}
+          vocaId={currentVocaId}
+        />
+      )}
+      {pinModal === "pinToFolder" && (
+        <PinWordModalModal
+          open
+          onClose={() => setPinModal("")}
+          onClickNewFolderButton={() => setPinModal("newFolder")}
+          vocaId={currentVocaId}
+        />
+      )}
 
       {/* Audio */}
       <audio id="audio-answer-wrong" ref={wrongAnswerAudioRef}>

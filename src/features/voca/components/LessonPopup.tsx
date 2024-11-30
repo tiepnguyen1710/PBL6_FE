@@ -9,6 +9,7 @@ interface LessonPopupProps extends PopupProps {
   retainedWords: number;
   totalWords: number;
   reviewable?: boolean;
+  vocaSetId?: string;
 }
 
 const LessonPopup: React.FC<LessonPopupProps> = ({
@@ -22,6 +23,7 @@ const LessonPopup: React.FC<LessonPopupProps> = ({
   retainedWords,
   totalWords,
   reviewable = false,
+  vocaSetId,
 }) => {
   return (
     <Popup
@@ -66,6 +68,14 @@ const LessonPopup: React.FC<LessonPopupProps> = ({
             <Link to={`/lesson/learn?id=${lessonId}`}>
               <LessonButton variant="outlined" sx={{ marginTop: "10px" }}>
                 CONTINUE LEARNING
+              </LessonButton>
+            </Link>
+
+            <Link
+              to={`/lesson/learning-result?id=${lessonId}${vocaSetId ? "&vocaSetId=" + vocaSetId : ""}`}
+            >
+              <LessonButton variant="outlined" sx={{ marginTop: "10px" }}>
+                VIEW RESULT
               </LessonButton>
             </Link>
           </>

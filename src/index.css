@@ -140,6 +140,7 @@ img {
 :root {
   --color-primary-light: #4a82c3;
   --color-primary-main: #203a90;
+  --color-primary-main-alpha-1: #203a901a;
   --color-primary-dark: #102774;
   --color-secondary-light: rgba(84, 86, 90, 0.6);
   --color-secondary-main: #54565a;

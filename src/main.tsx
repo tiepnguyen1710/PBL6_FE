@@ -22,6 +22,7 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import HomePage from "./features/home/components/HomePage.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setupAxiosInterceptors } from "./axios.ts";
 
 import Admin from "./components/layout/admin/Admin.tsx";
 import Dashboard from "./features/admin/dashboard/Dashboard.tsx";
@@ -45,7 +46,10 @@ import VocaPracticePage from "./features/voca/components/VocaPracticePage.tsx";
 import VocaTestConfirmPage from "./features/voca/components/VocaTestConfirmPage.tsx";
 import CompleteLearningLessonPage from "./features/voca/components/CompleteLearningLessonPage.tsx";
 import LessonLearningResultPage from "./features/voca/components/LessonLearningResultPage.tsx";
+
 import PartResultIndex from "./features/toeic-exam/components/PartResultIndex.tsx";
+
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const router = createBrowserRouter([
   {
@@ -193,14 +197,20 @@ const router = createBrowserRouter([
   // },
 ]);
 
+setupAxiosInterceptors(store);
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-            <ToastContainer />
+            <GoogleOAuthProvider
+              clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+            >
+              <RouterProvider router={router} />
+              <ToastContainer />
+            </GoogleOAuthProvider>
           </QueryClientProvider>
         </Provider>
       </ThemeProvider>
