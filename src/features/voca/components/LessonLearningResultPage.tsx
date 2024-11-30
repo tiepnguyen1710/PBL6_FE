@@ -167,7 +167,10 @@ const LessonLearningResultPage = () => {
                   <ResultHistoryBarChart
                     data={{
                       best: learningResult?.max.numCorrect || 0,
-                      mostRecent: learningResult?.last.numCorrect || 0,
+                      mostRecent:
+                        learningResult?.last.numCorrect ||
+                        currentResult?.numCorrect ||
+                        0,
                       current: currentResult?.numCorrect || 0,
                     }}
                     totalWord={currentResult?.totalWord || 0}

@@ -11,6 +11,7 @@ interface LessonCourseProps {
   totalWords: number;
   retainedWords: number;
   reviewable: boolean;
+  vocaSetId?: string;
 }
 
 const LessonCourse: React.FC<LessonCourseProps> = ({
@@ -20,6 +21,7 @@ const LessonCourse: React.FC<LessonCourseProps> = ({
   totalWords,
   retainedWords,
   reviewable,
+  vocaSetId,
 }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -52,6 +54,7 @@ const LessonCourse: React.FC<LessonCourseProps> = ({
         lessonName={name}
         retainedWords={retainedWords}
         totalWords={totalWords}
+        vocaSetId={vocaSetId}
       />
     </Stack>
   );

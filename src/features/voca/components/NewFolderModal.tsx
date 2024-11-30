@@ -74,9 +74,9 @@ const NewWordFolderModal: React.FC<NewWordFolderModalProps> = ({
       open={open}
       onClose={onClose}
       containerSx={{
-        top: 20,
-        left: "50%",
-        transform: "translateX(-50%)",
+        // top: 20,
+        // left: "50%",
+        // transform: "translateX(-50%)",
         borderRadius: "8px",
       }}
     >
