@@ -10,7 +10,7 @@ const ExamSetRow: React.FC<{ examSet: IExamModel }> = ({ examSet }) => {
       <TableCell>{examSet.name}</TableCell>
       <TableCell>{examSet.time}</TableCell>
       <TableCell>{0}</TableCell>
-      <TableCell>{examSet.tag}</TableCell>
+      <TableCell>{examSet.tags.name as string}</TableCell>
       <TableCell>Inactive</TableCell>
       <TableCell>
         <Stack direction="row" spacing={0.5}>

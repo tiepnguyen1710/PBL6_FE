@@ -15,11 +15,13 @@ export interface TimerCountdownRef {
 interface TimerCountdownProps {
   duration: string;
   timerRef?: RefObject<TimerCountdownRef>;
+  handleSubmit: () => void;
 }
 
 const TimerCountdown: React.FC<TimerCountdownProps> = ({
   duration,
   timerRef,
+  handleSubmit,
 }) => {
   const [time, setTime] = useState<number>(+duration);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -32,17 +34,20 @@ const TimerCountdown: React.FC<TimerCountdownProps> = ({
   }));
 
   useEffect(() => {
-    if (time === 0) {
-      //props.handleSubmit();
+    if (+duration > 0 && time < 1) {
+      handleSubmit();
       return;
     }
+  }, [time]);
 
+  useEffect(() => {
     intervalRef.current = setInterval(() => {
       setTime((prevTime) => {
-        if (prevTime <= 1) {
-          return 0;
+        if (+duration > 0) {
+          return prevTime > 0 ? prevTime - 1 : 0;
         }
-        return prevTime - 1;
+
+        return prevTime + 1;
       });
     }, 1000);
 

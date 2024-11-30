@@ -4,7 +4,7 @@ export interface ExamResponse {
   id: string;
   name: string;
   time?: number;
-  tag?: Tag[];
+  tags?: Tag[];
   groupQuestions: groupQuestionResponse[];
 }
 

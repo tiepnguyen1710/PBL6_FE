@@ -132,6 +132,10 @@ const theme = createTheme({
       primary: "#54565A",
       secondary: "rgba(84, 86, 90, 0.6)",
     },
+    success: {
+      light: "#F0FDF4",
+      main: "#00B035",
+    },
   },
   typography: {
     fontFamily: "'Inter', sans-serif",

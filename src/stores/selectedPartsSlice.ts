@@ -22,6 +22,7 @@ const selectedPartsSlice = createSlice({
     },
     clearSelectedParts: (state) => {
       state.selectedParts = [];
+      state.limitTime = "0";
     },
   },
 });

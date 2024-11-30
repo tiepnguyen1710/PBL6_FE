@@ -7,24 +7,64 @@ import { RootState } from "../../../stores";
 
 interface Part1Props {
   partData?: partData;
+  mode?: string;
 }
 
-const Item = styled(Paper)(({ isActive }: { isActive: boolean }) => ({
-  backgroundColor: isActive ? "#EBF5FF" : "#fff",
-  padding: "15px",
-  border: isActive ? "1px solid #0071F9" : "1px solid #f0f0f0",
-  borderRadius: "10px",
-  "&:hover": {
-    backgroundColor: isActive ? "#EBF5FF" : "#F9FAFB",
-    border: isActive ? "1px solid #0071F9" : "1px solid #F9A95A",
-    cursor: "pointer",
-    "& .innerBox": {
-      backgroundColor: isActive ? "#0071F9" : "#6B7280",
-      color: "white",
+const Item = styled(Paper)(
+  ({
+    isActive,
+    isDisabled,
+    isCorrect,
+    isIncorrect,
+    isChosen,
+  }: {
+    isActive: boolean;
+    isDisabled?: boolean;
+    isCorrect?: boolean;
+    isIncorrect?: boolean;
+    isChosen?: boolean;
+  }) => ({
+    backgroundColor: isActive
+      ? "#EBF5FF"
+      : isCorrect && isChosen
+        ? "#F0FDF4"
+        : isCorrect
+          ? "white"
+          : isIncorrect
+            ? "#FDF2F3"
+            : "#fff",
+    padding: "15px",
+    border: isActive
+      ? "1px solid #0071F9"
+      : isCorrect
+        ? "1px solid #00B035"
+        : isIncorrect
+          ? "1px solid #E20D2C"
+          : isDisabled
+            ? ""
+            : "1px solid #f0f0f0",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: isActive ? "#EBF5FF" : isDisabled ? "" : "",
+      border: isDisabled
+        ? undefined
+        : isActive
+          ? "1px solid #0071F9"
+          : "1px solid #F9A95A",
+      cursor: "pointer",
+      "& .innerBox": {
+        backgroundColor: isDisabled
+          ? undefined
+          : isActive
+            ? "#0071F9"
+            : "#6B7280",
+        color: isDisabled ? undefined : "white",
+      },
     },
-  },
-}));
-const Part1: React.FC<Part1Props> = ({ partData }) => {
+  }),
+);
+
+const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
   console.log(partData);
   const dispatch = useDispatch();
   const activeAnswers = useSelector(
@@ -123,11 +163,17 @@ const Part1: React.FC<Part1Props> = ({ partData }) => {
             {/* List of Items */}
             <Box sx={{ width: "100%" }}>
               {group.questionData.map((question, questionIndex) => {
+                let isCorrectQuestion = question.userAnswer?.isCorrect;
                 return (
                   <Stack spacing={1}>
                     <Box
                       sx={{
-                        background: "var(--color-primary-main)",
+                        background:
+                          isCorrectQuestion === true
+                            ? "#00B035"
+                            : isCorrectQuestion === false
+                              ? "#E20D2C"
+                              : "var(--color-primary-main)",
                         color: "white",
                         fontWeight: "400",
                         borderRadius: "50%",
@@ -146,11 +192,23 @@ const Part1: React.FC<Part1Props> = ({ partData }) => {
                       let isActive =
                         activeAnswers[groupIndex]?.[questionIndex] ===
                         answerIndex;
+                      let isDisabled = mode === "review";
+                      let isCorrect =
+                        answer === question.correctAnswer && mode === "review";
+                      let isIncorrect =
+                        answer === question.userAnswer?.userAnswer &&
+                        answer !== question.correctAnswer;
+                      let isChosen = answer === question.userAnswer?.userAnswer;
                       return (
                         <Item
                           key={answerIndex}
                           isActive={isActive}
+                          isDisabled={isDisabled}
+                          isCorrect={isCorrect}
+                          isIncorrect={isIncorrect}
+                          isChosen={isChosen}
                           onClick={() =>
+                            !isDisabled &&
                             handleClick(
                               groupIndex,
                               questionIndex,
@@ -168,8 +226,20 @@ const Part1: React.FC<Part1Props> = ({ partData }) => {
                           <Box
                             className="innerBox"
                             sx={{
-                              background: isActive ? "#0071F9" : "#F3F4F6",
-                              color: isActive ? "white" : "",
+                              background: isActive
+                                ? "#0071F9"
+                                : isCorrect
+                                  ? "#00B035"
+                                  : isIncorrect
+                                    ? "#E20D2C"
+                                    : "#F3F4F6",
+                              color: isActive
+                                ? "white"
+                                : isCorrect
+                                  ? "#F0FDF4"
+                                  : isIncorrect
+                                    ? "#FDF2F3"
+                                    : "",
                               fontWeight: "500",
                               borderRadius: "50%",
                               padding: "15px",

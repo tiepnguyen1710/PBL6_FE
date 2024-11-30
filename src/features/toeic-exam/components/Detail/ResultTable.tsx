@@ -113,7 +113,7 @@ export default function ResultTable() {
                     ) : (
                       <>
                         <Box sx={{ mb: 1 }}>
-                          <Chip label="practise" sx={{ ...chipStyle }} />
+                          <Chip label="practice" sx={{ ...chipStyle }} />
                         </Box>
 
                         {row.dateTest.tags.map((tag) => {

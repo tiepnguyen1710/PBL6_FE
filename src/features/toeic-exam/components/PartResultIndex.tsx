@@ -1,57 +1,43 @@
 import { Box, Button, Container, Grid2 } from "@mui/material";
+import Content from "../../../components/layout/Content";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { PracticeDetailConverted } from "../types/PracticeDetailConverted";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPracticeDetailUser } from "../api/api";
+import { convertPracticeResponse } from "../helper";
 import Part1 from "./Part1";
 import Part2 from "./Part2";
 import Part3 from "./Part3";
-import { useQuery } from "@tanstack/react-query";
-import { fetchExamById } from "../../admin/new_exams/api/examApi";
-import NewExamRequest from "../../admin/new_exams/types/NewExamRequest";
-import { convertExamResponse } from "../../admin/new_exams/utils/helper";
 import Part4 from "./Part4";
 import Part5 from "./Part5";
-import Part7 from "./Part7";
 import Part6 from "./Part6";
-import SubMitBox from "./SubmitBox/SubmitBox";
-import Content from "../../../components/layout/Content";
+import Part7 from "./Part7";
+import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 
-const PartIndex = () => {
-  const [searchParams] = useSearchParams();
-  const parts = searchParams.getAll("part");
-  const isFullTest = parts.includes("full");
-  console.log(isFullTest);
-  const allParts = [
-    "part1",
-    "part2",
-    "part3",
-    "part4",
-    "part5",
-    "part6",
-    "part7",
-  ];
-  const selectedParts = isFullTest ? allParts : parts;
-  //console.log(selectedParts);
+const PartResultIndex = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [examData, setExamData] = useState<NewExamRequest>();
+  const routeParams = useParams<{ reviewId: string }>();
+  const reviewId = routeParams.reviewId;
+  const [examDataReview, setExamDataReview] =
+    useState<PracticeDetailConverted>();
 
-  const routeParams = useParams<{ examId: string }>();
-  const examId = routeParams.examId;
-  const { isPending, data: ExamSetData } = useQuery({
-    queryKey: ["FetchExamSet", examId],
-    queryFn: () => fetchExamById(examId!),
-    enabled: !!examId,
+  const { isPending, data: ExamSetReviewData } = useQuery({
+    queryKey: ["FetchExamSet", reviewId],
+    queryFn: () => fetchPracticeDetailUser(reviewId!),
+    enabled: !!reviewId,
   });
 
   useEffect(() => {
-    if (examId && ExamSetData) {
-      console.log("exam ", ExamSetData);
-      console.log("converve data", convertExamResponse(ExamSetData));
-      const convertedData = convertExamResponse(ExamSetData);
-      setExamData(convertedData);
+    if (reviewId && ExamSetReviewData) {
+      console.log("exam ", ExamSetReviewData);
+      console.log("converve data", convertPracticeResponse(ExamSetReviewData));
+      const convertedData = convertPracticeResponse(ExamSetReviewData);
+      setExamDataReview(convertedData);
     }
-  }, [ExamSetData]);
+  }, [ExamSetReviewData]);
 
-  console.log("examset", ExamSetData);
+  const selectedParts = ["part1", "part2"];
 
   const handleNext = () => setCurrentIndex((prev) => prev + 1);
   const handlePrevious = () => setCurrentIndex((prev) => prev - 1);
@@ -61,23 +47,24 @@ const PartIndex = () => {
 
     switch (currentPart) {
       case "part1":
-        return <Part1 partData={examData?.partData[0]} />;
+        return <Part1 partData={examDataReview?.partData[0]} mode={"review"} />;
       case "part2":
-        return <Part2 partData={examData?.partData[1]} />;
+        return <Part2 partData={examDataReview?.partData[1]} />;
       case "part3":
-        return <Part3 partData={examData?.partData[2]} />;
+        return <Part3 partData={examDataReview?.partData[2]} />;
       case "part4":
-        return <Part4 partData={examData?.partData[3]} />;
+        return <Part4 partData={examDataReview?.partData[3]} />;
       case "part5":
-        return <Part5 partData={examData?.partData[4]} />;
+        return <Part5 partData={examDataReview?.partData[4]} />;
       case "part6":
-        return <Part6 partData={examData?.partData[5]} />;
+        return <Part6 partData={examDataReview?.partData[5]} />;
       case "part7":
-        return <Part7 partData={examData?.partData[6]} />;
+        return <Part7 partData={examDataReview?.partData[6]} />;
       default:
         return <div>Cannot find this part</div>;
     }
   };
+
   return (
     <Content>
       <Container maxWidth="sm">
@@ -85,7 +72,9 @@ const PartIndex = () => {
           <Grid2 container spacing={2}>
             <Grid2 size={9}>
               {isPending ? (
-                "...Loading"
+                <Box sx={{ marginTop: 2 }}>
+                  <DotLoadingProgress />
+                </Box>
               ) : (
                 <Box
                   sx={{
@@ -99,7 +88,7 @@ const PartIndex = () => {
               )}
             </Grid2>
             <Grid2 size={3}>
-              <Box
+              {/* <Box
                 padding={2}
                 sx={{
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -108,9 +97,7 @@ const PartIndex = () => {
                   top: "50px",
                   alignSelf: "flex-start",
                 }}
-              >
-                <SubMitBox partData={examData?.partData || []} />
-              </Box>
+              ></Box> */}
             </Grid2>
           </Grid2>
         </Box>
@@ -137,4 +124,4 @@ const PartIndex = () => {
   );
 };
 
-export default PartIndex;
+export default PartResultIndex;

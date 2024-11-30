@@ -1,27 +1,27 @@
 export interface Tag {
-  id: number;
+  id: string;
   name: string;
 }
 
 export const tags = [
   {
-    id: 1,
+    id: "1",
     name: "2024",
   },
   {
-    id: 2,
+    id: "2",
     name: "2023",
   },
   {
-    id: 3,
+    id: "3",
     name: "2022",
   },
   {
-    id: 4,
+    id: "4",
     name: "2021",
   },
   {
-    id: 5,
+    id: "5",
     name: "New economic",
   },
 ];

@@ -13,7 +13,12 @@ import CreatePart2 from "./CreatePart2";
 import CreatePart4 from "./CreatePart4";
 import CreatePart5 from "./CreatePart5";
 import CreatePart6 from "./CreatePart6";
-import { createExam, fetchExamById, getListPart } from "../api/examApi";
+import {
+  createExam,
+  fetchExamById,
+  fetchListTags,
+  getListPart,
+} from "../api/examApi";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -21,14 +26,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import NewExamRequest from "../types/NewExamRequest";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import { convertExamResponse } from "../utils/helper";
-import { tags } from "../../../toeic-exam/types/Tags";
 import TagSelect from "./TagSelect";
 
 export default function CreateExam() {
   const navigate = useNavigate();
   const initExamData: NewExamRequest = {
     name: "",
-    tag: [{ id: 1, name: "2024" }],
+    tags: [],
     partData: [
       {
         part: "part1",
@@ -72,6 +76,11 @@ export default function CreateExam() {
     enabled: !!examId,
   });
 
+  const { data: tags } = useQuery({
+    queryKey: ["FetchListTags"],
+    queryFn: () => fetchListTags(),
+  });
+
   useEffect(() => {
     if (examId && ExamSetData) {
       setIsUpdate(true);
@@ -82,7 +91,7 @@ export default function CreateExam() {
     }
   }, [ExamSetData]);
 
-  console.log("examData", examData);
+  console.log("examData", examData, ExamSetData);
 
   useEffect(() => {
     fetchListPart();
@@ -117,16 +126,20 @@ export default function CreateExam() {
     setExamData(updatedExamData);
   };
 
-  const handleChangeTag = (value: number) => {
-    const selectedTag = tags.find((tag) => tag.id === value);
+  const handleChangeTag = (value: string) => {
+    const selectedTag = tags?.find((tag) => tag?.id === value);
     console.log(selectedTag);
     if (!selectedTag) {
       console.log("cannot find tag");
       return;
     }
+    const selectedTagModel = {
+      id: selectedTag.id,
+      name: selectedTag.name,
+    };
     const updatedExamData = {
       ...examData,
-      tag: [selectedTag],
+      tags: [selectedTagModel],
     };
     setExamData(updatedExamData);
   };
@@ -150,7 +163,7 @@ export default function CreateExam() {
     const examDataClone = { ...examData };
     const {
       name: nameClone,
-      tag: tagClone,
+      tags: tagClone,
       partData: partDataClone,
     } = examDataClone;
     const transferPart = partDataClone.map((item) => {
@@ -163,7 +176,13 @@ export default function CreateExam() {
     const validExamData = transferPart.filter(
       (item) => item.groupQuestionData.length > 0,
     );
-    const newExam = { name: nameClone, tag: tagClone, partData: validExamData };
+    console.log(validExamData);
+    const newExam = {
+      name: nameClone,
+      tags: tagClone,
+      partData: validExamData,
+    };
+    console.log(newExam);
     createExamMuatation.mutate(newExam);
   };
 
@@ -204,9 +223,9 @@ export default function CreateExam() {
           placeholder="Tag"
         /> */}
         <TagSelect
-          labels={tags.map((tag) => tag.name)}
-          values={tags.map((tag) => tag.id)}
-          selectedValue={examData.tag[0].id}
+          labels={tags?.map((tag) => tag.name) || []}
+          values={tags?.map((tag) => tag?.id) || []}
+          selectedValue={examData?.tags?.[0]?.id ?? ""}
           onChange={handleChangeTag}
           sx={{
             width: "50%",

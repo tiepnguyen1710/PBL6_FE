@@ -2,6 +2,6 @@ import { partData } from "./examType";
 
 export default interface NewExamRequest {
   name: string;
-  tag: { id: number; name: string }[];
+  tags: { id: string; name: string }[];
   partData: partData[];
 }

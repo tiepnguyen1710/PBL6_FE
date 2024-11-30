@@ -20,8 +20,8 @@ import {
   setLimitTime,
   setSelectedParts,
 } from "../../../../stores/selectedPartsSlice";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { sortPartArray } from "../../../admin/new_exams/utils/helper";
+import { useNavigate, useParams } from "react-router-dom";
+import { sortPartArray } from "../../helper";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -84,10 +84,16 @@ export default function PracticeTabs() {
     }
   };
 
-  const handlePractice = () => {
+  const handlePractice = (isFullTest: boolean) => {
+    if (isFullTest) {
+      dispatch(setLimitTime("7200"));
+    }
     const selectedPartsClone = [...selectedParts];
     const sortedSelectedParts = sortPartArray(selectedPartsClone);
-    const query = sortedSelectedParts.map((part) => `part=${part}`).join("&");
+    const query = isFullTest
+      ? "part=full"
+      : sortedSelectedParts.map((part) => `part=${part}`).join("&");
+
     navigate(`/exams/${examId}/partIndex?${query}`);
   };
 
@@ -182,7 +188,7 @@ export default function PracticeTabs() {
                 <MenuItem value={0}>
                   <em>Time limit</em>
                 </MenuItem>
-                <MenuItem value={600}>10 minutes</MenuItem>
+                <MenuItem value={10}>10 minutes</MenuItem>
                 <MenuItem value={1200}>20 minutes</MenuItem>
                 <MenuItem value={1800}>30 minutes</MenuItem>
                 <MenuItem value={2400}>40 minutes</MenuItem>
@@ -205,7 +211,7 @@ export default function PracticeTabs() {
               px: 2,
               py: 0.5,
             }}
-            onClick={handlePractice}
+            onClick={() => handlePractice(false)}
           >
             Practice
           </Button>
@@ -237,8 +243,7 @@ export default function PracticeTabs() {
               px: 2,
               py: 0.5,
             }}
-            component={Link}
-            to={`/`}
+            onClick={() => handlePractice(true)}
           >
             Start
           </Button>

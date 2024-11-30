@@ -46,6 +46,9 @@ import VocaPracticePage from "./features/voca/components/VocaPracticePage.tsx";
 import VocaTestConfirmPage from "./features/voca/components/VocaTestConfirmPage.tsx";
 import CompleteLearningLessonPage from "./features/voca/components/CompleteLearningLessonPage.tsx";
 import LessonLearningResultPage from "./features/voca/components/LessonLearningResultPage.tsx";
+
+import PartResultIndex from "./features/toeic-exam/components/PartResultIndex.tsx";
+
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const router = createBrowserRouter([
@@ -87,6 +90,10 @@ const router = createBrowserRouter([
       {
         path: "result/:resultId",
         element: <ResultPage />,
+      },
+      {
+        path: "review/:reviewId",
+        element: <PartResultIndex />,
       },
     ],
   },
