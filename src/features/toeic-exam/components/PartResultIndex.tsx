@@ -13,6 +13,7 @@ import Part4 from "./Part4";
 import Part5 from "./Part5";
 import Part6 from "./Part6";
 import Part7 from "./Part7";
+import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 
 const PartResultIndex = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -71,7 +72,9 @@ const PartResultIndex = () => {
           <Grid2 container spacing={2}>
             <Grid2 size={9}>
               {isPending ? (
-                "...Loading"
+                <Box sx={{ marginTop: 2 }}>
+                  <DotLoadingProgress />
+                </Box>
               ) : (
                 <Box
                   sx={{
@@ -85,7 +88,7 @@ const PartResultIndex = () => {
               )}
             </Grid2>
             <Grid2 size={3}>
-              <Box
+              {/* <Box
                 padding={2}
                 sx={{
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -94,7 +97,7 @@ const PartResultIndex = () => {
                   top: "50px",
                   alignSelf: "flex-start",
                 }}
-              ></Box>
+              ></Box> */}
             </Grid2>
           </Grid2>
         </Box>
