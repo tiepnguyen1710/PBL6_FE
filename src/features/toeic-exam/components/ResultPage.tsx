@@ -1,4 +1,11 @@
-import { Box, Container, Grid2, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid2,
+  Stack,
+  Typography,
+} from "@mui/material";
 import InforUserBox from "./InforUserBox";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import DoneIcon from "@mui/icons-material/Done";
@@ -6,7 +13,9 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
-import { useLocation } from "react-router-dom";
+import HeadphonesIcon from "@mui/icons-material/Headphones";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ResponseResultData } from "../types/ResponseResultData";
 import { toHHMMSS } from "../helper";
 import Content from "../../../components/layout/Content";
@@ -18,12 +27,15 @@ const ResultPage = () => {
     padding: "30px",
   };
 
+  const navigate = useNavigate();
+  const routeParams = useParams<{ resultId: string }>();
+  const resultId = routeParams.resultId;
   const location = useLocation();
   const responseResultData: ResponseResultData = location.state?.responseData;
-  const selectedPartsQuery = location.state?.selectedPartsQuery;
+  const TOTAL_QUESTIONS = location.state?.TOTAL_QUESTIONS;
 
   console.log("Received responseData:", responseResultData);
-  console.log("part data chosen", selectedPartsQuery);
+  console.log("total", TOTAL_QUESTIONS);
   return (
     <Content>
       <Container maxWidth="sm">
@@ -41,28 +53,25 @@ const ResultPage = () => {
                 <Typography variant="h5" mb={2}>
                   Result New Economy TOEIC Test 10
                 </Typography>
-                <Grid2 container spacing={2}>
+                <Grid2 container spacing={1.5}>
                   <Grid2 size={3}>
-                    <Box
-                      sx={{
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        height: "fit-content",
-                        padding: "30px",
-                      }}
-                    >
-                      <Stack direction="column" spacing={2}>
+                    <Box sx={BoxStyle}>
+                      <Stack direction="column" spacing={4}>
                         <Stack direction="row" justifyContent="space-between">
                           <Stack direction="row" spacing={0.25}>
                             <DoneIcon fontSize="small" />
-                            <Typography>Result</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>
+                              Result
+                            </Typography>
                           </Stack>
-                          <Typography>1/6</Typography>
+                          <Typography>{`${responseResultData.numCorrect}/${TOTAL_QUESTIONS}`}</Typography>
                         </Stack>
                         <Stack direction="row" justifyContent="space-between">
                           <Stack direction="row" spacing={0.25}>
                             <TrackChangesIcon fontSize="small" />
-                            <Typography>Accurracy</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>
+                              Accurracy
+                            </Typography>
                           </Stack>
 
                           <Typography>{`${((responseResultData.numCorrect / responseResultData.totalQuestion) * 100).toFixed(1)}%`}</Typography>
@@ -70,7 +79,9 @@ const ResultPage = () => {
                         <Stack direction="row" justifyContent="space-between">
                           <Stack direction="row" spacing={0.25}>
                             <AccessTimeIcon fontSize="small" />
-                            <Typography>Time</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>
+                              Time
+                            </Typography>
                           </Stack>
                           <Typography>
                             {toHHMMSS(responseResultData.time)}
@@ -79,90 +90,151 @@ const ResultPage = () => {
                       </Stack>
                     </Box>
                   </Grid2>
-                  <Grid2 size={3}>
-                    <Box
-                      sx={{
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        height: "fit-content",
-                        padding: "30px",
-                      }}
-                    >
-                      <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="center"
-                        spacing={0.75}
-                      >
-                        <Stack direction="row" spacing={0.5}>
-                          <Typography
-                            sx={{
-                              fontSize: "18px",
-                              color: "green",
-                              fontWeight: "500",
-                            }}
+                  <Grid2 size={9}>
+                    <Grid2 container spacing={1}>
+                      <Grid2 size={4}>
+                        <Box sx={BoxStyle}>
+                          <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={0.75}
                           >
-                            Correct
-                          </Typography>
-                          <CheckCircleIcon color="success"></CheckCircleIcon>
-                        </Stack>
+                            <Stack direction="row" spacing={0.5}>
+                              <Typography
+                                sx={{
+                                  fontSize: "18px",
+                                  color: "green",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                Correct
+                              </Typography>
+                              <CheckCircleIcon color="success"></CheckCircleIcon>
+                            </Stack>
 
-                        <Typography>{responseResultData.numCorrect}</Typography>
-                      </Stack>
-                    </Box>
-                  </Grid2>
-                  <Grid2 size={3}>
-                    <Box sx={BoxStyle}>
-                      <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="center"
-                        spacing={0.75}
-                      >
-                        <Stack direction="row" spacing={0.5}>
-                          <Typography
-                            sx={{
-                              fontSize: "18px",
-                              color: "red",
-                              fontWeight: "500",
-                            }}
+                            <Typography>
+                              {responseResultData.numCorrect}
+                            </Typography>
+                          </Stack>
+                        </Box>
+                      </Grid2>
+                      <Grid2 size={4}>
+                        <Box sx={BoxStyle}>
+                          <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={0.75}
                           >
-                            Incorrect
-                          </Typography>
-                          <CancelIcon color="error"></CancelIcon>
-                        </Stack>
-                        <Typography>
-                          {responseResultData.totalQuestion -
-                            responseResultData.numCorrect}
-                        </Typography>
-                      </Stack>
-                    </Box>
-                  </Grid2>
-                  <Grid2 size={3}>
-                    <Box sx={BoxStyle}>
-                      <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="center"
-                        spacing={0.75}
-                      >
-                        <Stack direction="row" spacing={0.5}>
-                          <Typography
-                            sx={{
-                              fontSize: "18px",
-                              color: "gray",
-                              fontWeight: "500",
-                            }}
+                            <Stack direction="row" spacing={0.5}>
+                              <Typography
+                                sx={{
+                                  fontSize: "18px",
+                                  color: "red",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                Incorrect
+                              </Typography>
+                              <CancelIcon color="error"></CancelIcon>
+                            </Stack>
+                            <Typography>
+                              {responseResultData.totalQuestion -
+                                responseResultData.numCorrect}
+                            </Typography>
+                          </Stack>
+                        </Box>
+                      </Grid2>
+                      <Grid2 size={4}>
+                        <Box sx={BoxStyle}>
+                          <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={0.75}
                           >
-                            Skip
-                          </Typography>
-                          <DoNotDisturbOnIcon color="secondary"></DoNotDisturbOnIcon>
-                        </Stack>
-                        <Typography>0</Typography>
-                      </Stack>
-                    </Box>
+                            <Stack direction="row" spacing={0.5}>
+                              <Typography
+                                sx={{
+                                  fontSize: "18px",
+                                  color: "gray",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                Skip
+                              </Typography>
+                              <DoNotDisturbOnIcon color="secondary"></DoNotDisturbOnIcon>
+                            </Stack>
+                            <Typography>{`${TOTAL_QUESTIONS - responseResultData.totalQuestion}`}</Typography>
+                          </Stack>
+                        </Box>
+                      </Grid2>
+                      <Grid2 size={6}>
+                        <Box sx={BoxStyle}>
+                          <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={0.75}
+                          >
+                            <Stack direction="row" spacing={0.5}>
+                              <Typography
+                                sx={{
+                                  fontSize: "18px",
+                                  color: "primary.main",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                LC Score
+                              </Typography>
+                              <HeadphonesIcon color="primary" />
+                            </Stack>
+                            <Typography>{`${responseResultData.LCScore}`}</Typography>
+                          </Stack>
+                        </Box>
+                      </Grid2>
+                      <Grid2 size={6}>
+                        <Box sx={BoxStyle}>
+                          <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={0.75}
+                          >
+                            <Stack direction="row" spacing={0.5}>
+                              <Typography
+                                sx={{
+                                  fontSize: "18px",
+                                  color: "primary.main",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                RC Score
+                              </Typography>
+                              <MenuBookIcon color="primary" />
+                            </Stack>
+                            <Typography>{`${responseResultData.RCScore}`}</Typography>
+                          </Stack>
+                        </Box>
+                      </Grid2>
+                    </Grid2>
                   </Grid2>
                 </Grid2>
+                <Button
+                  variant="contained"
+                  sx={{ marginTop: 2, marginRight: 1 }}
+                  onClick={() => navigate("/exams")}
+                >
+                  Back to exams library
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{ marginTop: 2 }}
+                  onClick={() => navigate(`/exams/review/${resultId}`)}
+                >
+                  Answer details
+                </Button>
               </Box>
             </Grid2>
             <Grid2 size={3}>

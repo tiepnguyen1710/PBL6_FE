@@ -33,26 +33,32 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
     length: TOEIC_PARTS.Part5.groupQuestion,
   });
   const [part5Data, setPart5Data] = useState<groupQuestionData[]>(
-    Array.from({ length: TOEIC_PARTS.Part5.groupQuestion }, (_) => ({
-      validate: validateState.blank,
-      audioUrl: null,
-      audioPreview: "",
-      image: [],
-      imagePreview: [],
-      passage: "",
-      questionData: Array.from(
-        { length: TOEIC_PARTS.Part5.questionPerGroup },
-        (_) => ({
-          questionNumber: 0,
-          question: "",
-          answer: Array.from(
-            { length: TOEIC_PARTS.Part5.answerCount },
-            (_) => "",
-          ),
-          correctAnswer: "",
-        }),
-      ),
-    })),
+    Array.from(
+      { length: TOEIC_PARTS.Part5.groupQuestion },
+      (_, groupIndex) => ({
+        validate: validateState.blank,
+        audioUrl: null,
+        audioPreview: "",
+        image: [],
+        imagePreview: [],
+        passage: "",
+        questionData: Array.from(
+          { length: TOEIC_PARTS.Part5.questionPerGroup },
+          (_, questionIndex) => ({
+            questionNumber:
+              TOEIC_PARTS.Part5.start +
+              groupIndex * TOEIC_PARTS.Part5.questionPerGroup +
+              questionIndex,
+            question: "",
+            answer: Array.from(
+              { length: TOEIC_PARTS.Part5.answerCount },
+              (_) => "",
+            ),
+            correctAnswer: "",
+          }),
+        ),
+      }),
+    ),
   );
 
   const getChipStyle = (state: validateState = validateState.blank) => {
@@ -165,10 +171,6 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
   ) => {
     let updatedData = [...part5Data];
     updatedData[groupIndex].questionData[questionDataIndex].question = value;
-    updatedData[groupIndex].questionData[questionDataIndex].questionNumber =
-      TOEIC_PARTS.Part5.start +
-      group * TOEIC_PARTS.Part5.questionPerGroup +
-      (questionDataIndex + 1);
     setPart5Data(updatedData);
   };
 

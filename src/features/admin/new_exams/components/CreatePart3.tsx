@@ -33,26 +33,32 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
     length: TOEIC_PARTS.Part3.groupQuestion,
   });
   const [part3Data, setPart3Data] = useState<groupQuestionData[]>(
-    Array.from({ length: TOEIC_PARTS.Part3.groupQuestion }, (_) => ({
-      validate: validateState.blank,
-      audioUrl: null,
-      audioPreview: "",
-      image: [],
-      imagePreview: [],
-      passage: "",
-      questionData: Array.from(
-        { length: TOEIC_PARTS.Part3.questionPerGroup },
-        (_) => ({
-          questionNumber: 0,
-          question: "",
-          answer: Array.from(
-            { length: TOEIC_PARTS.Part3.answerCount },
-            (_) => "",
-          ),
-          correctAnswer: "",
-        }),
-      ),
-    })),
+    Array.from(
+      { length: TOEIC_PARTS.Part3.groupQuestion },
+      (_, groupIndex) => ({
+        validate: validateState.blank,
+        audioUrl: null,
+        audioPreview: "",
+        image: [],
+        imagePreview: [],
+        passage: "",
+        questionData: Array.from(
+          { length: TOEIC_PARTS.Part3.questionPerGroup },
+          (_, questionIndex) => ({
+            questionNumber:
+              TOEIC_PARTS.Part3.start +
+              groupIndex * TOEIC_PARTS.Part3.questionPerGroup +
+              questionIndex,
+            question: "",
+            answer: Array.from(
+              { length: TOEIC_PARTS.Part3.answerCount },
+              (_) => "",
+            ),
+            correctAnswer: "",
+          }),
+        ),
+      }),
+    ),
   );
 
   const getChipStyle = (state: validateState = validateState.blank) => {
@@ -166,10 +172,6 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
   ) => {
     let updatedData = [...part3Data];
     updatedData[groupIndex].questionData[questionDataIndex].question = value;
-    updatedData[groupIndex].questionData[questionDataIndex].questionNumber =
-      TOEIC_PARTS.Part3.start +
-      group * TOEIC_PARTS.Part3.questionPerGroup +
-      questionDataIndex;
     setPart3Data(updatedData);
   };
 

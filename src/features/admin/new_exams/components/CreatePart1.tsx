@@ -39,26 +39,32 @@ const CreatePart1: React.FC<CrPartProps1> = ({
     length: TOEIC_PARTS.Part1.groupQuestion,
   });
   const [part1Data, setPart1Data] = useState<groupQuestionData[]>(
-    Array.from({ length: TOEIC_PARTS.Part1.groupQuestion }, (_) => ({
-      validate: validateState.blank,
-      audioUrl: null,
-      audioPreview: "",
-      image: [],
-      imagePreview: [],
-      passage: "",
-      questionData: Array.from(
-        { length: TOEIC_PARTS.Part1.questionPerGroup },
-        (_) => ({
-          questionNumber: 0,
-          question: "",
-          answer: Array.from(
-            { length: TOEIC_PARTS.Part1.answerCount },
-            (_) => "",
-          ),
-          correctAnswer: "",
-        }),
-      ),
-    })),
+    Array.from(
+      { length: TOEIC_PARTS.Part1.groupQuestion },
+      (_, groupIndex) => ({
+        validate: validateState.blank,
+        audioUrl: null,
+        audioPreview: "",
+        image: [],
+        imagePreview: [],
+        passage: "",
+        questionData: Array.from(
+          { length: TOEIC_PARTS.Part1.questionPerGroup },
+          (_, questionIndex) => ({
+            questionNumber:
+              groupIndex * TOEIC_PARTS.Part1.questionPerGroup +
+              questionIndex +
+              1,
+            question: "",
+            answer: Array.from(
+              { length: TOEIC_PARTS.Part1.answerCount },
+              (_) => "",
+            ),
+            correctAnswer: "",
+          }),
+        ),
+      }),
+    ),
   );
 
   useEffect(() => {
@@ -182,8 +188,8 @@ const CreatePart1: React.FC<CrPartProps1> = ({
   ) => {
     let updatedData = [...part1Data];
     updatedData[groupIndex].questionData[questionDataIndex].question = value;
-    updatedData[groupIndex].questionData[questionDataIndex].questionNumber =
-      group * TOEIC_PARTS.Part1.questionPerGroup + (questionDataIndex + 1);
+    // updatedData[groupIndex].questionData[questionDataIndex].questionNumber =
+    //   group * TOEIC_PARTS.Part1.questionPerGroup + (questionDataIndex + 1);
     setPart1Data(updatedData);
   };
 

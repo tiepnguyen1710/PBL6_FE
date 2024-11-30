@@ -1,52 +1,77 @@
 import { Box, Chip, Grid2, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import InforUserBox from "../InforUserBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchAllExam } from "../../../admin/new_exams/api/examApi";
+import {
+  fetchAllExam,
+  fetchListTags,
+} from "../../../admin/new_exams/api/examApi";
 import DotLoadingProgress from "../../../../components/UI/DotLoadingProgress";
 import { ExamSetInfo } from "../../types/ExamSetInfo";
-import { tags } from "../../types/Tags";
 import ExamCard from "../../../home/components/ExamCard";
 import Content from "../../../../components/layout/Content";
+import { Tag } from "../../types/Tags";
+import { useSearchParams } from "react-router-dom";
 
-interface ITag {
-  id: number;
-  name: string;
-}
 const ExamsLibraryPage = () => {
-  const [selectedTag, setSelectedTag] = useState<ITag>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tagId = searchParams.get("tag_id");
+  const [selectedTag, setSelectedTag] = useState<Tag | null>();
 
-  const { data: examSetData, isPending } = useQuery({
-    queryKey: ["fetchExam"],
-    queryFn: fetchAllExam,
+  useEffect(() => {
+    if (!tagId) {
+      setSelectedTag(null);
+    }
   });
 
-  const handleTagClick = (tag: ITag) => {
+  const { data: examSetData, isPending } = useQuery({
+    queryKey: ["fetchExam", tagId],
+    queryFn: () => fetchAllExam(tagId || ""),
+  });
+
+  const { data: tags, isPending: isPendingTags } = useQuery({
+    queryKey: ["FetchListTags"],
+    queryFn: () => fetchListTags(),
+  });
+
+  const handleTagClick = (tag: Tag) => {
     setSelectedTag(tag);
+    setSearchParams(tag.id ? { tag_id: tag.id } : {});
   };
   return (
     <Content>
       <Box sx={{ flexGrow: 1, maxWidth: "1200px", mx: "auto", py: 3, px: 2 }}>
         <Grid container spacing={2}>
           <Grid size={9}>
-            <Typography variant="h4" sx={{ marginBottom: 1 }}>
+            <Typography variant="h3" sx={{ marginBottom: 2 }}>
               Library Exam
             </Typography>
-            {tags.map((tag) => {
-              return (
-                <Chip
-                  key={tag.id}
-                  label={tag.name}
-                  clickable
-                  color={
-                    selectedTag?.name.includes(tag.name) ? "primary" : "default"
-                  }
-                  onClick={() => handleTagClick(tag)}
-                  sx={{ padding: 0.75, marginRight: 0.75 }}
-                />
-              );
-            })}
+            {isPendingTags ? (
+              <Box sx={{ marginTop: 2 }}>
+                <DotLoadingProgress />
+              </Box>
+            ) : (
+              <>
+                {tags?.map((tag) => {
+                  return (
+                    <Chip
+                      key={tag.id}
+                      label={tag.name}
+                      clickable
+                      color={
+                        selectedTag?.name.includes(tag.name)
+                          ? "primary"
+                          : "default"
+                      }
+                      onClick={() => handleTagClick(tag)}
+                      sx={{ padding: 0.9, marginRight: 0.75 }}
+                    />
+                  );
+                })}
+              </>
+            )}
+
             {isPending ? (
               <Box sx={{ marginTop: 2 }}>
                 <DotLoadingProgress />

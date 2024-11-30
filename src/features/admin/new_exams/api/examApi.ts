@@ -1,4 +1,5 @@
 import axiosClient from "../../../../axios";
+import { Tag } from "../../../toeic-exam/types/Tags";
 import { IExamSetResponse } from "../types/Exam";
 import { ExamResponse } from "../types/ExamResponse";
 import NewExamRequest from "../types/NewExamRequest";
@@ -25,8 +26,10 @@ const uploadFile = async (file: File) => {
   }
 };
 
-const fetchAllExam = async () => {
-  const response = await axiosClient.get<IExamSetResponse>(`test`);
+const fetchAllExam = async (tagId: string) => {
+  const response = await axiosClient.get<IExamSetResponse>(`test`, {
+    params: tagId ? { tag_id: tagId } : {},
+  });
   return response.data;
 };
 
@@ -40,8 +43,20 @@ const createExam = async (data: NewExamRequest) => {
   return response.data;
 };
 
-const getListPart = () => {
-  return axiosClient.get(`part`);
+const getListPart = async () => {
+  return await axiosClient.get(`part`);
 };
 
-export { uploadFile, createExam, getListPart, fetchAllExam, fetchExamById };
+const fetchListTags = async () => {
+  const response = await axiosClient.get<Tag[]>(`tag?type=test_type`);
+  return response.data;
+};
+
+export {
+  uploadFile,
+  createExam,
+  getListPart,
+  fetchAllExam,
+  fetchExamById,
+  fetchListTags,
+};

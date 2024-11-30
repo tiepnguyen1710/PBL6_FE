@@ -43,7 +43,7 @@ const ExamSet = () => {
 
   const { isPending, data: examSetData } = useQuery({
     queryKey: ["fetchExam"],
-    queryFn: fetchAllExam,
+    queryFn: () => fetchAllExam(""),
   });
 
   useEffect(() => {

@@ -19,7 +19,7 @@ export const convertExamData = (data: groupQuestionData[]) => {
 export const convertExamResponse = (data: ExamResponse) => {
   const result: NewExamRequest = {
     name: data.name,
-    tag: data.tag || [{ id: 1, name: "2024" }],
+    tags: data.tags || [{ id: "1", name: "2024" }],
     partData: [
       { part: "part1", groupQuestionData: [] },
       { part: "part2", groupQuestionData: [] },
@@ -71,13 +71,4 @@ export const convertExamResponse = (data: ExamResponse) => {
   });
 
   return result;
-};
-
-export const sortPartArray = (partArray: string[]) => {
-  return partArray.slice().sort((a, b) => {
-    const numA = parseInt(a.replace("part", ""), 10);
-    const numB = parseInt(b.replace("part", ""), 10);
-
-    return numA - numB;
-  });
 };

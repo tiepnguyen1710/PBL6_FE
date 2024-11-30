@@ -25,6 +25,13 @@ export interface questionData {
   question: string;
   answer: string[];
   correctAnswer?: string;
+  userAnswer?: UserAnswer;
+}
+
+export interface UserAnswer {
+  id: string | null;
+  userAnswer: string | null;
+  isCorrect: boolean | null;
 }
 
 export interface part {

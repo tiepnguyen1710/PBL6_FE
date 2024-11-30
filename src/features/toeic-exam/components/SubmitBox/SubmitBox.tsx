@@ -2,34 +2,46 @@ import { Box, Button } from "@mui/material";
 import TimerCountdown, { TimerCountdownRef } from "./TimerCountdown";
 import ListQuestion from "./ListQuestions";
 import { partData } from "../../../admin/new_exams/types/examType";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../stores";
-import { useEffect, useRef, useState } from "react";
-import { sortPartArray } from "../../../admin/new_exams/utils/helper";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { PracticeRequest } from "../../types/PracticeRequest";
 import { useMutation } from "@tanstack/react-query";
 import { postPractice } from "../../api/api";
 import { toast } from "react-toastify";
+import { countTotalQuestions } from "../../helper";
+import { resetAnswers } from "../../../../stores/userAnswer";
+import { clearSelectedParts } from "../../../../stores/selectedPartsSlice";
 
 interface PartDataProps {
   partData: partData[];
-  // selectedPartsQuery: string[];
 }
 const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
   console.log("submit box", partData);
   const [partDataChosen, setPartDataChosen] = useState<partData[]>([]);
+  const dispatch = useDispatch();
   const limitTime = useSelector(
     (state: RootState) => state.selectedParts.limitTime,
-  );
-  const selectedParts = useSelector(
-    (state: RootState) => state.selectedParts.selectedParts,
   );
   const userAnswers = useSelector(
     (state: RootState) => state.userAnswers.userAnswers,
   );
   const [searchParams] = useSearchParams();
-  const selectedPartsQuery = searchParams.getAll("part");
+  const parts = searchParams.getAll("part");
+  const isFullTest = parts.includes("full");
+  console.log(isFullTest);
+  const allParts = [
+    "part1",
+    "part2",
+    "part3",
+    "part4",
+    "part5",
+    "part6",
+    "part7",
+  ];
+  const selectedPartsQuery = isFullTest ? allParts : parts;
+  const TOTAL_QUESTIONS = countTotalQuestions(selectedPartsQuery);
 
   const timerCountDownRef = useRef<TimerCountdownRef>(null);
 
@@ -39,10 +51,9 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
   console.log("part", selectedPartsQuery);
 
   useEffect(() => {
-    const selectedPartsClone = [...selectedParts];
-    const sortedSelectedParts = sortPartArray(selectedPartsClone);
+    const selectedPartsClone = [...selectedPartsQuery];
     const partDataChosen = partData.filter((partItem) =>
-      sortedSelectedParts.includes(partItem.part),
+      selectedPartsClone.includes(partItem.part),
     );
     console.log("chosen", partDataChosen);
     setPartDataChosen(partDataChosen);
@@ -56,8 +67,10 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
     onSuccess: (responseData) => {
       console.log("Post successfull, reponseData", responseData);
       navigate(`/exams/result/${responseData.id}`, {
-        state: { responseData, selectedPartsQuery },
+        state: { responseData, TOTAL_QUESTIONS },
       });
+      dispatch(resetAnswers());
+      dispatch(clearSelectedParts());
       // queryClient.setQueryData(
       //   responseData,
       // );
@@ -69,18 +82,19 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
     },
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     const remainingTime = timerCountDownRef.current?.submit() || 0;
-    const implementTime = +limitTime - remainingTime;
+    const implementTime = Math.abs(+limitTime - remainingTime);
     const practiceRequest: PracticeRequest = {
       userId: "4d6fffbc-72e7-4895-a0bb-eba4b17f0615",
       testId: examId || "",
+      isFullTest: isFullTest,
       time: implementTime,
       userAnswer: userAnswers,
     };
 
     mutate(practiceRequest);
-  };
+  }, [limitTime, examId, userAnswers]);
   return (
     <>
       <Box
@@ -89,7 +103,11 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
           marginBottom: "15px",
         }}
       >
-        <TimerCountdown duration={limitTime} timerRef={timerCountDownRef} />
+        <TimerCountdown
+          duration={limitTime}
+          timerRef={timerCountDownRef}
+          handleSubmit={handleSubmit}
+        />
       </Box>
       <Box
         sx={{
