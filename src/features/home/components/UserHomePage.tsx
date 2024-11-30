@@ -36,11 +36,11 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { enGB } from "date-fns/locale";
 
 import CustomModal from "../../../components/UI/CustomModal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import updateUserProfile from "../../user-profile/api/user-profile";
 import { toast } from "react-toastify";
-import { format } from "date-fns";
+import { differenceInDays, format } from "date-fns";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 
 type UserTargetFormData = {
@@ -79,21 +79,29 @@ const UserHomePage = () => {
     },
   });
 
+  const getDefaultTestDate = useCallback(() => {
+    let createdDate = new Date();
+    if (user) {
+      createdDate = new Date(user.createdAt);
+    }
+    const defaultTestDate = createdDate;
+    defaultTestDate.setMonth(defaultTestDate.getMonth() + 3);
+
+    return defaultTestDate;
+  }, [user]);
+
+  const userTestDate = useMemo(() => {
+    return user?.testDate ? new Date(user.testDate) : getDefaultTestDate();
+  }, [user?.testDate, getDefaultTestDate]);
+
   useEffect(() => {
     if (user) {
-      let testDate;
-      if (!user.testDate) {
-        testDate = new Date(user.createdAt);
-        testDate.setMonth(testDate.getMonth() + 3);
-      } else {
-        testDate = new Date(user.testDate);
-      }
       userTargetForm.reset({
-        testDate,
+        testDate: userTestDate,
         targetScore: user?.targetScore || 450,
       });
     }
-  }, [user, userTargetForm]);
+  }, [user, userTargetForm, userTestDate]);
 
   const handleUpdateUserTarget: SubmitHandler<UserTargetFormData> = (data) => {
     console.log("userTargetForm", data);
@@ -118,16 +126,13 @@ const UserHomePage = () => {
             <Stack spacing={1} direction="row" sx={{ alignSelf: "center" }}>
               <UserTargetInfo
                 label="Days until exam"
-                figure="111 days"
+                figure={`${differenceInDays(userTestDate, new Date())} days`}
                 icon={<DayUntilIcon sx={{ fontSize: 28 }} />}
               />
 
               <UserTargetInfo
                 label="Exam Date"
-                figure={format(
-                  new Date(user?.testDate || new Date()),
-                  "dd/MM/yyyy",
-                )}
+                figure={format(userTestDate, "dd/MM/yyyy")}
                 icon={<ExamDateIcon sx={{ fontSize: 28 }} />}
                 onEdit={() => setOpenChangeTargetModal(true)}
               />

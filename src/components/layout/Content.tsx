@@ -6,13 +6,14 @@ import { Stack } from "@mui/material";
 // Định nghĩa kiểu cho props
 interface Props {
   children: ReactNode;
+  withoutFooter?: boolean;
 }
 
-const Content: React.FC<Props> = ({ children }) => (
+const Content: React.FC<Props> = ({ children, withoutFooter = false }) => (
   <Stack sx={{ minHeight: "100vh" }}>
     <Header />
     <main style={{ flexGrow: 1 }}>{children}</main>
-    <Footer />
+    {!withoutFooter && <Footer />}
   </Stack>
 );
 

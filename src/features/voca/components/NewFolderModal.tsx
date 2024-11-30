@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 
 interface NewWordFolderModalProps extends CustomModalProps {
   vocaId?: string;
+  onCreated?: () => void; // create new folder successfully
 }
 
 interface NewWordFolderFormData {
@@ -28,6 +29,7 @@ const NewWordFolderModal: React.FC<NewWordFolderModalProps> = ({
   open,
   onClose,
   vocaId,
+  onCreated,
 }) => {
   const {
     register,
@@ -45,6 +47,7 @@ const NewWordFolderModal: React.FC<NewWordFolderModalProps> = ({
     onSuccess: () => {
       toast.success("New folder has been created");
       onClose();
+      onCreated?.();
     },
   });
 

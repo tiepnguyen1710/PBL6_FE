@@ -50,6 +50,7 @@ import LessonLearningResultPage from "./features/voca/components/LessonLearningR
 import PartResultIndex from "./features/toeic-exam/components/PartResultIndex.tsx";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import PersonalWordFolderPage from "./features/voca/components/PersonalWordFolderPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -144,6 +145,16 @@ const router = createBrowserRouter([
       {
         path: "learning-result",
         element: <LessonLearningResultPage />,
+      },
+    ],
+  },
+  {
+    path: "personal-word-folder",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <PersonalWordFolderPage />,
       },
     ],
   },
