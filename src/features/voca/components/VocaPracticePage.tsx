@@ -37,6 +37,7 @@ const VocaPracticePage: React.FC = () => {
     queryKey: ["lesson", { id: lessonId }],
     queryFn: () => getLessonById(lessonId!),
     enabled: !!lessonId,
+    refetchOnWindowFocus: false,
   });
 
   const [exerciseIdx, setExerciseIdx] = useState(0);

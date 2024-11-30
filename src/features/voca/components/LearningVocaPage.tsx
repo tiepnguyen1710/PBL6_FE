@@ -48,6 +48,7 @@ const LearningVocaPage: React.FC = () => {
     queryKey: ["lesson", { id: lessonId }],
     queryFn: () => getLessonById(lessonId!),
     enabled: !!lessonId,
+    refetchOnWindowFocus: false,
   });
 
   const vocabularies = lesson?.listWord || [];
