@@ -41,6 +41,10 @@ const PinWordModalModal: React.FC<PinWordModalModalProps> = ({
       onClose();
       toast.success("Word has been pinned");
     },
+    onError: (error: { message: string }) => {
+      setValidateError(error.message);
+      pinWordMutation.reset();
+    },
   });
 
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -59,9 +63,9 @@ const PinWordModalModal: React.FC<PinWordModalModalProps> = ({
       open={open}
       onClose={onClose}
       containerSx={{
-        top: 20,
-        left: "50%",
-        transform: "translateX(-50%)",
+        // top: 20,
+        // left: "50%",
+        // transform: "translateX(-50%)",
         borderRadius: "8px",
       }}
     >

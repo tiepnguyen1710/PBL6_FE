@@ -135,7 +135,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
         {/* Gif deco */}
         <Box sx={{ width: "180px", paddingRight: "40px", paddingTop: "75px" }}>
           <Image
-            src={`/src/features/voca/assets/voca-persons/${personDecoIndex}/${personDecoFileName}`}
+            src={`/assets/voca-persons/${personDecoIndex}/${personDecoFileName}`}
           />
         </Box>
 
