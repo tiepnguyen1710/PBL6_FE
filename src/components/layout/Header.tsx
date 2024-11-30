@@ -31,6 +31,7 @@ import { AppDispatch, RootState } from "../../stores";
 import DefaultAvatar from "../../assets/avatars/default.svg";
 import { authActions, AuthState } from "../../stores/authSlice";
 import { me } from "../../features/auth/api/account-api";
+import PinIcon from "../UI/PinIcon";
 
 const Header: React.FC = () => {
   const { isAuthenticated, token } = useSelector<RootState, AuthState>(
@@ -145,6 +146,16 @@ const Header: React.FC = () => {
                     <ListItemText>Profile</ListItemText>
                   </MenuItem>
                 </Link>
+
+                <Link to="/personal-word-folder">
+                  <MenuItem>
+                    <ListItemIcon>
+                      <PinIcon sx={{ fontSize: "20px" }} />
+                    </ListItemIcon>
+                    <ListItemText>Word Folders</ListItemText>
+                  </MenuItem>
+                </Link>
+
                 <MenuItem>
                   <ListItemIcon>
                     <BarChart fontSize="small" />
