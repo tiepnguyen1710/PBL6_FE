@@ -84,7 +84,11 @@ const PersonalWordFolderPage = () => {
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
           {folders.length > 0
             ? folders.map((folder) => (
-                <Folder name={folder.name} pinnedWords={folder.words.length} />
+                <Folder
+                  id={folder.id}
+                  name={folder.name}
+                  pinnedWords={folder.words.length}
+                />
               ))
             : "You haven't created a vocabulary yet, create a word folder to save the vocabulary you want to learn."}
         </Box>

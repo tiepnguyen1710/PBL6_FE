@@ -18,16 +18,18 @@ const ListWords: React.FC<ListWordsProps> = ({
   status,
   sx,
 }) => {
-  const badgeTypoStyle =
-    status === VocabularyCardState.ERROR
-      ? {
-          color: "#FF4B4B",
-          backgroundColor: "#FFEEEE",
-        }
-      : {
-          color: "#58CC02",
-          backgroundColor: "#EAFFD9",
-        };
+  let badgeTypoStyle = {
+    color: "#58CC02",
+    backgroundColor: "#EAFFD9",
+  };
+
+  if (status === VocabularyCardState.ERROR) {
+    badgeTypoStyle = {
+      color: "#FF4B4B",
+      backgroundColor: "#FFEEEE",
+    };
+  }
+
   return (
     <Box sx={{ ...sx }}>
       <Typography sx={{ fontSize: "20px", color: "#777777" }}>
