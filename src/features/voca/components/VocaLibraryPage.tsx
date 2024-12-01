@@ -124,7 +124,7 @@ const VocaLibraryPage: React.FC = () => {
                 .map((vocaSet: VocaSetInfo) => (
                   <Grid2
                     key={vocaSet.id}
-                    sx={{ width: "250px", marginRight: 1 }}
+                    sx={{ width: "250px", marginRight: 1, display: "flex" }}
                   >
                     <VocaSet
                       id={vocaSet.id}

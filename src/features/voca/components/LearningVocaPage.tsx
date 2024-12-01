@@ -130,7 +130,7 @@ const LearningVocaPage: React.FC = () => {
           <Box sx={{ flexGrow: 1 }}></Box>
         </>
       ) : (
-        <LessonMainContent>
+        <LessonMainContent sx={{ minHeight: "600px" }}>
           {/* Question progress */}
           <Stack
             direction="row"
