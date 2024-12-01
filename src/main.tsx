@@ -52,6 +52,8 @@ import PartResultIndex from "./features/toeic-exam/components/PartResultIndex.ts
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import PersonalWordFolderPage from "./features/voca/components/PersonalWordFolderPage.tsx";
 import FolderDetailsPage from "./features/voca/components/FolderDetailsPage.tsx";
+import FolderPracticePage from "./features/voca/components/FolderPracticePage.tsx";
+import FolderPracticeResultPage from "./features/voca/components/FolderPracticeResultPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -160,6 +162,14 @@ const router = createBrowserRouter([
       {
         path: ":folderId",
         element: <FolderDetailsPage />,
+      },
+      {
+        path: ":folderId/practice",
+        element: <FolderPracticePage />,
+      },
+      {
+        path: ":folderId/practice-result",
+        element: <FolderPracticeResultPage />,
       },
     ],
   },

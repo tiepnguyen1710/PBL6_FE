@@ -1,7 +1,7 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import Content from "../../../components/layout/Content";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { getUserFolderById } from "../api/user-folder";
 import { Edit } from "@mui/icons-material";
 import ListWords from "./ListWords";
@@ -9,8 +9,10 @@ import { VocabularyCardState } from "../../../components/VocabularyCard";
 import Link from "../../../components/UI/Link";
 import UpdateFolderModal from "./UpdateFolderModal";
 import { useState } from "react";
+import BoldStrokeButton from "./BoldStrokeButton";
 
 const FolderDetailsPage = () => {
+  const navigate = useNavigate();
   const { folderId } = useParams();
   const queryClient = useQueryClient();
 
@@ -30,24 +32,38 @@ const FolderDetailsPage = () => {
     <Content withoutFooter>
       <Box sx={{ maxWidth: "878px", mx: "auto", padding: "27px 15px 48px" }}>
         {/* help info */}
-        <Box
+        <Stack
+          direction="row"
+          justifyContent="space-between"
           sx={{
             padding: "20px 20px 20px 25px",
             borderRadius: "14px",
             border: "2px solid #ddd",
           }}
         >
-          <Typography
-            variant="inherit"
-            sx={{ fontSize: "24px", fontWeight: "bold" }}
+          <div>
+            <Typography
+              variant="inherit"
+              sx={{ fontSize: "24px", fontWeight: "bold" }}
+            >
+              Learning and Practice
+            </Typography>
+            <Typography
+              variant="inherit"
+              sx={{ fontSize: "15px", marginTop: 1 }}
+            >
+              You can use vocabulary learning feature after you pin at least 4
+              words.
+            </Typography>
+          </div>
+          <BoldStrokeButton
+            variant="contained"
+            sx={{ maxWidth: "200px", borderBottomWidth: "2px" }}
+            onClick={() => navigate("practice")}
           >
-            Learning and Practice
-          </Typography>
-          <Typography variant="inherit" sx={{ fontSize: "15px", marginTop: 1 }}>
-            You can use EngFlash's vocabulary learning feature after you pin at
-            least 4 words.
-          </Typography>
-        </Box>
+            START PRACTICE
+          </BoldStrokeButton>
+        </Stack>
 
         {/*  folder details */}
         <Box sx={{ marginTop: 1.5 }}>

@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import selectedPartsReducer from "./selectedPartsSlice";
 import userAnswerReducer from "./userAnswer";
+import folderPracticeReducer from "./folderPracticeSlice";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     selectedParts: selectedPartsReducer,
     userAnswers: userAnswerReducer,
+    folderPractice: folderPracticeReducer,
   },
 });
 
