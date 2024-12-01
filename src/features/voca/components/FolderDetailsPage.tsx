@@ -1,21 +1,26 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
 import Content from "../../../components/layout/Content";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useParams } from "react-router-dom";
 import { getUserFolderById } from "../api/user-folder";
-import { FolderOpen } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import ListWords from "./ListWords";
 import { VocabularyCardState } from "../../../components/VocabularyCard";
 import Link from "../../../components/UI/Link";
+import UpdateFolderModal from "./UpdateFolderModal";
+import { useState } from "react";
 
 const FolderDetailsPage = () => {
   const { folderId } = useParams();
+  const queryClient = useQueryClient();
 
   const { data: folder } = useQuery({
     queryKey: ["userFolders", { id: folderId }],
     queryFn: () => getUserFolderById(folderId!),
     enabled: !!folderId,
   });
+
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
 
   if (!folder) {
     return <Navigate to="/personal-word-folder" />;
@@ -47,10 +52,17 @@ const FolderDetailsPage = () => {
         {/*  folder details */}
         <Box sx={{ marginTop: 1.5 }}>
           <Stack direction="row" spacing={0.5}>
-            <FolderOpen />
             <Typography variant="h5" sx={{ textTransform: "uppercase" }}>
               {folder?.name}
             </Typography>
+
+            <IconButton
+              onClick={() => setOpenUpdateModal(true)}
+              sx={{ padding: 0, marginTop: "-2px !important" }}
+            >
+              <Edit />
+            </IconButton>
+
             <Link
               to="/personal-word-folder"
               sx={{
@@ -80,6 +92,21 @@ const FolderDetailsPage = () => {
           )}
         </Box>
       </Box>
+
+      {folder && (
+        <UpdateFolderModal
+          open={openUpdateModal}
+          onClose={() => setOpenUpdateModal(false)}
+          id={folder.id}
+          initialName={folder.name}
+          initialDescription={folder.description}
+          onUpdated={() =>
+            queryClient.invalidateQueries({
+              queryKey: ["userFolders", { id: folderId }],
+            })
+          }
+        />
+      )}
     </Content>
   );
 };
