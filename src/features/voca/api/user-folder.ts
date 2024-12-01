@@ -14,6 +14,12 @@ export async function getUserFolders() {
   return response.data;
 }
 
+export async function getUserFolderById(id: string) {
+  const response = await axiosClient.get<UserFolder[]>("user-topic/" + id);
+
+  return response.data[0]; // api returns an array that contains the requested folder
+}
+
 export async function pinWordToFolder(folderId: string, vocaId: string) {
   const response = await axiosClient.post<UserFolder>(
     `user-topic/${folderId}/word/${vocaId}`,
