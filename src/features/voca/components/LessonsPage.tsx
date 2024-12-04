@@ -21,19 +21,33 @@ import TwoRedCardIcon from "../assets/course-progress-not-learn-1.svg";
 import LessonComment from "./LessonComment";
 import CommentIcon from "../assets/comment-icon.svg";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LessonCourse from "./LessonCourse";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
-import { getVocaSetWithUserProgress } from "../api/voca-domain";
+import {
+  getVocaSetRating,
+  getVocaSetWithUserProgress,
+} from "../api/voca-domain";
 import { UserProgress } from "../types/UserProgress";
+import VocaSetRatingModal from "./VocaSetRatingModal";
+import { format } from "date-fns";
+import DefaultAvatar from "../../../assets/avatars/default.svg";
 
 const LessonsPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const { vocaSetId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
+  const [openRatingModal, setOpenRatingModal] = useState(false);
 
   const { data: vocaSet, isLoading } = useQuery({
     queryKey: ["vocaSet", { id: vocaSetId }],
     queryFn: () => getVocaSetWithUserProgress(vocaSetId!),
+    enabled: !!vocaSetId,
+  });
+
+  const { data: ratings } = useQuery({
+    queryKey: ["vocaSetRating", { vocaSetId: vocaSetId }],
+    queryFn: () => getVocaSetRating(vocaSetId!),
     enabled: !!vocaSetId,
   });
 
@@ -64,8 +78,6 @@ const LessonsPage: React.FC = () => {
       newWords: totalWords - retainedWords,
     };
   }, [vocaSet?.topics]);
-
-  console.log("vocaset", vocaSet);
 
   const lessons = vocaSet?.topics || [];
 
@@ -109,6 +121,7 @@ const LessonsPage: React.FC = () => {
                   {lessons.length > 0 ? (
                     lessons.map((lesson) => (
                       <LessonCourse
+                        key={lesson.id}
                         id={lesson.id}
                         name={lesson.name}
                         thumbnail={lesson.thumbnail}
@@ -291,9 +304,19 @@ const LessonsPage: React.FC = () => {
 
                 {/* Comment container */}
                 <Box sx={{ maxHeight: "340px", overflowY: "auto" }}>
-                  <LessonComment />
-                  <LessonComment />
-                  <LessonComment />
+                  {ratings?.map((rating) => (
+                    <LessonComment
+                      key={rating.id}
+                      reviewer={rating.user.name}
+                      reviewerAvatar={rating.user.avatar || DefaultAvatar}
+                      rating={rating.rating}
+                      ratingContent={rating.ratingContent}
+                      rateDate={format(
+                        new Date(rating.createdAt),
+                        "dd/MM/yyyy",
+                      )}
+                    />
+                  ))}
                 </Box>
 
                 {/* Comment button */}
@@ -305,7 +328,7 @@ const LessonsPage: React.FC = () => {
                   <Image src={CommentIcon} sx={{ width: "36px" }} />
                   <OutlinedInput
                     placeholder="Write a comment..."
-                    disabled
+                    readOnly
                     sx={{
                       fontSize: "13px",
                       height: "38px",
@@ -320,11 +343,23 @@ const LessonsPage: React.FC = () => {
                         textDecoration: "underline",
                       },
                     }}
+                    onClick={() => setOpenRatingModal(true)}
                   />
                 </Stack>
               </Paper>
             </Stack>
           </Stack>
+
+          <VocaSetRatingModal
+            vocaSetId={vocaSetId as string}
+            open={openRatingModal}
+            onClose={() => setOpenRatingModal(false)}
+            onPosted={() =>
+              queryClient.invalidateQueries({
+                queryKey: ["vocaSetRating", { vocaSetId: vocaSetId }],
+              })
+            }
+          />
         </Box>
       )}
     </Content>
