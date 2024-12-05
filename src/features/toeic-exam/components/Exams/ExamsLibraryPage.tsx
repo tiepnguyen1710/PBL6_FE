@@ -44,10 +44,10 @@ const ExamsLibraryPage = () => {
       <Box sx={{ flexGrow: 1, maxWidth: "1200px", mx: "auto", py: 3, px: 2 }}>
         <Grid container spacing={2}>
           <Grid size={9}>
-            <Typography variant="h3" sx={{ marginBottom: 2 }}>
+            <Typography variant="h4" sx={{ marginBottom: 2 }}>
               Library Exam
             </Typography>
-            {isPendingTags ? (
+            {isPendingTags && isPending ? (
               <Box sx={{ marginTop: 2 }}>
                 <DotLoadingProgress />
               </Box>
@@ -69,42 +69,35 @@ const ExamsLibraryPage = () => {
                     />
                   );
                 })}
+                <Grid2 container rowGap={1.5} my={3}>
+                  {examSetData?.data
+                    .map((examSet) => {
+                      const examSetInfo: ExamSetInfo = {
+                        id: examSet.id,
+                        name: examSet.name,
+                        time: examSet.time,
+                      };
+                      return examSetInfo;
+                    })
+                    .map((examSet) => {
+                      return (
+                        <Grid2 sx={{ width: "275px" }}>
+                          <ExamCard
+                            key={examSet.id}
+                            id={examSet.id}
+                            title={examSet.name}
+                            duration={examSet.time.toString()}
+                            totalParticipants={0}
+                            totalComments={0}
+                            numOfParts={7}
+                            numOfQuestions={200}
+                            tags={["Listening", "Reading"]}
+                          />
+                        </Grid2>
+                      );
+                    })}
+                </Grid2>
               </>
-            )}
-
-            {isPending ? (
-              <Box sx={{ marginTop: 2 }}>
-                <DotLoadingProgress />
-              </Box>
-            ) : (
-              <Grid2 container rowGap={1.5} my={3}>
-                {examSetData?.data
-                  .map((examSet) => {
-                    const examSetInfo: ExamSetInfo = {
-                      id: examSet.id,
-                      name: examSet.name,
-                      time: examSet.time,
-                    };
-                    return examSetInfo;
-                  })
-                  .map((examSet) => {
-                    return (
-                      <Grid2 sx={{ width: "275px" }}>
-                        <ExamCard
-                          key={examSet.id}
-                          id={examSet.id}
-                          title={examSet.name}
-                          duration={examSet.time.toString()}
-                          totalParticipants={0}
-                          totalComments={0}
-                          numOfParts={7}
-                          numOfQuestions={200}
-                          tags={["Listening", "Reading"]}
-                        />
-                      </Grid2>
-                    );
-                  })}
-              </Grid2>
             )}
           </Grid>
           <Grid size={3}>

@@ -153,6 +153,16 @@ const Header: React.FC = () => {
                     <ListItemText>Profile</ListItemText>
                   </MenuItem>
                 </Link>
+<<<<<<< HEAD
+                <Link to="/history">
+                  <MenuItem>
+                    <ListItemIcon>
+                      <BarChart fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Practice Analytics</ListItemText>
+                  </MenuItem>
+                </Link>
+=======
 
                 <Link to="/personal-word-folder">
                   <MenuItem>
@@ -169,6 +179,7 @@ const Header: React.FC = () => {
                   </ListItemIcon>
                   <ListItemText>Practice Analytics</ListItemText>
                 </MenuItem>
+>>>>>>> 726e6e4d72e1aee4c31b8a8869ea6fc0772908c7
 
                 <Divider sx={{ margin: "8px !important" }} />
                 <MenuItem onClick={handleLogout}>

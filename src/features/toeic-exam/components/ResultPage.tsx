@@ -15,10 +15,12 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import HeadphonesIcon from "@mui/icons-material/Headphones";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { ResponseResultData } from "../types/ResponseResultData";
+import { useNavigate, useParams } from "react-router-dom";
 import { toHHMMSS } from "../helper";
 import Content from "../../../components/layout/Content";
+import { fetchPracticeDetailUser } from "../api/api";
+import { useQuery } from "@tanstack/react-query";
+import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 const ResultPage = () => {
   const BoxStyle = {
     borderRadius: "10px",
@@ -30,228 +32,248 @@ const ResultPage = () => {
   const navigate = useNavigate();
   const routeParams = useParams<{ resultId: string }>();
   const resultId = routeParams.resultId;
-  const location = useLocation();
-  const responseResultData: ResponseResultData = location.state?.responseData;
-  const TOTAL_QUESTIONS = location.state?.TOTAL_QUESTIONS;
+  //const location = useLocation();
+  //const responseResultData: ResponseResultData = location.state?.responseData;
+  //const TOTAL_QUESTIONS = location.state?.TOTAL_QUESTIONS;
+  const { isPending, data: responseResultData } = useQuery({
+    queryKey: ["FetchTestPractice", resultId],
+    queryFn: () => fetchPracticeDetailUser(resultId!),
+    enabled: !!resultId,
+  });
+  const TOTAL_QUESTIONS = responseResultData?.testPractice.totalQuestion;
 
-  console.log("Received responseData:", responseResultData);
+  console.log("Received responseData:", responseResultData?.testPractice);
   console.log("total", TOTAL_QUESTIONS);
   return (
     <Content>
       <Container maxWidth="sm">
-        <Box my={2}>
-          <Grid2 container spacing={2}>
-            <Grid2 size={9}>
-              <Box
-                sx={{
-                  borderRadius: "10px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  height: "fit-content",
-                  padding: "30px",
-                }}
-              >
-                <Typography variant="h5" mb={2}>
-                  Result New Economy TOEIC Test 10
-                </Typography>
-                <Grid2 container spacing={1.5}>
-                  <Grid2 size={3}>
-                    <Box sx={BoxStyle}>
-                      <Stack direction="column" spacing={4}>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Stack direction="row" spacing={0.25}>
-                            <DoneIcon fontSize="small" />
-                            <Typography sx={{ fontWeight: 600 }}>
-                              Result
-                            </Typography>
-                          </Stack>
-                          <Typography>{`${responseResultData.numCorrect}/${TOTAL_QUESTIONS}`}</Typography>
-                        </Stack>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Stack direction="row" spacing={0.25}>
-                            <TrackChangesIcon fontSize="small" />
-                            <Typography sx={{ fontWeight: 600 }}>
-                              Accurracy
-                            </Typography>
-                          </Stack>
-
-                          <Typography>{`${((responseResultData.numCorrect / responseResultData.totalQuestion) * 100).toFixed(1)}%`}</Typography>
-                        </Stack>
-                        <Stack direction="row" justifyContent="space-between">
-                          <Stack direction="row" spacing={0.25}>
-                            <AccessTimeIcon fontSize="small" />
-                            <Typography sx={{ fontWeight: 600 }}>
-                              Time
-                            </Typography>
-                          </Stack>
-                          <Typography>
-                            {toHHMMSS(responseResultData.time)}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </Box>
-                  </Grid2>
-                  <Grid2 size={9}>
-                    <Grid2 container spacing={1}>
-                      <Grid2 size={4}>
-                        <Box sx={BoxStyle}>
-                          <Stack
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            spacing={0.75}
-                          >
-                            <Stack direction="row" spacing={0.5}>
-                              <Typography
-                                sx={{
-                                  fontSize: "18px",
-                                  color: "green",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                Correct
+        {isPending ? (
+          <CustomBackdrop open />
+        ) : (
+          <Box my={2}>
+            <Grid2 container spacing={2}>
+              <Grid2 size={9}>
+                <Box
+                  sx={{
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    height: "fit-content",
+                    padding: "30px",
+                  }}
+                >
+                  <Typography variant="h5" mb={2}>
+                    Result New Economy TOEIC Test 10
+                  </Typography>
+                  <Grid2 container spacing={1.5}>
+                    <Grid2 size={3}>
+                      <Box sx={BoxStyle}>
+                        <Stack direction="column" spacing={4}>
+                          <Stack direction="row" justifyContent="space-between">
+                            <Stack direction="row" spacing={0.25}>
+                              <DoneIcon fontSize="small" />
+                              <Typography sx={{ fontWeight: 600 }}>
+                                Result
                               </Typography>
-                              <CheckCircleIcon color="success"></CheckCircleIcon>
+                            </Stack>
+                            <Typography>{`${responseResultData?.testPractice.numCorrect}/${TOTAL_QUESTIONS}`}</Typography>
+                          </Stack>
+                          <Stack direction="row" justifyContent="space-between">
+                            <Stack direction="row" spacing={0.25}>
+                              <TrackChangesIcon fontSize="small" />
+                              <Typography sx={{ fontWeight: 600 }}>
+                                Accurracy
+                              </Typography>
                             </Stack>
 
-                            <Typography>
-                              {responseResultData.numCorrect}
-                            </Typography>
+                            <Typography>{`${(
+                              ((responseResultData?.testPractice?.numCorrect ??
+                                0) /
+                                (responseResultData?.testPractice
+                                  ?.totalQuestion ?? 1)) *
+                              100
+                            ).toFixed(1)}%`}</Typography>
                           </Stack>
-                        </Box>
-                      </Grid2>
-                      <Grid2 size={4}>
-                        <Box sx={BoxStyle}>
-                          <Stack
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            spacing={0.75}
-                          >
-                            <Stack direction="row" spacing={0.5}>
-                              <Typography
-                                sx={{
-                                  fontSize: "18px",
-                                  color: "red",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                Incorrect
+                          <Stack direction="row" justifyContent="space-between">
+                            <Stack direction="row" spacing={0.25}>
+                              <AccessTimeIcon fontSize="small" />
+                              <Typography sx={{ fontWeight: 600 }}>
+                                Time
                               </Typography>
-                              <CancelIcon color="error"></CancelIcon>
                             </Stack>
                             <Typography>
-                              {responseResultData.totalQuestion -
-                                responseResultData.numCorrect}
+                              {toHHMMSS(
+                                responseResultData?.testPractice.time ?? 0,
+                              )}
                             </Typography>
                           </Stack>
-                        </Box>
-                      </Grid2>
-                      <Grid2 size={4}>
-                        <Box sx={BoxStyle}>
-                          <Stack
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            spacing={0.75}
-                          >
-                            <Stack direction="row" spacing={0.5}>
-                              <Typography
-                                sx={{
-                                  fontSize: "18px",
-                                  color: "gray",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                Skip
+                        </Stack>
+                      </Box>
+                    </Grid2>
+                    <Grid2 size={9}>
+                      <Grid2 container spacing={1}>
+                        <Grid2 size={4}>
+                          <Box sx={BoxStyle}>
+                            <Stack
+                              direction="column"
+                              justifyContent="center"
+                              alignItems="center"
+                              spacing={0.75}
+                            >
+                              <Stack direction="row" spacing={0.5}>
+                                <Typography
+                                  sx={{
+                                    fontSize: "18px",
+                                    color: "green",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  Correct
+                                </Typography>
+                                <CheckCircleIcon color="success"></CheckCircleIcon>
+                              </Stack>
+
+                              <Typography>
+                                {responseResultData?.testPractice.numCorrect}
                               </Typography>
-                              <DoNotDisturbOnIcon color="secondary"></DoNotDisturbOnIcon>
                             </Stack>
-                            <Typography>{`${TOTAL_QUESTIONS - responseResultData.totalQuestion}`}</Typography>
-                          </Stack>
-                        </Box>
-                      </Grid2>
-                      <Grid2 size={6}>
-                        <Box sx={BoxStyle}>
-                          <Stack
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            spacing={0.75}
-                          >
-                            <Stack direction="row" spacing={0.5}>
-                              <Typography
-                                sx={{
-                                  fontSize: "18px",
-                                  color: "primary.main",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                LC Score
+                          </Box>
+                        </Grid2>
+                        <Grid2 size={4}>
+                          <Box sx={BoxStyle}>
+                            <Stack
+                              direction="column"
+                              justifyContent="center"
+                              alignItems="center"
+                              spacing={0.75}
+                            >
+                              <Stack direction="row" spacing={0.5}>
+                                <Typography
+                                  sx={{
+                                    fontSize: "18px",
+                                    color: "red",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  Incorrect
+                                </Typography>
+                                <CancelIcon color="error"></CancelIcon>
+                              </Stack>
+                              <Typography>
+                                {(responseResultData?.testPractice
+                                  .totalQuestion ?? 0) -
+                                  (responseResultData?.testPractice
+                                    .numCorrect ?? 0)}
                               </Typography>
-                              <HeadphonesIcon color="primary" />
                             </Stack>
-                            <Typography>{`${responseResultData.LCScore}`}</Typography>
-                          </Stack>
-                        </Box>
-                      </Grid2>
-                      <Grid2 size={6}>
-                        <Box sx={BoxStyle}>
-                          <Stack
-                            direction="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            spacing={0.75}
-                          >
-                            <Stack direction="row" spacing={0.5}>
-                              <Typography
-                                sx={{
-                                  fontSize: "18px",
-                                  color: "primary.main",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                RC Score
-                              </Typography>
-                              <MenuBookIcon color="primary" />
+                          </Box>
+                        </Grid2>
+                        <Grid2 size={4}>
+                          <Box sx={BoxStyle}>
+                            <Stack
+                              direction="column"
+                              justifyContent="center"
+                              alignItems="center"
+                              spacing={0.75}
+                            >
+                              <Stack direction="row" spacing={0.5}>
+                                <Typography
+                                  sx={{
+                                    fontSize: "18px",
+                                    color: "gray",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  Skip
+                                </Typography>
+                                <DoNotDisturbOnIcon color="secondary"></DoNotDisturbOnIcon>
+                              </Stack>
+                              <Typography>{`${(TOTAL_QUESTIONS ?? 0) - (responseResultData?.testPractice.totalQuestion ?? 0)}`}</Typography>
                             </Stack>
-                            <Typography>{`${responseResultData.RCScore}`}</Typography>
-                          </Stack>
-                        </Box>
+                          </Box>
+                        </Grid2>
+                        <Grid2 size={6}>
+                          <Box sx={BoxStyle}>
+                            <Stack
+                              direction="column"
+                              justifyContent="center"
+                              alignItems="center"
+                              spacing={0.75}
+                            >
+                              <Stack direction="row" spacing={0.5}>
+                                <Typography
+                                  sx={{
+                                    fontSize: "18px",
+                                    color: "primary.main",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  LC Score
+                                </Typography>
+                                <HeadphonesIcon color="primary" />
+                              </Stack>
+                              <Typography>{`${responseResultData?.testPractice.LCScore}`}</Typography>
+                            </Stack>
+                          </Box>
+                        </Grid2>
+                        <Grid2 size={6}>
+                          <Box sx={BoxStyle}>
+                            <Stack
+                              direction="column"
+                              justifyContent="center"
+                              alignItems="center"
+                              spacing={0.75}
+                            >
+                              <Stack direction="row" spacing={0.5}>
+                                <Typography
+                                  sx={{
+                                    fontSize: "18px",
+                                    color: "primary.main",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  RC Score
+                                </Typography>
+                                <MenuBookIcon color="primary" />
+                              </Stack>
+                              <Typography>{`${responseResultData?.testPractice.RCScore}`}</Typography>
+                            </Stack>
+                          </Box>
+                        </Grid2>
                       </Grid2>
                     </Grid2>
                   </Grid2>
-                </Grid2>
-                <Button
-                  variant="contained"
-                  sx={{ marginTop: 2, marginRight: 1 }}
-                  onClick={() => navigate("/exams")}
+                  <Button
+                    variant="contained"
+                    sx={{ marginTop: 2, marginRight: 1 }}
+                    onClick={() => navigate("/exams")}
+                  >
+                    Back to exams library
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{ marginTop: 2 }}
+                    onClick={() => navigate(`/exams/review/${resultId}`)}
+                  >
+                    Answer details
+                  </Button>
+                </Box>
+              </Grid2>
+              <Grid2 size={3}>
+                {" "}
+                <Box
+                  sx={{
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    height: "fit-content",
+                    padding: "30px",
+                  }}
                 >
-                  Back to exams library
-                </Button>
-                <Button
-                  variant="contained"
-                  sx={{ marginTop: 2 }}
-                  onClick={() => navigate(`/exams/review/${resultId}`)}
-                >
-                  Answer details
-                </Button>
-              </Box>
+                  <InforUserBox />
+                </Box>
+              </Grid2>
             </Grid2>
-            <Grid2 size={3}>
-              {" "}
-              <Box
-                sx={{
-                  borderRadius: "10px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  height: "fit-content",
-                  padding: "30px",
-                }}
-              >
-                <InforUserBox />
-              </Box>
-            </Grid2>
-          </Grid2>
-        </Box>
+          </Box>
+        )}
       </Container>
     </Content>
   );
