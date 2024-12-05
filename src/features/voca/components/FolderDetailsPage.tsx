@@ -24,7 +24,7 @@ const FolderDetailsPage = () => {
 
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
 
-  if (!folder) {
+  if (!folderId) {
     return <Navigate to="/personal-word-folder" />;
   }
 
@@ -99,11 +99,11 @@ const FolderDetailsPage = () => {
         <Box sx={{ maxWidth: "878px", mx: "auto", padding: "27px 15px 48px" }}>
           <ListWords
             title="Pinned words"
-            vocabularies={folder.words}
+            vocabularies={folder?.words || []}
             status={VocabularyCardState.DEFAULT}
           />
 
-          {folder.words.length == 0 && (
+          {folder?.words.length == 0 && (
             <Typography>You haven't pinned any word yet</Typography>
           )}
         </Box>
