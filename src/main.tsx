@@ -55,6 +55,7 @@ import FolderDetailsPage from "./features/voca/components/FolderDetailsPage.tsx"
 import FolderPracticePage from "./features/voca/components/FolderPracticePage.tsx";
 import FolderPracticeResultPage from "./features/voca/components/FolderPracticeResultPage.tsx";
 import ListListenGroup from "./features/listen/pages/ListListenGroup.tsx";
+import ListenPractice from "./features/listen/pages/ListenPractice.tsx";
 
 const router = createBrowserRouter([
   {
@@ -110,10 +111,10 @@ const router = createBrowserRouter([
         index: true,
         element: <ListListenGroup />,
       },
-      // {
-      //   path: ":examId",
-      //   element: <Detail />,
-      // },
+      {
+        path: ":lessionId",
+        element: <ListenPractice />,
+      },
       // {
       //   path: ":examId/partIndex",
       //   element: <PartIndex />,
