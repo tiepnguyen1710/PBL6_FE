@@ -54,6 +54,8 @@ import PersonalWordFolderPage from "./features/voca/components/PersonalWordFolde
 import FolderDetailsPage from "./features/voca/components/FolderDetailsPage.tsx";
 import FolderPracticePage from "./features/voca/components/FolderPracticePage.tsx";
 import FolderPracticeResultPage from "./features/voca/components/FolderPracticeResultPage.tsx";
+import ForgotPasswordPage from "./features/auth/components/ForgotPasswordPage.tsx";
+import ResetPasswordPage from "./features/auth/components/ResetPasswordPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +75,14 @@ const router = createBrowserRouter([
         element: <RegisterPage />,
       },
     ],
+  },
+  {
+    path: "forgot-password",
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: "reset-password/:token",
+    element: <ResetPasswordPage />,
   },
   {},
   {
