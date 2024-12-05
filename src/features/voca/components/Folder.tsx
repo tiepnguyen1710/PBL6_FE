@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import { LessonCard } from "../../../components/LessonCard";
 import DefaultFolderImage from "../assets/default-folder.svg";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import FolderPopup from "./FolderPopup";
 
 interface FolderProps {
   id: string; // folderId
@@ -11,15 +11,26 @@ interface FolderProps {
 }
 
 const Folder: React.FC<FolderProps> = ({ name, pinnedWords, id }) => {
-  const navigate = useNavigate();
+  const [openPopup, setOpenPopup] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
+  const handleClickCard = () => {
+    setOpenPopup(!openPopup);
+  };
   return (
-    <Box sx={{ display: "inline-block", textAlign: "center" }}>
+    <Box
+      sx={{
+        display: "inline-block",
+        textAlign: "center",
+        position: "relative",
+      }}
+    >
       <LessonCard
         name={name}
         image={DefaultFolderImage}
         nameSx={{ fontSize: "18px" }}
-        onClickCard={() => navigate(`/personal-word-folder/${id}`)}
+        onClickCard={handleClickCard}
+        cardRef={cardRef}
       />
       <Typography
         component="span"
@@ -27,6 +38,15 @@ const Folder: React.FC<FolderProps> = ({ name, pinnedWords, id }) => {
       >
         Pinned: {pinnedWords || 0}
       </Typography>
+
+      <FolderPopup
+        open={openPopup}
+        onClose={() => setOpenPopup(false)}
+        pinnedWords={pinnedWords}
+        folderName={name}
+        folderId={id}
+        anchorEle={cardRef.current}
+      />
     </Box>
   );
 };

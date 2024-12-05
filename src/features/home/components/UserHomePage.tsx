@@ -120,7 +120,7 @@ const UserHomePage = () => {
             useFlexGap
           >
             <Typography variant="h4" color="primary.main">
-              Hello, {user?.username}!
+              Hello, {user?.name || user?.username}!
             </Typography>
 
             <Stack spacing={1} direction="row" sx={{ alignSelf: "center" }}>
