@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { countTotalQuestions } from "../../helper";
 import { resetAnswers } from "../../../../stores/userAnswer";
 import { clearSelectedParts } from "../../../../stores/selectedPartsSlice";
+import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 
 interface PartDataProps {
   partData: partData[];
@@ -59,7 +60,7 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
     setPartDataChosen(partDataChosen);
   }, [partData]);
 
-  const { mutate } = useMutation({
+  const mutation = useMutation({
     mutationFn: async (data: PracticeRequest) => {
       const responseData = await postPractice(data);
       return responseData;
@@ -93,47 +94,53 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
       userAnswer: userAnswers,
     };
 
-    mutate(practiceRequest);
+    mutation.mutate(practiceRequest);
   }, [limitTime, examId, userAnswers]);
   return (
     <>
-      <Box
-        sx={{
-          textAlign: "center",
-          marginBottom: "15px",
-        }}
-      >
-        <TimerCountdown
-          duration={limitTime}
-          timerRef={timerCountDownRef}
-          handleSubmit={handleSubmit}
-        />
-      </Box>
-      <Box
-        sx={{
-          textAlign: "center",
-        }}
-      >
-        <Button
-          sx={{
-            padding: "8px 50px",
-            borderRadius: "5px",
-            color: "var(--color-primary-main)",
-            border: "1px solid var(--color-primary-main)",
-            background: "white",
-            ":hover": {
-              color: "white",
-              background: "var(--color-primary-main)",
-            },
-          }}
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-      </Box>
-      <Box>
-        <ListQuestion partDataChosen={partDataChosen} />
-      </Box>
+      {mutation.isPending ? (
+        <CustomBackdrop open />
+      ) : (
+        <>
+          <Box
+            sx={{
+              textAlign: "center",
+              marginBottom: "15px",
+            }}
+          >
+            <TimerCountdown
+              duration={limitTime}
+              timerRef={timerCountDownRef}
+              handleSubmit={handleSubmit}
+            />
+          </Box>
+          <Box
+            sx={{
+              textAlign: "center",
+            }}
+          >
+            <Button
+              sx={{
+                padding: "8px 50px",
+                borderRadius: "5px",
+                color: "var(--color-primary-main)",
+                border: "1px solid var(--color-primary-main)",
+                background: "white",
+                ":hover": {
+                  color: "white",
+                  background: "var(--color-primary-main)",
+                },
+              }}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+          </Box>
+          <Box>
+            <ListQuestion partDataChosen={partDataChosen} />
+          </Box>
+        </>
+      )}
     </>
   );
 };
