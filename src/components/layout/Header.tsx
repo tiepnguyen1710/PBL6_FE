@@ -145,12 +145,14 @@ const Header: React.FC = () => {
                     <ListItemText>Profile</ListItemText>
                   </MenuItem>
                 </Link>
-                <MenuItem>
-                  <ListItemIcon>
-                    <BarChart fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Practice Analytics</ListItemText>
-                </MenuItem>
+                <Link to="/history">
+                  <MenuItem>
+                    <ListItemIcon>
+                      <BarChart fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Practice Analytics</ListItemText>
+                  </MenuItem>
+                </Link>
 
                 <Divider sx={{ margin: "8px !important" }} />
                 <MenuItem onClick={handleLogout}>
