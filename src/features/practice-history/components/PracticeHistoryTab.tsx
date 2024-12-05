@@ -11,6 +11,7 @@ const PracticeHistoryTab = () => {
   const [PracticeHistoryData, setPracticeHistoryData] = useState<
     {
       id: string;
+      name: string;
       value: PracticeHistory[];
     }[]
   >();

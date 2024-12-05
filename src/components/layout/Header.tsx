@@ -96,6 +96,13 @@ const Header: React.FC = () => {
                 </CustomNavLink>
               )}
             </NavLink>
+            <NavLink to="/listen">
+              {({ isActive }) => (
+                <CustomNavLink isActive={isActive}>
+                  Listen Practice
+                </CustomNavLink>
+              )}
+            </NavLink>
           </Stack>
         </Stack>
 
@@ -146,6 +153,7 @@ const Header: React.FC = () => {
                     <ListItemText>Profile</ListItemText>
                   </MenuItem>
                 </Link>
+
                 <Link to="/history">
                   <MenuItem>
                     <ListItemIcon>
@@ -154,7 +162,7 @@ const Header: React.FC = () => {
                     <ListItemText>Practice Analytics</ListItemText>
                   </MenuItem>
                 </Link>
-                =======
+
                 <Link to="/personal-word-folder">
                   <MenuItem>
                     <ListItemIcon>
@@ -169,6 +177,7 @@ const Header: React.FC = () => {
                   </ListItemIcon>
                   <ListItemText>Practice Analytics</ListItemText>
                 </MenuItem>
+
                 <Divider sx={{ margin: "8px !important" }} />
                 <MenuItem onClick={handleLogout}>
                   <ListItemIcon>

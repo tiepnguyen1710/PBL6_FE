@@ -35,9 +35,9 @@ function groupPracticeByTest(practices: PracticeHistory[]) {
     {} as Record<string, PracticeHistory[]>,
   );
 
-  // Chuyển grouped thành mảng các object
   return Object.entries(grouped).map(([id, value]) => ({
     id,
+    name: value[0]?.test?.name || "Unknown Test",
     value,
   }));
 }
