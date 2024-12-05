@@ -187,36 +187,39 @@ const ListListenGroup = () => {
                             </Box>
                           </AccordionSummary>
                           <AccordionDetails>
-                            <Grid container rowGap={1.5}>
+                            <Grid
+                              container
+                              columnGap={1}
+                              rowGap={0.5}
+                              spacing={2}
+                            >
                               {listenGroup.listenLessions.map(
-                                (listenLession) => {
+                                (listenLession, index) => {
                                   return (
                                     <>
                                       <Grid2 size={3} key={listenLession.id}>
                                         <Link
                                           to={`/listen/${listenLession.id}`}
                                         >
-                                          <Chip label={listenLession.name} />
-                                        </Link>
-                                      </Grid2>
-                                      <Grid2
-                                        size={3}
-                                        key={listenLession.id + "2"}
-                                      >
-                                        <Link
-                                          to={`/listen/${listenLession.id}`}
-                                        >
-                                          <Chip label={listenLession.name} />
-                                        </Link>
-                                      </Grid2>
-                                      <Grid2
-                                        size={3}
-                                        key={listenLession.id + "3"}
-                                      >
-                                        <Link
-                                          to={`/listen/${listenLession.id}`}
-                                        >
-                                          <Chip label={listenLession.name} />
+                                          <Chip
+                                            variant="outlined"
+                                            sx={{
+                                              padding: "10px 12px",
+                                              width: "100%",
+                                              boxSizing: "border-box",
+                                              textAlign: "center",
+                                              backgroundColor: "#F0F8FF",
+                                              borderRadius: "10px",
+                                              color: "#203A90",
+                                            }}
+                                            size="medium"
+                                            label={
+                                              "#" +
+                                              (index + 1) +
+                                              ". " +
+                                              listenLession.name
+                                            }
+                                          />
                                         </Link>
                                       </Grid2>
                                     </>
