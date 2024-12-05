@@ -50,10 +50,15 @@ import LessonLearningResultPage from "./features/voca/components/LessonLearningR
 import PartResultIndex from "./features/toeic-exam/components/PartResultIndex.tsx";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
+
+import UserHistoryPage from "./features/practice-history/components/UserHistoryPage.tsx";
+
 import PersonalWordFolderPage from "./features/voca/components/PersonalWordFolderPage.tsx";
 import FolderDetailsPage from "./features/voca/components/FolderDetailsPage.tsx";
 import FolderPracticePage from "./features/voca/components/FolderPracticePage.tsx";
 import FolderPracticeResultPage from "./features/voca/components/FolderPracticeResultPage.tsx";
+import ListListenGroup from "./features/listen/pages/ListListenGroup.tsx";
+import ListenPractice from "./features/listen/pages/ListenPractice.tsx";
 import ForgotPasswordPage from "./features/auth/components/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./features/auth/components/ResetPasswordPage.tsx";
 
@@ -112,12 +117,48 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "listen",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <ListListenGroup />,
+      },
+      {
+        path: ":lessionId",
+        element: <ListenPractice />,
+      },
+      // {
+      //   path: ":examId/partIndex",
+      //   element: <PartIndex />,
+      // },
+      // {
+      //   path: "result/:resultId",
+      //   element: <ResultPage />,
+      // },
+      // {
+      //   path: "review/:reviewId",
+      //   element: <PartResultIndex />,
+      // },
+    ],
+  },
+  {
     path: "profile",
     element: <ProtectedRoute />,
     children: [
       {
         index: true,
         element: <UserProfilePage />,
+      },
+    ],
+  },
+  {
+    path: "history",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <UserHistoryPage />,
       },
     ],
   },

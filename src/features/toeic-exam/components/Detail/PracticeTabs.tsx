@@ -13,7 +13,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../stores";
 import {
@@ -22,6 +22,7 @@ import {
 } from "../../../../stores/selectedPartsSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { sortPartArray } from "../../helper";
+import { resetAnswers } from "../../../../stores/userAnswer";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -65,6 +66,10 @@ export default function PracticeTabs() {
 
   const routeParams = useParams<{ examId: string }>();
   const examId = routeParams.examId;
+
+  useEffect(() => {
+    dispatch(resetAnswers());
+  }, []);
 
   const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);

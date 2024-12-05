@@ -21,7 +21,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t dattrungnam510/engflashfe:latest .
+          docker build --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} --build-arg VITE_TINY_KEY=${{ secrets.VITE_TINY_KEY }} --build-arg VITE_CLOUDINARY_PRESET_NAME=${{ secrets.VITE_CLOUDINARY_PRESET_NAME }} --build-arg VITE_CLOUDINARY_CLOUD_NAME=${{ secrets.VITE_CLOUDINARY_CLOUD_NAME }} --build-arg VITE_GOOGLE_CLIENT_ID=224455832041-745s0jjjj1lglg40ccvcgvspisfka6ri.apps.googleusercontent.com -t dattrungnam510/engflashfe:latest .
 
       - name: Push Docker image to Docker Hub
         run: |

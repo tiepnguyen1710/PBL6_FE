@@ -24,7 +24,7 @@ export async function updateFolderDetails(request: UpdateFolderRequest) {
 export async function deleteUserFolder(id: string) {
   const response = await axiosClient.delete<UserFolder>("user-topic/" + id);
 
-  return response.data; // api returns an array that contains the requested folder
+  return response.data;
 }
 
 export async function getUserFolders() {
