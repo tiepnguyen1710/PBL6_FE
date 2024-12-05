@@ -38,7 +38,7 @@ import { enGB } from "date-fns/locale";
 import CustomModal from "../../../components/UI/CustomModal";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import updateUserProfile from "../../user-profile/api/user-profile";
+import { updateUserProfile } from "../../user-profile/api/user-profile";
 import { toast } from "react-toastify";
 import { differenceInDays, format } from "date-fns";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
