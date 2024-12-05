@@ -11,75 +11,63 @@ import CustomModal, {
 import { SubmitHandler, useForm } from "react-hook-form";
 import BoldStrokeButton from "./BoldStrokeButton";
 import { useMutation } from "@tanstack/react-query";
-import { createNewFolder, pinWordToNewFolder } from "../api/user-folder";
-import { NewUserFolderRequest } from "../types/UserFolderRequest";
+import { updateFolderDetails } from "../api/user-folder";
 import { toast } from "react-toastify";
 
-interface NewWordFolderModalProps extends CustomModalProps {
-  vocaId?: string;
-  onCreated?: () => void; // create new folder successfully
+interface UpdateFolderModalProps extends CustomModalProps {
+  id: string;
+  initialName: string;
+  initialDescription: string;
+
+  onUpdated?: () => void;
 }
 
-interface NewWordFolderFormData {
+interface UpdateFolderFormData {
   name: string;
   description: string;
 }
 
-const NewWordFolderModal: React.FC<NewWordFolderModalProps> = ({
+const UpdateFolderModal: React.FC<UpdateFolderModalProps> = ({
   open,
   onClose,
-  vocaId,
-  onCreated,
+  id,
+  initialName,
+  initialDescription,
+  onUpdated,
 }) => {
   const {
     register,
     formState: { errors: validationErrors },
     handleSubmit,
-  } = useForm<NewWordFolderFormData>({
+  } = useForm<UpdateFolderFormData>({
     defaultValues: {
-      name: "",
-      description: "",
+      name: initialName,
+      description: initialDescription,
     },
   });
 
-  const newFolderMutation = useMutation({
-    mutationFn: createNewFolder,
+  const updateFolderMutation = useMutation({
+    mutationFn: (request: { name: string; description: string }) =>
+      updateFolderDetails({
+        name: request.name,
+        description: request.description,
+        id,
+      }),
     onSuccess: () => {
-      toast.success("New folder has been created");
+      toast.success("Save successfully");
+      onUpdated?.();
       onClose();
-      onCreated?.();
     },
   });
 
-  const pinWordToNewFolderMutation = useMutation({
-    mutationFn: (newFolderRequest: NewUserFolderRequest) =>
-      pinWordToNewFolder(newFolderRequest, vocaId!),
-    onSuccess: () => {
-      onClose();
-      toast.success("Word has been pinned");
-    },
-  });
-
-  const handleSaveNewFolder: SubmitHandler<NewWordFolderFormData> = (data) => {
-    const request: NewUserFolderRequest = {
-      name: data.name,
-      description: data.description,
-    };
-
-    if (vocaId) {
-      pinWordToNewFolderMutation.mutate(request);
-    } else {
-      newFolderMutation.mutate(request);
-    }
+  const handleSaveNewFolder: SubmitHandler<UpdateFolderFormData> = (data) => {
+    updateFolderMutation.mutate(data);
   };
   return (
     <CustomModal
       open={open}
       onClose={onClose}
       containerSx={{
-        // top: 20,
-        // left: "50%",
-        // transform: "translateX(-50%)",
         borderRadius: "8px",
       }}
     >
@@ -89,7 +77,7 @@ const NewWordFolderModal: React.FC<NewWordFolderModalProps> = ({
             variant="h5"
             sx={{ marginBottom: 1.5, textAlign: "center" }}
           >
-            Create new folder
+            Update folder
           </Typography>
 
           {/* Folder */}
@@ -125,9 +113,9 @@ const NewWordFolderModal: React.FC<NewWordFolderModalProps> = ({
                 marginLeft: "auto",
                 borderBottomWidth: "4px",
               }}
-              disabled={newFolderMutation.isPending}
+              disabled={updateFolderMutation.isPending}
             >
-              {newFolderMutation.isPending ? (
+              {updateFolderMutation.isPending ? (
                 <CircularProgress size={20} />
               ) : (
                 "Save"
@@ -140,4 +128,4 @@ const NewWordFolderModal: React.FC<NewWordFolderModalProps> = ({
   );
 };
 
-export default NewWordFolderModal;
+export default UpdateFolderModal;

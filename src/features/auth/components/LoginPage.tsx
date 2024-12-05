@@ -10,7 +10,6 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import RoundedInput from "../../../components/UI/RoundedInput";
@@ -24,6 +23,7 @@ import { Alert } from "@mui/material";
 import { loginGoggle } from "../api/account-api";
 import LoginResponse from "../types/LoginResponse";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import Link from "../../../components/UI/Link";
 
 // Interface for form data
 interface FormData {
@@ -143,7 +143,15 @@ const LoginPage: React.FC = () => {
               alignItems="center"
             >
               <FormControlLabel control={<Checkbox />} label="Remember me" />
-              <Link href="#" underline="hover">
+              <Link
+                to="/forgot-password"
+                sx={{
+                  color: "primary.main",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                }}
+              >
                 Forgot password?
               </Link>
             </Box>

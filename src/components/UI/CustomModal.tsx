@@ -44,6 +44,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
                 height: "100vh",
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
               }}
+              onClick={onClose}
             ></motion.div>
             <Box
               sx={{

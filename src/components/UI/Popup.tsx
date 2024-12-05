@@ -47,6 +47,7 @@ const Popup: React.FC<PopupProps> = ({
       sx={{
         position: "absolute",
         display: open ? "block" : "none",
+        zIndex: 100,
         ...sx,
       }}
     >

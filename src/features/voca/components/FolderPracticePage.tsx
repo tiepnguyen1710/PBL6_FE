@@ -2,9 +2,8 @@ import { Clear } from "@mui/icons-material";
 import { Box, IconButton, Stack } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getExerciseSet } from "../utils/exercise-helper";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import { getLessonById } from "../../admin/vocasets/api/lesson-api";
+import { useQuery } from "@tanstack/react-query";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import VocabularyModel from "../../../types/VocabularyModel";
 import TestingExercise from "./TestingExercise";
@@ -12,18 +11,20 @@ import { Exercise } from "../types/Exercise";
 import ClockTimer, { ClockTimerRef } from "./ClockTimer";
 import { AnimatePresence } from "framer-motion";
 import SuspendLearningDrawer from "./SuspendLearningDrawer";
-import { PostLearningResultRequest } from "../types/LearningResultRequest";
-import { createLearningResult } from "../api/voca-learning";
+import { getUserFolderById } from "../api/user-folder";
 import PracticeProgressBar from "./PracticeProgressBar";
 import AnswerSound from "./AnswerSound";
+import { useDispatch } from "react-redux";
+import { folderPracticeActions } from "../../../stores/folderPracticeSlice";
+import { UserFolder } from "../../../types/user-folder";
 
 const MIN_NUMBER_OF_EXERCISES = 4;
 const DURATION_PER_EXERCISE = 15; // seconds
 
-const VocaPracticePage: React.FC = () => {
+const FolderPracticePage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const lessonId = searchParams.get("id");
+  const { folderId } = useParams();
+  const dispatch = useDispatch();
 
   const [vocabularies, setVocabularies] = useState<VocabularyModel[]>([]);
   // console.log("vocabularies", vocabularies);
@@ -33,11 +34,12 @@ const VocaPracticePage: React.FC = () => {
 
   const [openExitDrawer, setOpenExitDrawer] = useState(false);
 
-  const { data: lesson, isLoading } = useQuery({
-    queryKey: ["lesson", { id: lessonId }],
-    queryFn: () => getLessonById(lessonId!),
-    enabled: !!lessonId,
+  const { data: folder, isLoading } = useQuery({
+    queryKey: ["userFolders", { id: folderId }],
+    queryFn: () => getUserFolderById(folderId!),
+    enabled: !!folderId,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   const [exerciseIdx, setExerciseIdx] = useState(0);
@@ -62,16 +64,6 @@ const VocaPracticePage: React.FC = () => {
 
   const clockTimerRef = useRef<ClockTimerRef>(null);
 
-  const postLearningResultMutation = useMutation({
-    mutationFn: createLearningResult,
-    onSuccess: () => {
-      console.log("Post learning result successfully");
-      navigate(
-        `/lesson/learning-result?id=${lessonId}&vocaSetId=${lesson?.groupTopic.id}`,
-      );
-    },
-  });
-
   const playWrongAnswerAudio = () => {
     wrongAnswerAudioRef.current?.play();
   };
@@ -93,58 +85,28 @@ const VocaPracticePage: React.FC = () => {
     playWrongAnswerAudio();
   };
 
-  const postLearningResult = useCallback(() => {
-    const listCorrectWord = new Set<string>();
-    const listIncorrectWord = new Set<string>();
-
-    for (const {
-      voca: { id },
-    } of exercises) {
-      // As each voca has been repeated `repeatTimes` times
-      // So, a voca is considered correct if it is answered correctly `repeatTimes` times
-      if (
-        correctVocaIds.filter((vocaId) => vocaId === id).length == repeatTimes
-      ) {
-        listCorrectWord.add(id);
-      } else {
-        listIncorrectWord.add(id);
-      }
-    }
-
-    const request: PostLearningResultRequest = {
-      idTopic: lessonId!,
-      listCorrectWord: [...listCorrectWord],
-      listIncorrectWord: [...listIncorrectWord],
-      time: takenTime,
-    };
-
-    console.log(request);
-
-    postLearningResultMutation.mutate(request);
-  }, [
-    exercises,
-    correctVocaIds,
-    lessonId,
-    postLearningResultMutation,
-    repeatTimes,
-    takenTime,
-  ]);
-
   useEffect(() => {
-    if (lesson) {
-      setVocabularies(lesson.listWord || []);
+    if (folder) {
+      setVocabularies(folder.words || []);
     }
-  }, [lesson]);
+  }, [folder]);
 
   const handleFulFillExercise = useCallback(() => {
     // The callback is re-defined in each time `exerciseIdx` changes, so the `exerciseIdx` is always the latest
     if (exercises.length > 0 && exerciseIdx + 1 >= exercises.length) {
       // Finish lesson
-      postLearningResult();
+      dispatch(
+        folderPracticeActions.savePracticeResult({
+          folder: folder as UserFolder,
+          correctVocaIds: [...new Set(correctVocaIds)],
+          takenTime: takenTime,
+        }),
+      );
+      navigate(`/personal-word-folder/${folderId}/practice-result`);
     } else {
       setExerciseIdx((prev) => prev + 1);
     }
-  }, [exercises.length, exerciseIdx, postLearningResult]);
+  }, [exercises.length, exerciseIdx]);
 
   const handleAnswerExercise = useCallback(() => {
     const remainingTime = clockTimerRef.current?.stop() || 0;
@@ -153,7 +115,7 @@ const VocaPracticePage: React.FC = () => {
     setTakenTime((prev) => prev + implementTime);
   }, [clockTimerRef, setTakenTime]);
 
-  if (!lessonId) {
+  if (!folderId) {
     return <Navigate to="/" />;
   }
 
@@ -163,7 +125,6 @@ const VocaPracticePage: React.FC = () => {
         <CustomBackdrop open={isLoading} />
       ) : (
         <Box sx={{ maxWidth: "962px", mx: "auto", padding: "30px 15px" }}>
-          {postLearningResultMutation.isPending && <CustomBackdrop open />}
           {/* Header */}
           <Stack direction="row" spacing={0.5} alignItems="center">
             {/* Close button */}
@@ -171,7 +132,6 @@ const VocaPracticePage: React.FC = () => {
               <Clear />
             </IconButton>
 
-            {/* Progress bar */}
             <PracticeProgressBar
               progress={(exerciseIdx / exercises.length) * 100}
             />
@@ -204,7 +164,7 @@ const VocaPracticePage: React.FC = () => {
             open={openExitDrawer}
             onClose={() => setOpenExitDrawer(false)} // onCloseDrawer
             onClickStay={() => setOpenExitDrawer(false)}
-            exitLink={`/voca/${lesson?.groupTopic.id}/lessons`}
+            exitLink={`/personal-word-folder/${folderId}`}
           />
         </Box>
       )}
@@ -218,4 +178,4 @@ const VocaPracticePage: React.FC = () => {
   );
 };
 
-export default VocaPracticePage;
+export default FolderPracticePage;
