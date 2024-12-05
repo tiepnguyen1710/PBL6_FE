@@ -5,21 +5,26 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Stack,
+  TableFooter,
+  TablePagination,
+  Typography,
+} from "@mui/material";
 
-interface TestDate {
-  date: Date;
-  tags: string[];
-  fulltest: boolean;
-}
+import { useQuery } from "@tanstack/react-query";
+import { fetchTestDetailWithPractice } from "../../api/api";
+import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
+import useResultTable from "../../hooks/useResultTable";
+import { TestPractice } from "../../types/TestDetailWithPractice";
+import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-function createData(
-  dateTest: TestDate,
-  result: string,
-  time: number,
-  action: string,
-) {
-  return { dateTest, result, time, action };
+interface ResultTableProps {
+  examId?: string;
 }
 
 const HeadRowStyle = {
@@ -54,87 +59,138 @@ const toHHMMSS = (secs: number) => {
     .join(":");
 };
 
-const rows = [
-  createData(
+const ResultTable: React.FC<ResultTableProps> = ({ examId }) => {
+  const ROW_per_PAGE = 5;
+  const [testPractice, setTestPractice] = useState<TestPractice[]>();
+  const { data: testDetailPractice, isPending: isPendingTestDetail } = useQuery(
     {
-      date: new Date(2024, 11, 1),
-      tags: ["part1", "part2", "part3", "part4", "part5"],
-      fulltest: false,
+      queryKey: ["fetchExam", examId],
+      queryFn: () => fetchTestDetailWithPractice(examId || ""),
+      enabled: !!examId,
     },
-    "12/18",
-    5000,
-    "Detail",
-  ),
-  createData(
-    {
-      date: new Date(2024, 11, 1),
-      tags: [],
-      fulltest: true,
-    },
-    "120/200",
-    5000,
-    "Detail",
-  ),
-];
-
-export default function ResultTable() {
-  return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ ...HeadRowStyle }}>Date</TableCell>
-            <TableCell sx={{ ...HeadRowStyle }}>Result</TableCell>
-            <TableCell sx={{ ...HeadRowStyle }}>Time</TableCell>
-            <TableCell sx={{ ...HeadRowStyle }}>Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, rowIndex) => (
-            <TableRow
-              key={rowIndex}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                <Stack direction="column" spacing={0.5}>
-                  <Typography>
-                    {row.dateTest.date.toLocaleDateString()}
-                  </Typography>
-                  <Stack
-                    direction="row"
-                    spacing={0.25}
-                    sx={{ flexWrap: "wrap" }}
-                  >
-                    {row.dateTest.fulltest ? (
-                      <Chip
-                        label="fulltest"
-                        sx={{ ...chipStyle, backgroundColor: "success.main" }}
-                      />
-                    ) : (
-                      <>
-                        <Box sx={{ mb: 1 }}>
-                          <Chip label="practice" sx={{ ...chipStyle }} />
-                        </Box>
-
-                        {row.dateTest.tags.map((tag) => {
-                          return <Chip label={tag} sx={{ ...chipStyle }} />;
-                        })}
-                      </>
-                    )}
-                  </Stack>
-                </Stack>
-              </TableCell>
-              <TableCell sx={{ ...RowStyle }}>{row.result}</TableCell>
-              <TableCell sx={{ ...RowStyle }}>{toHHMMSS(row.time)}</TableCell>
-              <TableCell sx={{ ...RowStyle }}>
-                <span style={{ color: "#0071F9", cursor: "pointer" }}>
-                  {row.action}
-                </span>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
   );
-}
+
+  console.log(testDetailPractice);
+  useEffect(() => {
+    setTestPractice(testDetailPractice?.testPractice);
+  }, [testDetailPractice]);
+
+  const { page, emptyRows, pageData, handleChangePage } =
+    useResultTable<TestPractice>(testPractice || [], ROW_per_PAGE);
+
+  const rows = pageData.map((testPractice) => {
+    return {
+      id: testPractice.id,
+      dateTest: {
+        date: testPractice.createdAt,
+        tags: testPractice.listPart,
+        fulltest: testPractice.isFullTest,
+      },
+      result: `${testPractice.numCorrect}/${testPractice.totalQuestion}`,
+      time: testPractice.time,
+    };
+  });
+  return (
+    <>
+      {isPendingTestDetail ? (
+        <CustomBackdrop open />
+      ) : (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ ...HeadRowStyle }}>Date</TableCell>
+                <TableCell sx={{ ...HeadRowStyle }}>Part</TableCell>
+                <TableCell sx={{ ...HeadRowStyle }}>Result</TableCell>
+                <TableCell sx={{ ...HeadRowStyle }}>Time</TableCell>
+                <TableCell sx={{ ...HeadRowStyle }}>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows?.map((row, rowIndex) => (
+                <TableRow
+                  key={rowIndex}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    <Stack direction="column" spacing={0.5}>
+                      <Typography>{row.dateTest.date.slice(0, 10)}</Typography>
+                    </Stack>
+                  </TableCell>
+                  <TableCell sx={{ ...RowStyle }}>
+                    <Stack
+                      direction="row"
+                      spacing={0.25}
+                      sx={{ flexWrap: "wrap" }}
+                    >
+                      {row.dateTest.fulltest ? (
+                        <Chip
+                          label="fulltest"
+                          sx={{ ...chipStyle, backgroundColor: "success.main" }}
+                        />
+                      ) : (
+                        <>
+                          <Box sx={{ mb: 1 }}>
+                            <Chip label="practice" sx={{ ...chipStyle }} />
+                          </Box>
+
+                          {row.dateTest.tags.map((tag) => {
+                            return <Chip label={tag} sx={{ ...chipStyle }} />;
+                          })}
+                        </>
+                      )}
+                    </Stack>
+                  </TableCell>
+                  <TableCell sx={{ ...RowStyle }}>{row.result}</TableCell>
+                  <TableCell sx={{ ...RowStyle }}>
+                    {toHHMMSS(row.time)}
+                  </TableCell>
+                  <TableCell sx={{ ...RowStyle }}>
+                    <Link
+                      to={`/exams/result/${row.id}`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#0071F9",
+                          cursor: "pointer",
+                          ":hover": "main.primary",
+                        }}
+                      >
+                        {`Detail`}
+                      </Typography>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: 53 * emptyRows,
+                    backgroundColor: "white",
+                  }}
+                >
+                  <TableCell colSpan={7} />
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[ROW_per_PAGE]}
+                  count={testDetailPractice?.testPractice?.length || 0}
+                  rowsPerPage={ROW_per_PAGE}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      )}
+    </>
+  );
+};
+
+export default ResultTable;

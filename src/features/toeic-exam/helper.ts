@@ -35,16 +35,16 @@ export const countTotalQuestions = (partSelect: string[]) => {
         totalQuestions += TOEIC_PARTS.Part3.questionCount;
         break;
       case "part4":
-        totalQuestions += TOEIC_PARTS.Part3.questionCount;
+        totalQuestions += TOEIC_PARTS.Part4.questionCount;
         break;
       case "part5":
-        totalQuestions += TOEIC_PARTS.Part3.questionCount;
+        totalQuestions += TOEIC_PARTS.Part5.questionCount;
         break;
       case "part6":
-        totalQuestions += TOEIC_PARTS.Part3.questionCount;
+        totalQuestions += TOEIC_PARTS.Part6.questionCount;
         break;
       case "part7":
-        totalQuestions += TOEIC_PARTS.Part3.questionCount;
+        totalQuestions += TOEIC_PARTS.Part7.questionCount;
         break;
       default:
         break;

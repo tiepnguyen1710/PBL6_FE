@@ -23,7 +23,7 @@ const PartResultIndex = () => {
     useState<PracticeDetailConverted>();
 
   const { isPending, data: ExamSetReviewData } = useQuery({
-    queryKey: ["FetchExamSet", reviewId],
+    queryKey: ["FetchTestPractice", reviewId],
     queryFn: () => fetchPracticeDetailUser(reviewId!),
     enabled: !!reviewId,
   });
