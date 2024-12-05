@@ -171,12 +171,6 @@ const Header: React.FC = () => {
                     <ListItemText>Word Folders</ListItemText>
                   </MenuItem>
                 </Link>
-                <MenuItem>
-                  <ListItemIcon>
-                    <BarChart fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Practice Analytics</ListItemText>
-                </MenuItem>
 
                 <Divider sx={{ margin: "8px !important" }} />
                 <MenuItem onClick={handleLogout}>
