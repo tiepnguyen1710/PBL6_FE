@@ -3,8 +3,12 @@ import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 import PersonIcon from "@mui/icons-material/Person";
 import ResultTable from "./ResultTable";
 import PracticeTabs from "./PracticeTabs";
+import { useParams } from "react-router-dom";
 
 const DetailContent = () => {
+  const routeParams = useParams<{ examId: string }>();
+  const examId = routeParams.examId;
+
   return (
     <>
       <Box sx={{ pb: 2 }}>
@@ -46,7 +50,7 @@ const DetailContent = () => {
         <Typography variant="h6" sx={{ mb: 1, color: "black" }}>
           Your result
         </Typography>
-        <ResultTable />
+        <ResultTable examId={examId} />
       </Box>
 
       <Box sx={{ width: "100%" }}>
