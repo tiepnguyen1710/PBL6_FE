@@ -439,7 +439,7 @@ const ListenPractice: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Typography variant="h6">Check1:</Typography>
+                    <Typography variant="h6">Check:</Typography>
                     {answerState[currIndex - 1].checked &&
                       sentenceCheck[currIndex - 1].map((sentence, index) => {
                         return (
