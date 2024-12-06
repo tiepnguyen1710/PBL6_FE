@@ -387,9 +387,9 @@ const ListenPractice: React.FC = () => {
                   marginLeft: "20px",
                 }}
               >
-                <audio controls>
+                <audio key={currIndex} controls>
                   <source
-                    src={lesson?.listenSentences[currIndex - 1]?.audio || ""}
+                  src={lesson?.listenSentences[currIndex - 1]?.audio || ""}
                   />
                   Your browser does not support the audio element.
                 </audio>
