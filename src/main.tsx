@@ -125,7 +125,7 @@ const router = createBrowserRouter([
         element: <ListListenGroup />,
       },
       {
-        path: ":lessionId",
+        path: ":lessonId",
         element: <ListenPractice />,
       },
       // {

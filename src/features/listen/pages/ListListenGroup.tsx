@@ -110,13 +110,13 @@ const ListListenGroup = () => {
                       id: listenGroup.id,
                       name: listenGroup.name,
                       level: listenGroup.level,
-                      listenLessions: listenGroup.listenLessions.map(
-                        (listenLession) => {
-                          const listenLessionSetInfo = {
-                            id: listenLession.id,
-                            name: listenLession.name,
+                      listenLessons: listenGroup.listenLessons.map(
+                        (listenLesson) => {
+                          const listenLessonSetInfo = {
+                            id: listenLesson.id,
+                            name: listenLesson.name,
                           };
-                          return listenLessionSetInfo;
+                          return listenLessonSetInfo;
                         },
                       ),
                     };
@@ -182,7 +182,7 @@ const ListListenGroup = () => {
                               <Typography
                                 sx={{ color: "gray", fontSize: "14px" }}
                               >
-                                ({listenGroup.listenLessions.length} Lession)
+                                ({listenGroup.listenLessons.length} Lesson)
                               </Typography>
                             </Box>
                           </AccordionSummary>
@@ -193,14 +193,12 @@ const ListListenGroup = () => {
                               rowGap={0.5}
                               spacing={2}
                             >
-                              {listenGroup.listenLessions.map(
-                                (listenLession, index) => {
+                              {listenGroup.listenLessons.map(
+                                (listenLesson, index) => {
                                   return (
                                     <>
-                                      <Grid2 size={3} key={listenLession.id}>
-                                        <Link
-                                          to={`/listen/${listenLession.id}`}
-                                        >
+                                      <Grid2 size={3} key={listenLesson.id}>
+                                        <Link to={`/listen/${listenLesson.id}`}>
                                           <Chip
                                             variant="outlined"
                                             sx={{
@@ -217,7 +215,7 @@ const ListListenGroup = () => {
                                               "#" +
                                               (index + 1) +
                                               ". " +
-                                              listenLession.name
+                                              listenLesson.name
                                             }
                                           />
                                         </Link>

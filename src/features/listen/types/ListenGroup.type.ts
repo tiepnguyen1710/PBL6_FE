@@ -1,4 +1,4 @@
-import { IListenLession } from "./ListenLession.type";
+import { IListenLesson } from "./ListenLesson.type";
 
 export interface IListenGroupResponse {
   first: number;
@@ -12,17 +12,17 @@ export interface IListenGroupModel {
   id: string;
   name: string;
   level: string;
-  listenLessions: IListenLession[];
+  listenLessons: IListenLesson[];
 }
 
 export interface IListenGroupSetInfor {
   id: string;
   name: string;
   level: string;
-  listenLessions: IListenLessionSetInfor[];
+  listenLessons: IListenLessonSetInfor[];
 }
 
-interface IListenLessionSetInfor {
+interface IListenLessonSetInfor {
   id: string;
   name: string;
 }
