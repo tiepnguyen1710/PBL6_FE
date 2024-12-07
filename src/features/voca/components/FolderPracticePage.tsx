@@ -95,10 +95,16 @@ const FolderPracticePage: React.FC = () => {
     // The callback is re-defined in each time `exerciseIdx` changes, so the `exerciseIdx` is always the latest
     if (exercises.length > 0 && exerciseIdx + 1 >= exercises.length) {
       // Finish lesson
+      const actualCorrectVocaIds = correctVocaIds.filter(
+        (vocaId) =>
+          correctVocaIds.filter((id) => id === vocaId).length ===
+          2 * repeatTimes,
+      );
+      console.log("actualCorrectVocaIds", actualCorrectVocaIds);
       dispatch(
         folderPracticeActions.savePracticeResult({
           folder: folder as UserFolder,
-          correctVocaIds: [...new Set(correctVocaIds)],
+          correctVocaIds: [...new Set(actualCorrectVocaIds)],
           takenTime: takenTime,
         }),
       );
@@ -106,7 +112,17 @@ const FolderPracticePage: React.FC = () => {
     } else {
       setExerciseIdx((prev) => prev + 1);
     }
-  }, [exercises.length, exerciseIdx]);
+  }, [
+    exercises.length,
+    exerciseIdx,
+    correctVocaIds,
+    dispatch,
+    folder,
+    takenTime,
+    navigate,
+    folderId,
+    repeatTimes,
+  ]);
 
   const handleAnswerExercise = useCallback(() => {
     const remainingTime = clockTimerRef.current?.stop() || 0;
