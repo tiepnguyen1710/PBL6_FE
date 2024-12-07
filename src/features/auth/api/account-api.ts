@@ -1,17 +1,13 @@
 import axios from "../../../axios";
 import { User } from "../../../types/auth";
+import LoginRequest from "../types/LoginRequest";
 import LoginResponse from "../types/LoginResponse";
 import RegisterRequest from "../types/RegisterRequest";
 import { ResetPasswordRequest } from "../types/ResetPasswordRequest";
 
-export async function postLogin(
-  username: string,
-  password: string,
-): Promise<LoginResponse> {
-  const response = await axios.post<LoginResponse>("/auth/login", {
-    username,
-    password,
-  });
+export async function postLogin(request: LoginRequest): Promise<LoginResponse> {
+  const response = await axios.post<LoginResponse>("/auth/login", request);
+
   return response.data;
 }
 

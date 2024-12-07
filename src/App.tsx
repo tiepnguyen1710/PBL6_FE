@@ -1,12 +1,26 @@
-// import { useState } from "react";
-
-import { Link } from "react-router-dom";
+import React from "react";
 import "./App.css";
+import { authActions } from "./stores/authSlice";
+import { useDispatch } from "react-redux";
+import useUser from "./hooks/useUser";
+import CustomBackdrop from "./components/UI/CustomBackdrop";
 
-function App() {
-  // const [count, setCount] = useState(0);
+const App: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
 
-  return <Link to="exam">hello</Link>;
-}
+  const {
+    data: user,
+    isSuccess,
+    isLoading: isLoadingUser,
+  } = useUser(token || "", token !== null);
+
+  if (isSuccess && user) {
+    // init redux auth state
+    dispatch(authActions.login({ token: token!, user }));
+  }
+
+  return <>{isLoadingUser ? <CustomBackdrop /> : children}</>;
+};
 
 export default App;
