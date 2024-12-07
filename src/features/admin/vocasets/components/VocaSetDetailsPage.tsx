@@ -51,7 +51,7 @@ interface VocaSetFormData {
   description: string;
 }
 
-const LESSON_PAGE_SIZE = 2;
+const LESSON_PAGE_SIZE = 4;
 
 const VocaSetDetailsPage = () => {
   const [searchParams] = useSearchParams();
@@ -72,7 +72,10 @@ const VocaSetDetailsPage = () => {
     },
     onSuccess: (responseData) => {
       toast.success("Update successfully!");
-      queryClient.setQueryData(["vocaSet", { id: vocaSetId }], responseData);
+      queryClient.setQueryData(["vocaSet", { id: vocaSetId }], {
+        ...responseData,
+        topics: data?.topics,
+      });
     },
   });
 
@@ -84,7 +87,8 @@ const VocaSetDetailsPage = () => {
         queryKey: ["vocaSet", { id: vocaSetId }],
         exact: true,
       });
-      setPage(0);
+
+      invalidatePage(data!.topics.length - 1);
     },
     onSettled: () => {
       // reset state
@@ -121,11 +125,17 @@ const VocaSetDetailsPage = () => {
 
   const lessons = data?.topics || [];
 
-  const filteredlessons = lessons.filter((lesson) =>
-    lesson.name.toLowerCase().includes(searchLesson),
+  const filteredLessons = lessons.filter((lesson) =>
+    lesson.name.toLowerCase().includes(searchLesson.toLowerCase()),
   );
-  const { page, setPage, emptyRows, pageData, handleChangePage } =
-    useAdminTablePagination<LessonModel>(filteredlessons, LESSON_PAGE_SIZE);
+  const {
+    page,
+    setPage,
+    emptyRows,
+    pageData,
+    handleChangePage,
+    invalidatePage,
+  } = useAdminTablePagination<LessonModel>(filteredLessons, LESSON_PAGE_SIZE);
 
   // console.log("pageData", pageData);
   // console.log("data.topic", data?.topics);
@@ -144,6 +154,7 @@ const VocaSetDetailsPage = () => {
 
   useEffect(() => {
     if (data) {
+      //  Reset form data
       const vocaSetFormData: VocaSetFormData = {
         id: data.id,
         name: data.name,
@@ -195,8 +206,6 @@ const VocaSetDetailsPage = () => {
   if (!vocaSetId) {
     return <Navigate to="/admin/voca-set/" />;
   }
-
-  console.log("register level", register("level"));
 
   return (
     <>
