@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { me } from "../features/auth/api/account-api";
 import { User } from "../types/auth";
 
 export interface AuthState {
@@ -8,9 +7,15 @@ export interface AuthState {
   user: User | null;
 }
 
+const initialState: AuthState = {
+  token: null,
+  isAuthenticated: false,
+  user: null,
+};
+
 const authSlice = createSlice({
   name: "auth",
-  initialState: await getInitialAuthState(),
+  initialState: initialState,
   reducers: {
     login(state, action: PayloadAction<{ token: string; user: User }>) {
       const { token, user } = action.payload;
@@ -33,28 +38,3 @@ const authSlice = createSlice({
 export const authActions = authSlice.actions;
 
 export default authSlice.reducer;
-
-async function restoreUser(token: string) {
-  const user = await me(token);
-
-  return user;
-}
-
-async function getInitialAuthState() {
-  const token = localStorage.getItem("token");
-
-  let loggedInUser: User | null = null;
-  try {
-    loggedInUser = token ? await restoreUser(token) : null;
-  } catch (error) {
-    loggedInUser = null;
-    console.error("Restore user from stored token failed", error);
-  }
-
-  const initialState: AuthState = {
-    token: token || null,
-    isAuthenticated: !!loggedInUser,
-    user: loggedInUser,
-  };
-  return initialState;
-}
