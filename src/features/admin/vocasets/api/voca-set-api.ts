@@ -26,3 +26,9 @@ export async function updateVocaSet(data: UpdateVocaSetRequest) {
 
   return response.data;
 }
+
+export async function deleteVocaSet(id: string) {
+  const response = await axiosClient.delete(`/group-topic/${id}`);
+
+  return response.data;
+}
