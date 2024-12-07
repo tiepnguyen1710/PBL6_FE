@@ -13,4 +13,10 @@ export interface User {
   createdAt: string;
 }
 
-export type Role = "admin" | "user";
+export type Role = "admin" | "user" | "moderator";
+
+export enum RoleEnum {
+  Admin = "admin",
+  User = "user",
+  Moderator = "moderator",
+}

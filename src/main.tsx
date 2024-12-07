@@ -61,6 +61,10 @@ import ListListenGroup from "./features/listen/pages/ListListenGroup.tsx";
 import ListenPractice from "./features/listen/pages/ListenPractice.tsx";
 import ForgotPasswordPage from "./features/auth/components/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./features/auth/components/ResetPasswordPage.tsx";
+import ProtectedRouteComponent from "./components/ProtectedRouteComponent.tsx";
+import { RoleEnum } from "./types/auth.ts";
+import GlobalMessageContainer from "./components/GlobalMessageContainer.tsx";
+import AccountIndexPage from "./features/admin/accounts/AccountIndexPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -226,7 +230,13 @@ const router = createBrowserRouter([
   },
   {
     path: "admin",
-    element: <Admin />,
+    element: (
+      <ProtectedRouteComponent
+        authorizedRoles={[RoleEnum.Admin, RoleEnum.Moderator]}
+      >
+        <Admin />
+      </ProtectedRouteComponent>
+    ),
     children: [
       {
         index: true,
@@ -270,6 +280,20 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "admin/account",
+    element: (
+      <ProtectedRouteComponent authorizedRoles={[RoleEnum.Admin]}>
+        <Admin />
+      </ProtectedRouteComponent>
+    ),
+    children: [
+      {
+        index: true,
+        element: <AccountIndexPage />,
+      },
+    ],
+  },
   //   ],
   // },
 ]);
@@ -285,8 +309,10 @@ createRoot(document.getElementById("root")!).render(
             <GoogleOAuthProvider
               clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
             >
-              <RouterProvider router={router} />
-              <ToastContainer />
+              <GlobalMessageContainer>
+                <ToastContainer />
+                <RouterProvider router={router} />
+              </GlobalMessageContainer>
             </GoogleOAuthProvider>
           </QueryClientProvider>
         </Provider>
