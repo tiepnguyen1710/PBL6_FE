@@ -11,6 +11,7 @@ import ListWords from "./ListWords";
 import { FolderPracticeState } from "../../../stores/folderPracticeSlice";
 import { RootState } from "../../../stores";
 import { useSelector } from "react-redux";
+import BoldStrokeButton from "./BoldStrokeButton";
 
 const PIE_COLORS = ["#32CD32", "#E5E5E5"]; // Green and Grey
 
@@ -56,9 +57,20 @@ const FolderPracticeResultPage = () => {
           onExit={() => navigate(`/personal-word-folder/${folder.id}`)}
         />
         <LessonMainContent sx={{ py: "50px", maxWidth: "1070px" }}>
-          <Typography variant="h4" sx={{ fontSize: "30px" }}>
-            Result evaluation table
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="h4" sx={{ fontSize: "30px" }}>
+              Result evaluation table
+            </Typography>
+            <BoldStrokeButton
+              variant="outlined"
+              sx={{ maxWidth: "200px" }}
+              onClick={() =>
+                navigate(`/personal-word-folder/${folder.id}/practice`)
+              }
+            >
+              CONTINUE PRACTICE
+            </BoldStrokeButton>
+          </Stack>
           <Grid2
             container
             columns={10}
