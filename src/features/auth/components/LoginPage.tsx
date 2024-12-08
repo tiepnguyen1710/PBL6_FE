@@ -185,11 +185,12 @@ const LoginPage: React.FC = () => {
         <GoogleLogin
           onSuccess={handleCredentialResponse}
           onError={() => console.log("Oauth error")}
-          useOneTap
+          useOneTap={false}
           theme="outline"
           size="large"
           shape="circle"
           text="signin_with" // Tùy chỉnh văn bản
+          auto_select={false}
         />
       </Stack>
     </>
