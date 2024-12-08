@@ -10,11 +10,12 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAllListenGroup } from "../api/ListListenGroupApi";
 import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 import { IListenGroupSetInfor } from "../types/ListenGroup.type";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import SearchInput from "../../../components/UI/SearchInput";
 import TabPanel from "../../../components/UI/TabPanel";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { Link } from "react-router-dom";
+import { debounce } from "../../../utils/debounce";
 const LISTEN_TABS = [
   {
     index: 0,
@@ -47,10 +48,11 @@ const ListListenGroup = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [tabValue, setTabValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [searchValueDebounce, setSearchValueDebounce] = useState("");
 
   const { data: listenGroupSetData, isLoading } = useQuery({
-    queryKey: ["fetchListenGroup", tabValue, searchValue],
-    queryFn: () => fetchAllListenGroup(tabValue, searchValue),
+    queryKey: ["fetchListenGroup", tabValue, searchValueDebounce],
+    queryFn: () => fetchAllListenGroup(tabValue, searchValueDebounce),
   });
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -62,7 +64,14 @@ const ListListenGroup = () => {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setSearchValue(event.target.value);
+    debouncedSearch(event.target.value);
   };
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setSearchValueDebounce(value);
+    }, 1000),
+    [],
+  );
 
   return (
     <>

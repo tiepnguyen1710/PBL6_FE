@@ -61,6 +61,10 @@ import ListListenGroup from "./features/listen/pages/ListListenGroup.tsx";
 import ListenPractice from "./features/listen/pages/ListenPractice.tsx";
 import ForgotPasswordPage from "./features/auth/components/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./features/auth/components/ResetPasswordPage.tsx";
+import ListenGroupAdmin from "./features/admin/listen/pages/ListenGroupAdmin.tsx";
+import ListenGroupDetailAdmin from "./features/admin/listen/pages/ListenGroupDetailAdmin.tsx";
+import ListenLessonCreateAdmin from "./features/admin/listen/pages/ListenLessonCreateAdmin.tsx";
+import ListenLessonUpdateAdmin from "./features/admin/listen/pages/ListenLessonUpdateAdmin.tsx";
 
 const router = createBrowserRouter([
   {
@@ -128,18 +132,6 @@ const router = createBrowserRouter([
         path: ":lessonId",
         element: <ListenPractice />,
       },
-      // {
-      //   path: ":examId/partIndex",
-      //   element: <PartIndex />,
-      // },
-      // {
-      //   path: "result/:resultId",
-      //   element: <ResultPage />,
-      // },
-      // {
-      //   path: "review/:reviewId",
-      //   element: <PartResultIndex />,
-      // },
     ],
   },
   {
@@ -267,6 +259,22 @@ const router = createBrowserRouter([
       {
         path: "voca/create",
         element: <VocabularyDetailsPage />,
+      },
+      {
+        path: "listen-group",
+        element: <ListenGroupAdmin />,
+      },
+      {
+        path: "listen-group/:id",
+        element: <ListenGroupDetailAdmin />,
+      },
+      {
+        path: "listen-lesson/create",
+        element: <ListenLessonCreateAdmin />,
+      },
+      {
+        path: "listen-lesson",
+        element: <ListenLessonUpdateAdmin />,
       },
     ],
   },
