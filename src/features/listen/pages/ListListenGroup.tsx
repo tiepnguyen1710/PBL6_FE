@@ -97,7 +97,10 @@ const ListListenGroup = () => {
               <Tab label="Advanced" />
             </Tabs>
             <Box sx={{ position: "absolute", right: 0, top: 0 }}>
-              <SearchInput onChange={handleSearchInputChange} />
+              <SearchInput
+                value={searchValue}
+                onChange={handleSearchInputChange}
+              />
             </Box>
           </Box>
           {isLoading && (
