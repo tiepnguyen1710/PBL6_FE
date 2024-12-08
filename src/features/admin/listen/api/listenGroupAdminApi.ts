@@ -28,3 +28,9 @@ export async function updateListenGroup(data: UpdateListenGroupRequest) {
 
   return response.data;
 }
+
+export async function deleteListenGroup(id: string) {
+  const response = await axiosClient.delete(`/listen-group/${id}`);
+
+  return response.data;
+}

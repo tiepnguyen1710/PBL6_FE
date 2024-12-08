@@ -21,13 +21,16 @@ import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import { useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import { fetchAllListenGroup } from "../../../listen/api/ListListenGroupApi";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminTableContainer from "../../vocasets/components/AdminTableContainer";
 import ListenGroupRow from "../components/ListenGroupRow";
 import CustomModal from "../../../../components/UI/CustomModal";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import { ListenGroupModel } from "../types/ListListenGroup.type";
-import { createListenGroup } from "../api/listenGroupAdminApi";
+import {
+  createListenGroup,
+  deleteListenGroup,
+} from "../api/listenGroupAdminApi";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 
@@ -80,6 +83,7 @@ type filterType = "all" | "beginner" | "intermediate" | "advanced";
 
 const ListenGroupAdmin = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
@@ -89,6 +93,9 @@ const ListenGroupAdmin = () => {
   const [searchParams, setSearchParams] = useState("");
 
   const [openNewModal, setOpenNewModal] = useState(false);
+  const [deletedListenGroup, setDeletedListenGroup] = useState<string | null>(
+    null,
+  );
   const { data, isLoading } = useQuery({
     queryKey: ["listenGroupSet", page, limit, typeParams, searchParams],
     queryFn: () => fetchAllListenGroup(typeParams, searchParams, page, limit),
@@ -116,6 +123,20 @@ const ListenGroupAdmin = () => {
       toast.success("Create new listen group set successfully!");
     },
   });
+
+  const deleteListenGroupMutation = useMutation({
+    mutationFn: deleteListenGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["listenGroupSet"] });
+      toast.success("Delete listen group successfully!");
+    },
+    onSettled: () => {
+      // reset state
+      setDeletedListenGroup(null);
+      deleteListenGroupMutation.reset();
+    },
+  });
+
   const handleCreateListenGroup = async (data: NewListenGroupFormData) => {
     mutate(data);
   };
@@ -149,6 +170,13 @@ const ListenGroupAdmin = () => {
   const handleChangeType = (e: React.ChangeEvent<HTMLInputElement>) => {
     setType(e.target.value as filterType);
   };
+
+  const handleDeleteListenGroup = () => {
+    if (deletedListenGroup) {
+      deleteListenGroupMutation.mutate(deletedListenGroup);
+    }
+  };
+
   return (
     <>
       <Box sx={{ padding: 2 }}>
@@ -168,7 +196,11 @@ const ListenGroupAdmin = () => {
             New
           </Button>
         </Stack>
-        <Grid2 spacing={1} container sx={{ maxWidth: "900px" }}>
+        <Grid2
+          spacing={1}
+          container
+          sx={{ maxWidth: "900px", marginBottom: 2 }}
+        >
           <Grid2 size={5}>
             <TextField
               value={search}
@@ -214,34 +246,34 @@ const ListenGroupAdmin = () => {
             </Button>
           </Grid2>
         </Grid2>
-      </Box>
 
-      {isLoading ? (
-        <CustomBackdrop open />
-      ) : (
-        <AdminTableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ height: "20px" }} width={100}>
-                  ID
-                </TableCell>
-                <TableCell sx={{ height: "20px" }}>Name</TableCell>
-                <TableCell sx={{ height: "20px" }}>Level</TableCell>
-                <TableCell sx={{ height: "20px" }}>Lession</TableCell>
-                <TableCell sx={{ height: "20px" }} align="center">
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.data.map((listenGroup) => (
-                <ListenGroupRow
-                  key={listenGroup.id}
-                  listenGroup={listenGroup}
-                />
-              ))}
-              {/* {emptyRows > 0 && (
+        {isLoading ? (
+          <CustomBackdrop open />
+        ) : (
+          <AdminTableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ height: "20px" }} width={100}>
+                    ID
+                  </TableCell>
+                  <TableCell sx={{ height: "20px" }}>Name</TableCell>
+                  <TableCell sx={{ height: "20px" }}>Level</TableCell>
+                  <TableCell sx={{ height: "20px" }}>Lession</TableCell>
+                  <TableCell sx={{ height: "20px" }} align="center">
+                    Action
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data?.data.map((listenGroup) => (
+                  <ListenGroupRow
+                    key={listenGroup.id}
+                    listenGroup={listenGroup}
+                    onDelete={() => setDeletedListenGroup(listenGroup.id)}
+                  />
+                ))}
+                {/* {emptyRows > 0 && (
                   <TableRow
                     style={{
                       height: 53 * emptyRows,
@@ -251,27 +283,28 @@ const ListenGroupAdmin = () => {
                     <TableCell colSpan={7} />
                   </TableRow>
                 )} */}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 15]}
-                  count={data?.total || 0}
-                  rowsPerPage={limit}
-                  page={page - 1}
-                  onPageChange={(_e, newPage) => {
-                    setPage(newPage + 1);
-                  }}
-                  onRowsPerPageChange={(e) => {
-                    setLimit(+e.target.value);
-                    setPage(1);
-                  }}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </AdminTableContainer>
-      )}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 15]}
+                    count={data?.total || 0}
+                    rowsPerPage={limit}
+                    page={page - 1}
+                    onPageChange={(_e, newPage) => {
+                      setPage(newPage + 1);
+                    }}
+                    onRowsPerPageChange={(e) => {
+                      setLimit(+e.target.value);
+                      setPage(1);
+                    }}
+                  />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </AdminTableContainer>
+        )}
+      </Box>
 
       <CustomModal
         open={openNewModal}
@@ -331,6 +364,39 @@ const ListenGroupAdmin = () => {
               </Stack>
             </Stack>
           </form>
+        </Box>
+      </CustomModal>
+
+      {/* Delete modal */}
+      <CustomModal
+        open={!!deletedListenGroup}
+        onClose={() => setDeletedListenGroup(null)}
+      >
+        <Box sx={{ padding: 3 }}>
+          <Typography variant="h6" sx={{ marginBottom: 1 }}>
+            Do you want to delete this listen group?
+          </Typography>
+          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleDeleteListenGroup}
+              sx={{ width: "80px" }}
+              disabled={deleteListenGroupMutation.isPending}
+            >
+              {deleteListenGroupMutation.isPending ? (
+                <CircularProgress size={20} color="error" />
+              ) : (
+                "Delete"
+              )}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setDeletedListenGroup(null)}
+            >
+              Cancel
+            </Button>
+          </Stack>
         </Box>
       </CustomModal>
     </>

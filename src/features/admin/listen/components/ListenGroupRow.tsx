@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import { IListenGroupModel } from "../../../listen/types/ListenGroup.type";
 
-const ListenGroupRow: React.FC<{ listenGroup: IListenGroupModel }> = ({
-  listenGroup,
-}) => {
+const ListenGroupRow: React.FC<{
+  listenGroup: IListenGroupModel;
+  onDelete?: () => void;
+}> = ({ listenGroup, onDelete }) => {
   const actionRef = useRef<HTMLSpanElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -66,7 +67,7 @@ const ListenGroupRow: React.FC<{ listenGroup: IListenGroupModel }> = ({
           <Link to={`${listenGroup.id}`}>
             <MenuItem>Manage</MenuItem>
           </Link>
-          <MenuItem>Delete</MenuItem>
+          <MenuItem onClick={onDelete}>Delete</MenuItem>
         </MenuList>
       </Menu>
     </TableRow>

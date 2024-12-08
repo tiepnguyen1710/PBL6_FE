@@ -65,10 +65,10 @@ const ListenGroupDetailAdmin = () => {
     },
     onSuccess: (responseData) => {
       toast.success("Update successfully!");
-      queryClient.setQueryData(
-        ["listenGroupDetail", { id: listenGroupId }],
-        responseData,
-      );
+      queryClient.setQueryData(["listenGroupDetail", { id: listenGroupId }], {
+        ...responseData,
+        listenLessons: data?.listenLessons,
+      });
     },
   });
 
