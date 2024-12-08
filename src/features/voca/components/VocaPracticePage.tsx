@@ -100,10 +100,11 @@ const VocaPracticePage: React.FC = () => {
     for (const {
       voca: { id },
     } of exercises) {
-      // As each voca has been repeated `repeatTimes` times
+      // As each voca has been repeated 2 * `repeatTimes` times
       // So, a voca is considered correct if it is answered correctly `repeatTimes` times
       if (
-        correctVocaIds.filter((vocaId) => vocaId === id).length == repeatTimes
+        correctVocaIds.filter((vocaId) => vocaId === id).length ==
+        2 * repeatTimes
       ) {
         listCorrectWord.add(id);
       } else {

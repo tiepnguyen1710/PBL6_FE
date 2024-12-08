@@ -1,8 +1,4 @@
-import { ThunkAction } from "redux-thunk";
-import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Dispatch } from "redux";
-import { postLogin } from "../features/auth/api/account-api";
-import { RootState } from "./index";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../types/auth";
 
 export interface AuthState {
@@ -12,8 +8,8 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem("token") || null,
-  isAuthenticated: localStorage.getItem("token") ? true : false,
+  token: null,
+  isAuthenticated: false,
   user: null,
 };
 
@@ -38,18 +34,6 @@ const authSlice = createSlice({
     },
   },
 });
-
-export const loginAction =
-  (
-    username: string,
-    password: string,
-  ): ThunkAction<Promise<void>, RootState, unknown, AnyAction> =>
-  async (dispatch: Dispatch) => {
-    const response = await postLogin(username, password);
-    const { user, token } = response;
-
-    dispatch(authActions.login({ token, user }));
-  };
 
 export const authActions = authSlice.actions;
 

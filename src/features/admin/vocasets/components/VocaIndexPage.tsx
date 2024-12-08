@@ -40,7 +40,7 @@ import {
   getPlaceholderImage,
 } from "../../../../utils/helper.ts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createVocaSet } from "../api/voca-set-api.ts";
+import { createVocaSet, deleteVocaSet } from "../api/voca-set-api.ts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import VocaSetModel from "../../../../types/VocaSetModel.ts";
@@ -80,6 +80,9 @@ const VOCASET_PAGE_SIZE = 4;
 const VocaIndexPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [openNewModal, setOpenNewModal] = useState(false);
+  const [deletedVocaSet, setDeletedVocaSet] = useState<string | null>(null);
+
+  const openDeleteModal = deletedVocaSet !== null;
 
   const {
     register,
@@ -122,8 +125,14 @@ const VocaIndexPage: React.FC = () => {
 
   const [vocaSets, setVocaSets] = useState<VocaSetModel[] | null>();
 
-  const { page, setPage, emptyRows, pageData, handleChangePage } =
-    useAdminTablePagination<VocaSetModel>(vocaSets || [], VOCASET_PAGE_SIZE);
+  const {
+    page,
+    setPage,
+    emptyRows,
+    pageData,
+    handleChangePage,
+    invalidatePage,
+  } = useAdminTablePagination<VocaSetModel>(vocaSets || [], VOCASET_PAGE_SIZE);
 
   const {
     reset: resetFilterForm,
@@ -131,6 +140,21 @@ const VocaIndexPage: React.FC = () => {
     handleSubmit: handleFilter,
   } = useForm<VocaSetFilterFormData>({
     defaultValues: DEFAULT_FILTER_FORM_DATA,
+  });
+
+  const deleteVocaSetMutation = useMutation({
+    mutationFn: deleteVocaSet,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vocaSet"] });
+      toast.success("Delete vocabulary set successfully!");
+
+      invalidatePage(vocaSets!.length - 1);
+    },
+    onSettled: () => {
+      // reset state
+      setDeletedVocaSet(null);
+      deleteVocaSetMutation.reset();
+    },
   });
 
   useEffect(() => {
@@ -166,6 +190,12 @@ const VocaIndexPage: React.FC = () => {
     setPage(0);
 
     resetFilterForm(DEFAULT_FILTER_FORM_DATA);
+  };
+
+  const handleDeleteVocaSet = () => {
+    if (deletedVocaSet) {
+      deleteVocaSetMutation.mutate(deletedVocaSet);
+    }
   };
 
   return (
@@ -268,7 +298,11 @@ const VocaIndexPage: React.FC = () => {
               </TableHead>
               <TableBody>
                 {pageData.map((vocaSet: VocaSetModel) => (
-                  <VocaSetRow key={vocaSet.id} vocaSet={vocaSet} />
+                  <VocaSetRow
+                    key={vocaSet.id}
+                    vocaSet={vocaSet}
+                    onDelete={() => setDeletedVocaSet(vocaSet.id)}
+                  />
                 ))}
                 {emptyRows > 0 && (
                   <TableRow
@@ -297,6 +331,8 @@ const VocaIndexPage: React.FC = () => {
           </AdminTableContainer>
         )}
       </Box>
+
+      {/*  New voca set modal */}
       <CustomModal
         open={openNewModal}
         onClose={() => setOpenNewModal(false)}
@@ -374,6 +410,35 @@ const VocaIndexPage: React.FC = () => {
               </Stack>
             </Stack>
           </form>
+        </Box>
+      </CustomModal>
+
+      {/* Delete voca set modal */}
+      <CustomModal
+        open={openDeleteModal}
+        onClose={() => setDeletedVocaSet(null)}
+      >
+        <Box sx={{ padding: 3 }}>
+          <Typography variant="h6" sx={{ marginBottom: 1 }}>
+            Do you want to delete this voca set?
+          </Typography>
+          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleDeleteVocaSet}
+              sx={{ width: "80px" }}
+            >
+              {deleteVocaSetMutation.isPending ? (
+                <CircularProgress size={20} color="error" />
+              ) : (
+                "Delete"
+              )}
+            </Button>
+            <Button variant="contained" onClick={() => setDeletedVocaSet(null)}>
+              Cancel
+            </Button>
+          </Stack>
         </Box>
       </CustomModal>
     </>
