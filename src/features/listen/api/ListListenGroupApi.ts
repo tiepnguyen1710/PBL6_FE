@@ -5,9 +5,14 @@ import { IListenGroupResponse } from "../types/ListenGroup.type";
 // import { ExamResponse } from "../types/ExamResponse";
 // import NewExamRequest from "../types/NewExamRequest";
 
-const fetchAllListenGroup = async (tabValue: string, searchValue: string) => {
+const fetchAllListenGroup = async (
+  tabValue: string,
+  searchValue: string,
+  page: number = 1,
+  limit: number = 10,
+) => {
   const response = await axiosClient.get<IListenGroupResponse>(
-    `listen-group?${tabValue ? `level=${tabValue}` : ""}${searchValue ? `&search=${searchValue}` : ""}`,
+    `listen-group?${tabValue ? `level=${tabValue}` : ""}${searchValue ? `&search=${searchValue}` : ""}${page ? `&page=${page}` : ""}${limit ? `&limit=${limit}` : ""}`,
   );
   return response.data;
 };

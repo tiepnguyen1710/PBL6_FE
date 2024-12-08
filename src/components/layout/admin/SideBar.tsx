@@ -65,6 +65,10 @@ const SideBar = (props: any) => {
           <MenuItem>Lessons</MenuItem>
           <MenuItem>Vocabularies</MenuItem>
         </SubMenu>
+        <MenuItem onClick={() => navigate("/admin/listen-group")}>
+          Listen Practice
+        </MenuItem>
+        <MenuItem> Account </MenuItem>
       </Menu>
     </Sidebar>
   );
