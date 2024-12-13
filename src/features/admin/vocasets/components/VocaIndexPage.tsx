@@ -75,7 +75,7 @@ const DEFAULT_FILTER_FORM_DATA: VocaSetFilterFormData = {
   filterLevel: "all",
 };
 
-const VOCASET_PAGE_SIZE = 4;
+const VOCASET_PAGE_SIZE = 5;
 
 const VocaIndexPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -291,8 +291,8 @@ const VocaIndexPage: React.FC = () => {
                   <TableCell>Thumbnail</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Level</TableCell>
-                  <TableCell align="right">Taken Students</TableCell>
-                  <TableCell align="right">Lessons</TableCell>
+                  <TableCell>Taken Students</TableCell>
+                  <TableCell>Lessons</TableCell>
                   <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -307,7 +307,7 @@ const VocaIndexPage: React.FC = () => {
                 {emptyRows > 0 && (
                   <TableRow
                     style={{
-                      height: 53 * emptyRows,
+                      height: 106 * emptyRows,
                       backgroundColor: "white",
                     }}
                   >

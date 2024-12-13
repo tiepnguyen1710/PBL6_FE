@@ -73,7 +73,6 @@ import GlobalMessageContainer from "./components/GlobalMessageContainer.tsx";
 import AccountIndexPage from "./features/admin/accounts/AccountIndexPage.tsx";
 import App from "./App.tsx";
 
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -322,7 +321,7 @@ createRoot(document.getElementById("root")!).render(
               clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
             >
               <GlobalMessageContainer>
-                <ToastContainer />
+                <ToastContainer position="bottom-right" />
                 <App>
                   <RouterProvider router={router} />
                 </App>

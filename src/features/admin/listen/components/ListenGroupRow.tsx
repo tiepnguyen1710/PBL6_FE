@@ -33,9 +33,11 @@ const ListenGroupRow: React.FC<{
       </TableCell>
 
       <TableCell>{listenGroup.name}</TableCell>
-      <TableCell>{capitalizeFirstLetter(listenGroup.level)}</TableCell>
+      <TableCell align="center">
+        {capitalizeFirstLetter(listenGroup.level)}
+      </TableCell>
 
-      <TableCell align="left">
+      <TableCell align="center">
         {listenGroup?.listenLessons?.length || 0}
       </TableCell>
       <TableCell

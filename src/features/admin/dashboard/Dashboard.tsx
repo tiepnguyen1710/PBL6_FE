@@ -42,7 +42,7 @@ const Dashboard = () => {
             title="Listening Lessons"
             description="Curate and manage dictation listening lessons, helping users improve their listening skills."
             image={ListenImage}
-            to="#"
+            to="/admin/listen-group"
           />
         </Grid2>
       </Grid2>

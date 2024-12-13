@@ -20,3 +20,10 @@ export enum RoleEnum {
   User = "user",
   Moderator = "moderator",
 }
+
+export function canAccessAdminPage(user: User) {
+  return (
+    user.roles.includes(RoleEnum.Admin) ||
+    user.roles.includes(RoleEnum.Moderator)
+  );
+}

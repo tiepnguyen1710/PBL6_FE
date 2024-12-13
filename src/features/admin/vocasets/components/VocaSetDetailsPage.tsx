@@ -4,6 +4,7 @@ import {
   CardMedia,
   CircularProgress,
   Grid2,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -219,7 +220,7 @@ const VocaSetDetailsPage = () => {
             alignItems="center"
           >
             <Typography variant="h4" sx={{ marginBottom: 1 }}>
-              Vocabulary Set Details
+              Vocabulary Set
             </Typography>
             <GoBackButton />
           </Stack>
@@ -406,7 +407,7 @@ const VocaSetDetailsPage = () => {
                     >
                       {lesson.id}
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       <Image
                         src={lesson.thumbnail}
                         sx={{
@@ -417,19 +418,22 @@ const VocaSetDetailsPage = () => {
                       />
                     </TableCell>
                     <TableCell>{lesson.name}</TableCell>
-                    <TableCell>{lesson?.listWord.length || 0}</TableCell>
+                    <TableCell align="center">
+                      {lesson?.listWord.length || 0}
+                    </TableCell>
                     <TableCell align="right">
-                      <Stack direction="row" spacing={0.5}>
+                      <Stack direction="row" justifyContent="center">
                         <Link to={`/admin/lesson?id=${lesson.id}`}>
-                          <Button startIcon={<Tune />}>Manage</Button>
+                          <IconButton color="primary">
+                            <Tune />
+                          </IconButton>
                         </Link>
-                        <Button
-                          startIcon={<Delete />}
+                        <IconButton
                           color="error"
                           onClick={() => handleClickDeleteLesson(lesson.id)}
                         >
-                          Delete
-                        </Button>
+                          <Delete />
+                        </IconButton>
                       </Stack>
                     </TableCell>
                   </TableRow>
