@@ -9,6 +9,7 @@ import SearchInput from "../../../components/UI/SearchInput";
 import { useQuery } from "@tanstack/react-query";
 import { getAllVocaSets } from "../../shared-apis/vocaset-api";
 import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
+import Link from "../../../components/UI/Link";
 
 const VOCA_TABS = [
   {
@@ -126,15 +127,20 @@ const VocaLibraryPage: React.FC = () => {
                     key={vocaSet.id}
                     sx={{ width: "250px", marginRight: 1, display: "flex" }}
                   >
-                    <VocaSet
-                      id={vocaSet.id}
-                      title={vocaSet.title}
-                      qualification={vocaSet.qualification}
-                      topic={vocaSet.topic}
-                      author={vocaSet.author}
-                      takenNumber={vocaSet.takenNumber}
-                      image={vocaSet.image}
-                    />
+                    <Link
+                      to={`${vocaSet.id}/lessons`}
+                      style={{ display: "flex" }}
+                    >
+                      <VocaSet
+                        id={vocaSet.id}
+                        title={vocaSet.title}
+                        qualification={vocaSet.qualification}
+                        topic={vocaSet.topic}
+                        author={vocaSet.author}
+                        takenNumber={vocaSet.takenNumber}
+                        image={vocaSet.image}
+                      />
+                    </Link>
                   </Grid2>
                 ))}
             </Grid2>

@@ -6,7 +6,6 @@ import StudentIcon from "../features/home/components/StudentIcon";
 import CustomCard from "../features/home/components/CustomCard";
 import { capitalizeFirstLetter } from "../utils/stringFormatter";
 import VocaSetLevel from "../types/VocaSetLevel";
-import { Link } from "react-router-dom";
 
 export interface VocaSetProps {
   id: string;
@@ -19,7 +18,6 @@ export interface VocaSetProps {
 }
 
 const VocaSet: React.FC<VocaSetProps> = ({
-  id,
   title,
   qualification,
   topic,
@@ -47,6 +45,8 @@ const VocaSet: React.FC<VocaSetProps> = ({
     <CustomCard
       sx={{
         width: "250px",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <CardMedia component="img" height="140" image={image} />
@@ -55,6 +55,7 @@ const VocaSet: React.FC<VocaSetProps> = ({
           display: "flex",
           flexDirection: "column",
           gap: 0.5,
+          flexGrow: 1,
         }}
       >
         <Stack direction="row" spacing={0.25}>
@@ -67,11 +68,15 @@ const VocaSet: React.FC<VocaSetProps> = ({
           {topic && <Chip label={topic} sx={{ ...chipStyleTopic }} />}
         </Stack>
 
-        <Link to={`${id}/lessons`} style={{ textDecoration: "none" }}>
-          <CardTitle>{title}</CardTitle>
-        </Link>
+        <CardTitle>{title}</CardTitle>
 
-        <Stack direction="row" justifyContent="space-between" alignItems="end">
+        {/* Taken student and author */}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="end"
+          sx={{ flexGrow: 1 }}
+        >
           <Stack direction="row" spacing={0.5} alignItems="end">
             <StudentIcon sx={{ fontSize: 20 }} />
             <Typography component="span" sx={{ lineHeight: 1 }}>
