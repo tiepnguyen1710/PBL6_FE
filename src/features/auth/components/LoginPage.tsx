@@ -59,6 +59,7 @@ const LoginPage: React.FC = () => {
       dispatch(
         authActions.login({
           token: responseData.token,
+          refreshToken: responseData.refreshToken,
           user: responseData.user,
         }),
       );

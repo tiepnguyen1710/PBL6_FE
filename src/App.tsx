@@ -8,6 +8,7 @@ import CustomBackdrop from "./components/UI/CustomBackdrop";
 const App: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
+  const refreshToken = localStorage.getItem("refreshToken");
 
   const {
     data: user,
@@ -17,7 +18,9 @@ const App: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   if (isSuccess && user) {
     // init redux auth state
-    dispatch(authActions.login({ token: token!, user }));
+    dispatch(
+      authActions.login({ token: token!, user, refreshToken: refreshToken! }),
+    );
   }
 
   return <>{isLoadingUser ? <CustomBackdrop /> : children}</>;
