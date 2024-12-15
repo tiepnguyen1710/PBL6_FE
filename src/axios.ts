@@ -83,14 +83,16 @@ export const setupAxiosInterceptors = (store: StoreType) => {
               axiosClient(item.originalRequest).then(item.resolve, item.reject);
             });
 
-            isRefreshing = false;
-            requestQueue.length = 0; // Clear the queue after processing
-
             return Promise.resolve(response);
           } catch (error) {
             console.error("Refresh token process with error:", error);
             store.dispatch(authActions.logout());
             toast.error("Your session has expired. Please login again.");
+
+            return Promise.reject(error);
+          } finally {
+            isRefreshing = false;
+            requestQueue.length = 0; // Clear the queue after processing
           }
         }
       }
@@ -114,7 +116,7 @@ export const setupAxiosInterceptors = (store: StoreType) => {
 export default axiosClient;
 
 async function refreshAccessToken(refreshToken: string) {
-  const response = await axiosClient.post<RefreshResponse>(
+  const response = await axios.post<RefreshResponse>(
     "auth/refresh",
     undefined,
     {

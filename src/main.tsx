@@ -71,7 +71,7 @@ import ProtectedRouteComponent from "./components/ProtectedRouteComponent.tsx";
 import { RoleEnum } from "./types/auth.ts";
 import GlobalMessageContainer from "./components/GlobalMessageContainer.tsx";
 import AccountIndexPage from "./features/admin/accounts/components/AccountIndexPage.tsx";
-import App from "./App.tsx";
+import AuthInitializer from "./features/auth/components/AuthInitializer.tsx";
 
 const router = createBrowserRouter([
   {
@@ -322,9 +322,9 @@ createRoot(document.getElementById("root")!).render(
             >
               <GlobalMessageContainer>
                 <ToastContainer position="bottom-right" />
-                <App>
+                <AuthInitializer>
                   <RouterProvider router={router} />
-                </App>
+                </AuthInitializer>
               </GlobalMessageContainer>
             </GoogleOAuthProvider>
           </QueryClientProvider>
