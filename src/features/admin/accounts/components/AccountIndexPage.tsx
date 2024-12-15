@@ -28,6 +28,7 @@ import RoundedInput from "../../../../components/UI/RoundedInput";
 import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import useDebounce from "../../../../hooks/useDebounce";
+import UserInfoModal from "./UserInfoModal";
 
 const USER_PAGE_SIZE = 10;
 
@@ -44,6 +45,8 @@ type FilterForm = {
 };
 
 const AccountIndexPage: React.FC = () => {
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
@@ -210,12 +213,18 @@ const AccountIndexPage: React.FC = () => {
                   <TableCell align="center" width={125}>
                     Registered at
                   </TableCell>
-                  <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
+              <TableBody
+                sx={{
+                  "& .MuiTableRow-root:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    cursor: "pointer",
+                  },
+                }}
+              >
                 {pageData.map((user: User) => (
-                  <TableRow key={user.id}>
+                  <TableRow key={user.id} onClick={() => setSelectedUser(user)}>
                     <TableCell
                       sx={{
                         maxWidth: "50px",
@@ -249,7 +258,6 @@ const AccountIndexPage: React.FC = () => {
                     <TableCell align="center">
                       {format(new Date(user.createdAt), "dd/MM/yyyy")}
                     </TableCell>
-                    <TableCell align="center">Action</TableCell>
                   </TableRow>
                 ))}
                 {emptyRows > 0 && (
@@ -278,6 +286,15 @@ const AccountIndexPage: React.FC = () => {
             </Table>
           </AdminTableContainer>
         )}
+
+        {/* User information modal */}
+        <UserInfoModal
+          modal={{
+            open: selectedUser !== null,
+            onClose: () => setSelectedUser(null),
+          }}
+          user={selectedUser}
+        />
       </Box>
     </>
   );

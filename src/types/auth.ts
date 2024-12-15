@@ -3,8 +3,8 @@ export interface User {
   username: string;
   name: string;
   email: string;
-  avatar?: string | null;
-  phone?: string | null;
+  avatar?: string;
+  phone?: string;
   roles: Role[];
 
   targetScore: number;
