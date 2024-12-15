@@ -22,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import VocaSet from "../../../../components/VocaSet";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import AdminTableContainer from "./AdminTableContainer";
-import useAdminTablePagination from "../hooks/useAdminTablePagination";
+import useAdminTablePagination from "../../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import SearchInput from "../../../../components/UI/SearchInput";
 import { Add, Delete, Tune } from "@mui/icons-material";

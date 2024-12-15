@@ -22,7 +22,7 @@ import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import VocaSetRow from "./VocaSetRow";
 import AdminTableContainer from "./AdminTableContainer";
-import useAdminTablePagination from "../hooks/useAdminTablePagination.ts";
+import useAdminTablePagination from "../../hooks/useAdminTablePagination.ts";
 import {
   Add,
   AddPhotoAlternate,

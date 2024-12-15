@@ -70,7 +70,7 @@ import ListenLessonUpdateAdmin from "./features/admin/listen/pages/ListenLessonU
 import ProtectedRouteComponent from "./components/ProtectedRouteComponent.tsx";
 import { RoleEnum } from "./types/auth.ts";
 import GlobalMessageContainer from "./components/GlobalMessageContainer.tsx";
-import AccountIndexPage from "./features/admin/accounts/AccountIndexPage.tsx";
+import AccountIndexPage from "./features/admin/accounts/components/AccountIndexPage.tsx";
 import App from "./App.tsx";
 
 const router = createBrowserRouter([

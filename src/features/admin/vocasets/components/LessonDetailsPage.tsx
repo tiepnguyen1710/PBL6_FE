@@ -23,7 +23,7 @@ import DefaultLessonImage from "../assets/default-lesson-img.webp";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { LessonCard } from "../../../../components/LessonCard";
 import AdminTableContainer from "./AdminTableContainer";
-import useAdminTablePagination from "../hooks/useAdminTablePagination";
+import useAdminTablePagination from "../../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getLessonById, updateLesson } from "../api/lesson-api";
