@@ -126,3 +126,12 @@ export function validateEmail(email: string) {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return regex.test(email);
 }
+
+export function getPhoneValidator(errorMessage?: string) {
+  return {
+    pattern: {
+      value: /^[0-9]{10,11}$/,
+      message: errorMessage || "Phone number must be 10 or 11 digits",
+    },
+  };
+}

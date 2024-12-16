@@ -1,7 +1,8 @@
 import axiosClient from "../../../axios";
+import { User } from "../../../types/auth";
 
 export async function updateUserProfile(data: unknown) {
-  const response = await axiosClient.patch("users/updateProfile", data);
+  const response = await axiosClient.patch<User>("users/updateProfile", data);
   return response.data;
 }
 
