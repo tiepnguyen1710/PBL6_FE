@@ -117,7 +117,7 @@ export default axiosClient;
 
 async function refreshAccessToken(refreshToken: string) {
   const response = await axios.post<RefreshResponse>(
-    "auth/refresh",
+    import.meta.env.VITE_API_URL + "/auth/refresh",
     undefined,
     {
       headers: { Authorization: `Bearer ${refreshToken}` },

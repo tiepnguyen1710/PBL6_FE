@@ -1,5 +1,6 @@
 import axiosClient from "../../../../axios";
 import { User } from "../../../../types/auth";
+import { UpdateUserProfileRequest } from "../types/Request";
 
 export async function getUsers() {
   const response = await axiosClient.get<User[]>("/users");
@@ -25,4 +26,14 @@ export async function switchUserStatus(userId: string, activate: boolean) {
   }
 
   return await deactivateUser(userId);
+}
+
+export async function updateUserProfile(request: UpdateUserProfileRequest) {
+  const { userId, ...data } = request;
+  const response = await axiosClient.patch<User>(
+    "/users/updateProfile/" + userId,
+    data,
+  );
+
+  return response.data;
 }

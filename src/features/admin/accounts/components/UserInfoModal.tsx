@@ -22,14 +22,27 @@ import PasswordTextField from "../../../../components/UI/PasswordTextField";
 import UserStatusLegend from "./UserStatusLegend";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { switchUserStatus } from "../api/user-api";
+import { switchUserStatus, updateUserProfile } from "../api/user-api";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import { UpdateUserProfileRequest } from "../types/Request";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { getPhoneValidator, validateEmail } from "../../../../utils/helper";
+import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
+import useFileInput from "../../../../hooks/useFileInput";
 
 interface UserInfoModalProps {
   modal: CustomModalProps;
   defaultUser: User | null;
 }
+
+type FormData = {
+  email: string;
+  name: string;
+  phone: string;
+  newPassword: string;
+  confirmNewPassword: string;
+};
 
 const UserInfoModal: React.FC<UserInfoModalProps> = ({
   modal: { onClose: onCloseModal, ...modalProps },
@@ -39,9 +52,27 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
   const [openConfirmSwitchStatusModal, setOpenConfirmSwitchStatusModal] =
     useState(false);
 
+  const [user, setUser] = useState<User | null>(defaultUser);
   const [hasChanged, setHasChanged] = useState(false);
 
-  const [user, setUser] = useState<User | null>(defaultUser);
+  const {
+    register,
+    getValues,
+    formState: { errors: validationErrors },
+    handleSubmit,
+    reset: resetForm,
+  } = useForm<FormData>({
+    defaultValues: {
+      email: defaultUser?.email || "",
+      name: defaultUser?.name || "",
+      phone: defaultUser?.phone || "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
+  });
+
+  const { fileInputRef, fileSrc, handleChangeFileInput, chooseFile } =
+    useFileInput(user?.avatar || "");
 
   const switchStatusMutation = useMutation({
     mutationFn: (request: { userId: string; activate: boolean }) =>
@@ -53,6 +84,18 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     },
     onSettled: () => {
       setOpenConfirmSwitchStatusModal(false);
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: updateUserProfile,
+    onSuccess: (newUserData: User) => {
+      toast.success("User information has been updated!");
+      setUser(newUserData);
+      setHasChanged(true);
+    },
+    onError: (error) => {
+      toast.error(capitalizeFirstLetter(error.message[0]));
     },
   });
 
@@ -70,10 +113,45 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     }
   };
 
+  const handleSaveChanges: SubmitHandler<FormData> = (data) => {
+    if (!user) return;
+
+    const request: UpdateUserProfileRequest = {
+      userId: user.id,
+      name: data.name,
+    };
+
+    if (data.email !== user.email) {
+      request.email = data.email;
+    }
+
+    if (data.phone && data.phone !== user.phone) {
+      request.phone = data.phone;
+    }
+
+    if (fileSrc && fileSrc !== user.avatar) {
+      request.avatar = fileSrc;
+    }
+
+    updateProfileMutation.mutate(request);
+  };
+
   useEffect(() => {
     setUser(defaultUser);
     setHasChanged(false);
   }, [defaultUser]);
+
+  useEffect(() => {
+    if (user) {
+      resetForm({
+        email: user.email,
+        name: user.name,
+        phone: user.phone || "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+    }
+  }, [resetForm, user]);
 
   return (
     <div id="user-info-modal">
@@ -103,11 +181,18 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
               <Stack direction="row" spacing={1}>
                 <Box sx={{ position: "relative" }}>
                   <Avatar
-                    src={user?.avatar}
+                    src={fileSrc}
                     sx={{ width: "80px", height: "80px" }}
                   />
+                  <input
+                    type="file"
+                    hidden
+                    name="avatar"
+                    ref={fileInputRef}
+                    onChange={handleChangeFileInput}
+                  />
                   <IconButton
-                    // onClick={chooseFile}
+                    onClick={chooseFile}
                     sx={{
                       width: "24px",
                       height: "24px",
@@ -188,16 +273,43 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
               }}
             >
               <Grid2 size={6}>
-                <TextField label="Email" defaultValue={user?.email} />
+                <TextField
+                  label="Email"
+                  {...register("email", {
+                    required: "Email is required",
+                    validate: (value) =>
+                      validateEmail(value) ||
+                      "Please enter a valid email format",
+                  })}
+                  error={!!validationErrors.email}
+                  helperText={validationErrors.email?.message}
+                />
               </Grid2>
               <Grid2 size={6}>
-                <TextField label="User name" defaultValue={user?.username} />
+                <TextField
+                  label="User name"
+                  defaultValue={user?.username}
+                  slotProps={{ input: { readOnly: true } }}
+                />
               </Grid2>
               <Grid2 size={6}>
-                <TextField label="Full name" defaultValue={user?.name} />
+                <TextField
+                  label="Full name"
+                  error={!!validationErrors.name}
+                  helperText={validationErrors.name?.message}
+                  {...register("name", { required: "Name is required" })}
+                />
               </Grid2>
               <Grid2 size={6}>
-                <TextField label="Phone number" defaultValue={user?.phone} />
+                <TextField
+                  label="Phone number"
+                  error={!!validationErrors.phone}
+                  helperText={validationErrors.phone?.message}
+                  {...register("phone", {
+                    ...(user?.phone && { required: "Phone is required" }),
+                    ...getPhoneValidator(),
+                  })}
+                />
               </Grid2>
             </Grid2>
           </Box>
@@ -217,10 +329,29 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
               }}
             >
               <Grid2 size={6}>
-                <PasswordTextField label="New password" />
+                <PasswordTextField
+                  label="New password"
+                  error={!!validationErrors.newPassword}
+                  helperText={validationErrors.newPassword?.message}
+                  register={register("newPassword", {
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                />
               </Grid2>
               <Grid2 size={6}>
-                <PasswordTextField label="Confirm new password" />
+                <PasswordTextField
+                  label="Confirm new password"
+                  error={!!validationErrors.confirmNewPassword}
+                  helperText={validationErrors.confirmNewPassword?.message}
+                  register={register("confirmNewPassword", {
+                    validate: (value: string) =>
+                      value === getValues("newPassword") ||
+                      "Password does not match",
+                  })}
+                />
               </Grid2>
             </Grid2>
           </Box>
@@ -273,8 +404,11 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
                 <Button
                   variant="contained"
                   sx={{ width: "100%", boxShadow: "none" }}
+                  onClick={handleSubmit(handleSaveChanges)}
                 >
-                  Save changes
+                  {updateProfileMutation.isPending
+                    ? "Please wait..."
+                    : "Save changes"}
                 </Button>
               </Grid2>
             </Grid2>
