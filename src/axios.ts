@@ -60,8 +60,9 @@ export const setupAxiosInterceptors = (store: StoreType) => {
           originalRequest._retry = true;
           isRefreshing = true;
 
+          let refreshResponse;
           try {
-            const refreshResponse = await refreshAccessToken(refreshToken);
+            refreshResponse = await refreshAccessToken(refreshToken);
 
             // Update new token (redux state and local storage)
             store.dispatch(
@@ -70,22 +71,8 @@ export const setupAxiosInterceptors = (store: StoreType) => {
                 refreshToken: refreshResponse.refreshToken,
               }),
             );
-
-            // Retry the original request
-            const response = await axiosClient(originalRequest);
-
-            // Retry requests
-            requestQueue.forEach((item) => {
-              item.originalRequest.headers["Authorization"] =
-                `Bearer ${refreshResponse.token}`;
-
-              // Call the actual request with the handler received from intermediate promise
-              axiosClient(item.originalRequest).then(item.resolve, item.reject);
-            });
-
-            return Promise.resolve(response);
           } catch (error) {
-            console.error("Refresh token process with error:", error);
+            console.error("Call refresh token with error", error);
             store.dispatch(authActions.logout());
             toast.error("Your session has expired. Please login again.");
 
@@ -93,6 +80,37 @@ export const setupAxiosInterceptors = (store: StoreType) => {
           } finally {
             isRefreshing = false;
             requestQueue.length = 0; // Clear the queue after processing
+          }
+
+          if (refreshResponse) {
+            try {
+              // Retry the original request
+              const response = await axiosClient(originalRequest);
+
+              // Retry requests
+              requestQueue.forEach((item) => {
+                item.originalRequest.headers["Authorization"] =
+                  `Bearer ${refreshResponse.token}`;
+
+                // Call the actual request with the handler received from intermediate promise
+                axiosClient(item.originalRequest).then(
+                  item.resolve,
+                  item.reject,
+                );
+              });
+
+              return Promise.resolve(response);
+            } catch (error) {
+              console.error(
+                "Retry request after refreshing token with error:",
+                error,
+              );
+
+              return Promise.reject(error);
+            } finally {
+              isRefreshing = false;
+              requestQueue.length = 0; // Clear the queue after processing
+            }
           }
         }
       }
