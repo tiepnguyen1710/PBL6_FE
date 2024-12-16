@@ -29,6 +29,7 @@ import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import useDebounce from "../../../../hooks/useDebounce";
 import UserInfoModal from "./UserInfoModal";
+import UserStatusLegend from "./UserStatusLegend";
 
 const USER_PAGE_SIZE = 10;
 
@@ -187,14 +188,10 @@ const AccountIndexPage: React.FC = () => {
               </Button>
             </Grid2>
           </Grid2>
-
-          {/* <FormGroup>
-            <FormControlLabel
-              control={<Switch size="small" {...register("includeDeleted")} />}
-              label="Include deleted"
-              labelPlacement="start"
-            />
-          </FormGroup> */}
+          <Box sx={{ textAlign: "right" }}>
+            <UserStatusLegend label="Active" color="success.main" />
+            <UserStatusLegend label="Disabled" color="divider" />
+          </Box>
         </form>
         {isLoading ? (
           <CustomBackdrop open />
@@ -289,11 +286,12 @@ const AccountIndexPage: React.FC = () => {
 
         {/* User information modal */}
         <UserInfoModal
+          key={selectedUser?.id}
           modal={{
             open: selectedUser !== null,
             onClose: () => setSelectedUser(null),
           }}
-          user={selectedUser}
+          defaultUser={selectedUser}
         />
       </Box>
     </>
