@@ -37,3 +37,9 @@ export async function updateUserProfile(request: UpdateUserProfileRequest) {
 
   return response.data;
 }
+
+export async function deleteUser(userId: string) {
+  const response = await axiosClient.delete("/users/" + userId);
+
+  return response.data;
+}

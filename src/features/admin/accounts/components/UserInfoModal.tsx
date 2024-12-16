@@ -22,7 +22,11 @@ import PasswordTextField from "../../../../components/UI/PasswordTextField";
 import UserStatusLegend from "./UserStatusLegend";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { switchUserStatus, updateUserProfile } from "../api/user-api";
+import {
+  deleteUser,
+  switchUserStatus,
+  updateUserProfile,
+} from "../api/user-api";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import { UpdateUserProfileRequest } from "../types/Request";
@@ -51,6 +55,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
   const queryClient = useQueryClient();
   const [openConfirmSwitchStatusModal, setOpenConfirmSwitchStatusModal] =
     useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const [user, setUser] = useState<User | null>(defaultUser);
   const [hasChanged, setHasChanged] = useState(false);
@@ -84,6 +89,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     },
     onSettled: () => {
       setOpenConfirmSwitchStatusModal(false);
+      switchStatusMutation.reset();
     },
   });
 
@@ -96,6 +102,25 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     },
     onError: (error) => {
       toast.error(capitalizeFirstLetter(error.message[0]));
+    },
+    onSettled: () => {
+      updateProfileMutation.reset();
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      toast.success("User has been deleted!");
+      onCloseModal();
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      toast.error(capitalizeFirstLetter(error.message[0]));
+    },
+    onSettled: () => {
+      setOpenDeleteModal(false);
+      deleteUserMutation.reset();
     },
   });
 
@@ -134,6 +159,12 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     }
 
     updateProfileMutation.mutate(request);
+  };
+
+  const handleDeleteUser = () => {
+    if (!user) return;
+
+    deleteUserMutation.mutate(user.id);
   };
 
   useEffect(() => {
@@ -247,7 +278,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
                   direction="row"
                   spacing={1}
                   justifyContent="end"
-                  sx={{ textAlign: "right" }}
+                  sx={{ textAlign: "right", marginTop: "-4px" }}
                 >
                   <UserStatusLegend label="Active" color="success.main" />
                   <UserStatusLegend label="Disabled" color="divider" />
@@ -373,6 +404,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
                 </Typography>
               </div>
               <Button
+                onClick={() => setOpenDeleteModal(true)}
                 variant="outlined"
                 color="error"
                 sx={{ backgroundColor: "rgba(211, 47, 47, 0.04)", py: "4px" }}
@@ -416,6 +448,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
         </Box>
       </CustomModal>
 
+      {/* Modal confirm switch status */}
       <CustomModal
         open={openConfirmSwitchStatusModal}
         onClose={() => setOpenConfirmSwitchStatusModal(false)}
@@ -447,6 +480,39 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
             <Button
               variant="outlined"
               onClick={() => setOpenConfirmSwitchStatusModal(false)}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </CustomModal>
+
+      {/* Delete modal */}
+      <CustomModal
+        open={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+      >
+        <Box sx={{ padding: 2, maxWidth: "500px" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Are you sure to delete this account?
+          </Typography>
+          <Typography>
+            Deleting this account will permanently remove all data associated
+            with this account.
+          </Typography>
+          <Stack direction="row" spacing={0.5} sx={{ marginTop: 1 }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleDeleteUser}
+              sx={{ boxShadow: "none", minWidth: "85px" }}
+            >
+              {deleteUserMutation.isPending ? "Deleting..." : "OK"}
+            </Button>
+            <Button
+              color="error"
+              variant="outlined"
+              onClick={() => setOpenDeleteModal(false)}
             >
               Cancel
             </Button>
