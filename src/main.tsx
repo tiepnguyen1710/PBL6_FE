@@ -321,7 +321,7 @@ createRoot(document.getElementById("root")!).render(
               clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
             >
               <GlobalMessageContainer>
-                <ToastContainer position="bottom-right" />
+                <ToastContainer position="bottom-right" autoClose={4000} />
                 <AuthInitializer>
                   <RouterProvider router={router} />
                 </AuthInitializer>

@@ -1,6 +1,9 @@
 import axiosClient from "../../../../axios";
 import { User } from "../../../../types/auth";
-import { UpdateUserProfileRequest } from "../types/Request";
+import {
+  UpdateUserPasswordRequest,
+  UpdateUserProfileRequest,
+} from "../types/Request";
 
 export async function getUsers() {
   const response = await axiosClient.get<User[]>("/users");
@@ -40,6 +43,16 @@ export async function updateUserProfile(request: UpdateUserProfileRequest) {
 
 export async function deleteUser(userId: string) {
   const response = await axiosClient.delete("/users/" + userId);
+
+  return response.data;
+}
+
+export async function updateUserPassword(request: UpdateUserPasswordRequest) {
+  const { userId, ...data } = request;
+  const response = await axiosClient.patch(
+    "/users/updatePassword/" + userId,
+    data,
+  );
 
   return response.data;
 }

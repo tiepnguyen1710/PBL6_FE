@@ -25,11 +25,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   deleteUser,
   switchUserStatus,
+  updateUserPassword,
   updateUserProfile,
 } from "../api/user-api";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
-import { UpdateUserProfileRequest } from "../types/Request";
+import {
+  UpdateUserPasswordRequest,
+  UpdateUserProfileRequest,
+} from "../types/Request";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getPhoneValidator, validateEmail } from "../../../../utils/helper";
 import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
@@ -66,6 +70,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     formState: { errors: validationErrors },
     handleSubmit,
     reset: resetForm,
+    setValue,
   } = useForm<FormData>({
     defaultValues: {
       email: defaultUser?.email || "",
@@ -108,6 +113,18 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     },
   });
 
+  const updatePasswordMutation = useMutation({
+    mutationFn: updateUserPassword,
+    onSuccess: () => {
+      toast.success("Password has been updated!");
+      setValue("newPassword", "");
+      setValue("confirmNewPassword", "");
+    },
+    onSettled: () => {
+      updatePasswordMutation.reset();
+    },
+  });
+
   const deleteUserMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
@@ -143,22 +160,49 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
 
     const request: UpdateUserProfileRequest = {
       userId: user.id,
-      name: data.name,
     };
+
+    let needToMutate = false;
+
+    if (data.name !== user.name) {
+      request.name = data.name;
+      needToMutate = true;
+    }
 
     if (data.email !== user.email) {
       request.email = data.email;
+      needToMutate = true;
     }
 
     if (data.phone && data.phone !== user.phone) {
       request.phone = data.phone;
+      needToMutate = true;
     }
 
     if (fileSrc && fileSrc !== user.avatar) {
       request.avatar = fileSrc;
+      needToMutate = true;
     }
 
-    updateProfileMutation.mutate(request);
+    if (needToMutate) {
+      updateProfileMutation.mutate(request);
+    }
+
+    // Check whether need to update password
+    const needToUpdatePassword =
+      data.newPassword !== "" && data.confirmNewPassword !== "";
+    if (needToUpdatePassword) {
+      const updatePasswordRequest: UpdateUserPasswordRequest = {
+        userId: user.id,
+        password: data.newPassword,
+        passwordConfirm: data.confirmNewPassword,
+      };
+      updatePasswordMutation.mutate(updatePasswordRequest);
+    }
+
+    if (!(needToMutate || needToUpdatePassword)) {
+      toast.info("No changes to save!");
+    }
   };
 
   const handleDeleteUser = () => {

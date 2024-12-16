@@ -5,3 +5,9 @@ export interface UpdateUserProfileRequest {
   phone?: string;
   avatar?: string;
 }
+
+export interface UpdateUserPasswordRequest {
+  userId: string;
+  password: string;
+  passwordConfirm: string;
+}
