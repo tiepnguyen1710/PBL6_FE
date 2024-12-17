@@ -1,0 +1,62 @@
+import axiosClient from "../../axios";
+import { WordItem, WordResult } from "../../types/voca-search";
+import { VocabularyWordClassAbbr } from "../../types/VocabularyModel";
+
+export async function searchWord(word: string) {
+  const response = await axiosClient.get<WordResult[]>(
+    import.meta.env.VITE_VOCA_SEARCH_API + word,
+  );
+
+  const wordResult = response.data[0];
+
+  let phonetic = wordResult.phonetic;
+
+  const nonEmptyPhoneticPair = wordResult.phonetics.find(
+    (phoneticPair) => phoneticPair.audio && phoneticPair.text,
+  );
+
+  let phoneticAudio = "";
+
+  if (nonEmptyPhoneticPair) {
+    phonetic = nonEmptyPhoneticPair.text;
+    phoneticAudio = nonEmptyPhoneticPair.audio;
+  }
+
+  const wordItems: WordItem[] = [];
+
+  for (const meaning of wordResult.meanings) {
+    const partOfSpeech = shortenPartOfSpeech(meaning.partOfSpeech);
+
+    for (const definition of meaning.definitions) {
+      wordItems.push({
+        word: wordResult.word,
+        phonetic,
+        phoneticAudio,
+        partOfSpeech,
+        definition: definition.definition,
+        example: definition.example,
+      });
+    }
+  }
+
+  return wordItems;
+}
+
+function shortenPartOfSpeech(partOfSpeech: string) {
+  switch (partOfSpeech) {
+    case "noun":
+      return VocabularyWordClassAbbr.NOUN;
+    case "verb":
+      return VocabularyWordClassAbbr.VERB;
+    case "adjective":
+      return VocabularyWordClassAbbr.ADJECTIVE;
+    case "adverb":
+      return VocabularyWordClassAbbr.ADVERB;
+    case "pronoun":
+      return VocabularyWordClassAbbr.PRONOUN;
+    case "preposition":
+      return VocabularyWordClassAbbr.PREPOSITION;
+  }
+
+  return partOfSpeech;
+}

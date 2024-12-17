@@ -10,6 +10,7 @@ import Link from "../../../components/UI/Link";
 import UpdateFolderModal from "./UpdateFolderModal";
 import { useState } from "react";
 import BoldStrokeButton from "./BoldStrokeButton";
+import VocaSearching from "./VocaSearching";
 
 const FolderDetailsPage = () => {
   const navigate = useNavigate();
@@ -92,6 +93,8 @@ const FolderDetailsPage = () => {
           </Stack>
           <Typography>{folder?.description}</Typography>
         </Box>
+
+        <VocaSearching />
       </Box>
 
       {/* List of pinned words */}
