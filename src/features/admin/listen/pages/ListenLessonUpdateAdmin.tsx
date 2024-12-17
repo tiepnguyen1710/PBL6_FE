@@ -55,10 +55,7 @@ const ListenLessonUpdateAdmin = () => {
         setLesson({
           id: data.id,
           name: data.name,
-          audioUrl: data.audio!,
-          fileName: data.audio!,
           nameError: "",
-          fileError: "",
         });
         const newListSentence = Array.isArray(data.listenSentences)
           ? data.listenSentences.map((sentence, index) => ({
@@ -72,6 +69,7 @@ const ListenLessonUpdateAdmin = () => {
             }))
           : [];
         setListSentence(newListSentence);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         toast.error("Failed to fetch lesson details");
       } finally {
@@ -96,10 +94,7 @@ const ListenLessonUpdateAdmin = () => {
   const [lesson, setLesson] = useState({
     id: "",
     name: "",
-    audioUrl: "",
-    fileName: "",
     nameError: "",
-    fileError: "",
   });
 
   if (!lessonId) {
@@ -148,25 +143,25 @@ const ListenLessonUpdateAdmin = () => {
     newListSentence[index].fileError = "";
     setListSentence(newListSentence);
   };
-  const handleFileLessonChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (file.size > 1024 * 1024 * 10) {
-      toast.error("File size is too large");
-      return;
-    }
-    const data = await uploadFile(file);
-    const audioUrl = data.secure_url;
-    const newLesson = {
-      ...lesson,
-      audioUrl: audioUrl,
-      fileName: file.name,
-      fileError: "",
-    };
-    setLesson(newLesson);
-  };
+  // const handleFileLessonChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
+  //   if (file.size > 1024 * 1024 * 10) {
+  //     toast.error("File size is too large");
+  //     return;
+  //   }
+  //   const data = await uploadFile(file);
+  //   const audioUrl = data.secure_url;
+  //   const newLesson = {
+  //     ...lesson,
+  //     audioUrl: audioUrl,
+  //     fileName: file.name,
+  //     fileError: "",
+  //   };
+  //   setLesson(newLesson);
+  // };
   const handleDeleteSentence = async (index: number) => {
     const id = listSentence.find((item) => item.index === index)?.id;
     if (id) {
@@ -193,7 +188,7 @@ const ListenLessonUpdateAdmin = () => {
       const data: UpdateListenLesson = {
         id: lesson.id,
         name: lesson.name,
-        audioUrl: lesson.audioUrl,
+        // audioUrl: lesson.audioUrl,
         listenSentences: listSentence.map((sentence) => {
           return {
             id: sentence.id,
@@ -210,11 +205,11 @@ const ListenLessonUpdateAdmin = () => {
   const handleValidateInput = () => {
     let isValid = true;
     const newLesson = { ...lesson };
-    if (!lesson.audioUrl) {
-      isValid = false;
-      newLesson.fileError = "Lesson audio is required";
-      setLesson({ ...newLesson, fileError: "Lesson audio is required" });
-    }
+    // if (!lesson.audioUrl) {
+    //   isValid = false;
+    //   newLesson.fileError = "Lesson audio is required";
+    //   setLesson({ ...newLesson, fileError: "Lesson audio is required" });
+    // }
     if (!lesson.name.trim()) {
       isValid = false;
       newLesson.nameError = "Lesson name is required";
@@ -274,10 +269,10 @@ const ListenLessonUpdateAdmin = () => {
                 </Typography>
               </Stack>
               <Stack display={"flex"} flexDirection={"column"} gap={"8px"}>
-                <audio style={{ width: "100%" }} key={lesson.audioUrl} controls>
+                {/* <audio style={{ width: "100%" }} key={lesson.audioUrl} controls>
                   <source src={lesson.audioUrl || ""} />
                   Your browser does not support the audio element.
-                </audio>
+                </audio> */}
                 <TextField
                   onChange={(e) => {
                     setLesson({
@@ -293,7 +288,7 @@ const ListenLessonUpdateAdmin = () => {
                   error={!!lesson.nameError}
                   helperText={lesson.nameError}
                 />
-                <TextField
+                {/* <TextField
                   id="outlined-basic"
                   label="Audio name"
                   variant="outlined"
@@ -308,8 +303,8 @@ const ListenLessonUpdateAdmin = () => {
                       },
                     },
                   }}
-                />
-                <Button
+                /> */}
+                {/* <Button
                   component="label"
                   role={undefined}
                   variant="contained"
@@ -323,7 +318,7 @@ const ListenLessonUpdateAdmin = () => {
                     type="file"
                     hidden
                   />
-                </Button>
+                </Button> */}
               </Stack>
               <Stack
                 marginTop={"20px"}
@@ -378,7 +373,6 @@ const ListenLessonUpdateAdmin = () => {
                       id="outlined-multiline-static"
                       label="Sentence"
                       multiline
-                      rows={1}
                       value={sentence.sentence}
                       onChange={(event) => {
                         handleSetSentence(index, event.target.value);
@@ -453,10 +447,10 @@ const ListenLessonUpdateAdmin = () => {
               <Typography variant="h5" sx={{ marginBottom: 1 }}>
                 {lesson.name || "Lesson name"}
               </Typography>
-              <audio key={Date.now() + lesson.audioUrl} controls>
+              {/* <audio key={Date.now() + lesson.audioUrl} controls>
                 <source src={lesson.audioUrl || ""} />
                 Your browser does not support the audio element.
-              </audio>
+              </audio> */}
               <Stack
                 sx={{
                   border: "1px dashed #ccc",

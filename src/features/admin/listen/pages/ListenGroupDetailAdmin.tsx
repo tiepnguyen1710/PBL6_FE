@@ -274,16 +274,32 @@ const ListenGroupDetailAdmin = () => {
                 sx={{ "& > input": { py: "4px" } }}
               />
             </Stack>
-            <Button
-              variant="outlined"
-              startIcon={<Add />}
-              size="small"
-              onClick={() =>
-                navigate(`/admin/listen-lesson/create?groupId=${listenGroupId}`)
-              }
-            >
-              New
-            </Button>
+            <Box sx={{ display: "flex", gap: "8px" }}>
+              <Button
+                variant="outlined"
+                startIcon={<Add />}
+                size="small"
+                onClick={() =>
+                  navigate(
+                    `/admin/listen-lesson/create?groupId=${listenGroupId}`,
+                  )
+                }
+              >
+                New
+              </Button>
+              {/* <Button
+                variant="outlined"
+                startIcon={<Add />}
+                size="small"
+                onClick={() =>
+                  navigate(
+                    `/admin/listen-lesson/auto-create?groupId=${listenGroupId}`,
+                  )
+                }
+              >
+                Auto generate audio
+              </Button> */}
+            </Box>
           </Stack>
           <AdminTableContainer>
             <Table>

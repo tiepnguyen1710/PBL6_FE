@@ -1,23 +1,46 @@
-import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import {
+  Avatar,
+  Box,
+  // Box,
+  Button,
+  Divider,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AddIcon from "@mui/icons-material/Add";
-
-import { useState } from "react";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { useRef, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { uploadFile } from "../../new_exams/api/examApi";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { toast } from "react-toastify";
 import { CreateListenLesson } from "../types/ListenLesson.type";
 import { createListenLesson } from "../api/listenLessonAdminApi";
+// import { Add } from "@mui/icons-material";
+import CustomModal from "../../../../components/UI/CustomModal";
+import { createListVoice, getListVoice } from "../api/listVoiceAdminApi";
+import { Voice } from "../types/ListVoice.type";
+import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 
 const ListenLessonCreateAdmin = () => {
   const navigate = useNavigate();
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [paragraphError, setParagraphError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const groupId = searchParams.get("groupId");
-
+  const [openAutoModal, setOpenAutoModal] = useState(false);
   const { mutate } = useMutation({
     mutationFn: async (data: CreateListenLesson) => {
       const responseData = await createListenLesson(data, groupId!);
@@ -28,6 +51,12 @@ const ListenLessonCreateAdmin = () => {
       toast.success("Create new listen group set successfully!");
     },
   });
+  const { data: listVoice } = useQuery({
+    queryKey: ["listVoice"],
+    queryFn: () => getListVoice(),
+  });
+
+  const [voiceSelected, setVoiceSelected] = useState<Voice | null>(null);
 
   const [listSentence, setListSentence] = useState<
     {
@@ -41,10 +70,7 @@ const ListenLessonCreateAdmin = () => {
   >([]);
   const [lesson, setLesson] = useState({
     name: "",
-    audioUrl: "",
-    fileName: "",
     nameError: "",
-    fileError: "",
   });
 
   if (!groupId) {
@@ -93,25 +119,25 @@ const ListenLessonCreateAdmin = () => {
     newListSentence[index].fileError = "";
     setListSentence(newListSentence);
   };
-  const handleFileLessonChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (file.size > 1024 * 1024 * 10) {
-      toast.error("File is too large");
-      return;
-    }
-    const data = await uploadFile(file);
-    const audioUrl = data.secure_url;
-    const newLesson = {
-      ...lesson,
-      audioUrl: audioUrl,
-      fileName: file.name,
-      fileError: "",
-    };
-    setLesson(newLesson);
-  };
+  // const handleFileLessonChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) return;
+  //   if (file.size > 1024 * 1024 * 10) {
+  //     toast.error("File is too large");
+  //     return;
+  //   }
+  //   const data = await uploadFile(file);
+  //   const audioUrl = data.secure_url;
+  //   const newLesson = {
+  //     ...lesson,
+  //     audioUrl: audioUrl,
+  //     fileName: file.name,
+  //     fileError: "",
+  //   };
+  //   setLesson(newLesson);
+  // };
   const handleDeleteSentence = (index: number) => {
     const newListSentence = listSentence.filter((item) => item.index !== index);
     setListSentence(newListSentence);
@@ -120,10 +146,7 @@ const ListenLessonCreateAdmin = () => {
   const resetInput = () => {
     setLesson({
       name: "",
-      audioUrl: "",
-      fileName: "",
       nameError: "",
-      fileError: "",
     });
     setListSentence([]);
   };
@@ -132,10 +155,9 @@ const ListenLessonCreateAdmin = () => {
     if (valid) {
       const data: CreateListenLesson = {
         name: lesson.name,
-        audioUrl: lesson.audioUrl,
         listenSentences: listSentence.map((sentence) => {
           return {
-            sentence: sentence.sentence,
+            sentence: sentence.sentence.trim(),
             audioUrl: sentence.audioUrl,
             index: sentence.index,
           };
@@ -148,11 +170,11 @@ const ListenLessonCreateAdmin = () => {
   const handleValidateInput = () => {
     let isValid = true;
     const newLesson = { ...lesson };
-    if (!lesson.audioUrl) {
-      isValid = false;
-      newLesson.fileError = "Lesson audio is required";
-      setLesson({ ...newLesson, fileError: "Lesson audio is required" });
-    }
+    // if (!lesson.audioUrl) {
+    //   isValid = false;
+    //   newLesson.fileError = "Lesson audio is required";
+    //   setLesson({ ...newLesson, fileError: "Lesson audio is required" });
+    // }
     if (!lesson.name.trim()) {
       isValid = false;
       newLesson.nameError = "Lesson name is required";
@@ -183,8 +205,93 @@ const ListenLessonCreateAdmin = () => {
     setListSentence(newSentence);
     return isValid;
   };
+  const handleOpenAutoModal = () => {
+    setOpenAutoModal(true);
+  };
+  const handleCloseAutoModal = () => {
+    setVoiceSelected(null);
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+    setOpenAutoModal(false);
+  };
+  const handleSelectVoice = (voice: Voice) => {
+    setVoiceSelected(voice);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current.src = voice.preview_audio;
+      audioRef.current.oncanplaythrough = () => {
+        audioRef.current?.play();
+      };
+    }
+  };
+  const handleValidateParagraph = () => {
+    const paragraph = inputRef?.current?.value;
+    let rs = true;
+    if (!paragraph || !paragraph.trim()) {
+      setParagraphError("Paragraph is required");
+      rs = false;
+    }
+    if (!voiceSelected) {
+      toast.error("Please select voice");
+      rs = false;
+    }
+    return rs;
+  };
+  const handleSubmitParagraph = async () => {
+    if (!handleValidateParagraph()) {
+      return;
+    }
+    const paragraph = inputRef?.current?.value
+      .replace(/\n/g, "")
+      .split(/[.!?]/)
+      .map((sentence) => {
+      return sentence.trim();
+      })
+      .filter((it) => it !== "");
+    if (paragraph?.length && voiceSelected) {
+      const payload = paragraph.map((sentence) => {
+        return {
+          voiceId: voiceSelected.id!,
+          text: sentence!,
+        };
+      });
+      setIsLoading(true);
+      setOpenAutoModal(false);
+      const res = await createListVoice(payload);
+      setIsLoading(false);
+
+      const newSentences = res.map((item, index) => {
+        return {
+          sentence: paragraph[index],
+          audioUrl: item.url,
+          fileName: item.url,
+          index: listSentence.length + index + 1,
+          sentenceError: "",
+          fileError: "",
+        };
+      });
+      setListSentence([...listSentence, ...newSentences]);
+
+      // const listSentence = paragraph.map((sentence, index) => {
+      //   return {
+      //     sentence: sentence,
+      //     audioUrl: "",
+      //     fileName: "",
+      //     index: index,
+      //     sentenceError: "",
+      //     fileError: "",
+      //   };
+      // });
+      // setListSentence(listSentence);
+    }
+    handleCloseAutoModal();
+  };
   return (
     <>
+      <CustomBackdrop open={isLoading} />
+
       <Stack sx={{ padding: "32px" }}>
         <Stack
           direction="row"
@@ -209,13 +316,17 @@ const ListenLessonCreateAdmin = () => {
               </Typography>
             </Stack>
             <Stack display={"flex"} flexDirection={"column"} gap={"8px"}>
-              <audio style={{ width: "100%" }} key={lesson.audioUrl} controls>
+              {/* <audio style={{ width: "100%" }} key={lesson.audioUrl} controls>
                 <source src={lesson.audioUrl || ""} />
                 Your browser does not support the audio element.
-              </audio>
+              </audio> */}
               <TextField
                 onChange={(e) => {
-                  setLesson({ ...lesson, name: e.target.value, nameError: "" });
+                  setLesson({
+                    ...lesson,
+                    name: e.target.value,
+                    nameError: "",
+                  });
                 }}
                 id="outlined-basic"
                 label="Name"
@@ -224,7 +335,7 @@ const ListenLessonCreateAdmin = () => {
                 error={!!lesson.nameError}
                 helperText={lesson.nameError}
               />
-              <TextField
+              {/* <TextField
                 id="outlined-basic"
                 label="Audio name"
                 variant="outlined"
@@ -239,8 +350,8 @@ const ListenLessonCreateAdmin = () => {
                     },
                   },
                 }}
-              />
-              <Button
+              /> */}
+              {/* <Button
                 component="label"
                 role={undefined}
                 variant="contained"
@@ -254,7 +365,7 @@ const ListenLessonCreateAdmin = () => {
                   type="file"
                   hidden
                 />
-              </Button>
+              </Button> */}
             </Stack>
             <Stack
               marginTop={"20px"}
@@ -295,7 +406,11 @@ const ListenLessonCreateAdmin = () => {
                   />
                   <audio
                     key={sentence.index + sentence.audioUrl}
-                    style={{ width: "100%", height: "30px", marginTop: "8px" }}
+                    style={{
+                      width: "100%",
+                      height: "30px",
+                      marginTop: "8px",
+                    }}
                     controls
                   >
                     <source src={sentence.audioUrl || ""} />
@@ -305,7 +420,6 @@ const ListenLessonCreateAdmin = () => {
                     id="outlined-multiline-static"
                     label="Sentence"
                     multiline
-                    rows={1}
                     value={sentence.sentence}
                     onChange={(event) => {
                       handleSetSentence(index, event.target.value);
@@ -365,6 +479,17 @@ const ListenLessonCreateAdmin = () => {
               role={undefined}
               variant="outlined"
               tabIndex={-1}
+              startIcon={<AutoAwesomeIcon />}
+              onClick={handleOpenAutoModal}
+              sx={{ marginTop: "20px" }}
+            >
+              Auto generate
+            </Button>
+            <Button
+              component="label"
+              role={undefined}
+              variant="outlined"
+              tabIndex={-1}
               startIcon={<SaveIcon />}
               onClick={handleSubmit}
               sx={{ marginTop: "20px" }}
@@ -380,10 +505,10 @@ const ListenLessonCreateAdmin = () => {
             <Typography variant="h5" sx={{ marginBottom: 1 }}>
               {lesson.name || "Lesson name"}
             </Typography>
-            <audio key={Date.now() + lesson.audioUrl} controls>
+            {/* <audio key={Date.now() + lesson.audioUrl} controls>
               <source src={lesson.audioUrl || ""} />
               Your browser does not support the audio element.
-            </audio>
+            </audio> */}
             <Stack
               sx={{
                 border: "1px dashed #ccc",
@@ -424,6 +549,133 @@ const ListenLessonCreateAdmin = () => {
           </Stack>
         </Stack>
       </Stack>
+
+      <CustomModal open={openAutoModal} onClose={handleCloseAutoModal}>
+        <Box
+          sx={{
+            padding: 3,
+            paddingBottom: 1,
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <Box sx={{ minWidth: "200px" }}>
+            <Typography variant="h5" sx={{ marginBottom: "20px" }}>
+              Available voice:
+            </Typography>
+            <List
+              dense
+              sx={{
+                width: "100%",
+                maxWidth: 360,
+                height: 400,
+                overflowY: "scroll",
+                bgcolor: "background.paper",
+              }}
+            >
+              {listVoice?.map((voice: Voice, index: number) => {
+                const labelId = `checkbox-list-secondary-label-${index}`;
+                return (
+                  <ListItem
+                    onClick={() => handleSelectVoice(voice)}
+                    key={index}
+                    disablePadding
+                  >
+                    <ListItemButton
+                      sx={{
+                        "&.Mui-selected": {
+                          backgroundColor: "#03258b38",
+                        },
+                        "&.Mui-selected:hover": {
+                          backgroundColor: "#03258b28",
+                        },
+                        "&:hover": {},
+                        borderRadius: "8px",
+                      }}
+                      selected={voiceSelected?.id === voice.id}
+                    >
+                      <ListItemAvatar>
+                        <Avatar
+                          alt={`Avatar ${voice.name}`}
+                          src={voice.avatar}
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        id={labelId}
+                        primary={`${voice.name}`}
+                        sx={{
+                          ".MuiListItemText-primary": {
+                            color: "#595959",
+                          },
+                        }}
+                        secondary={
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            sx={{ color: "#9b9b9b", display: "inline" }}
+                          >
+                            {voice.gender}
+                          </Typography>
+                        }
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </Box>
+          <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+          <Box sx={{ minWidth: "360px" }}>
+            <Typography variant="h5" sx={{ marginBottom: "20px" }}>
+              Input Paragraph:
+            </Typography>
+            <TextField
+              focused
+              sx={{ width: "100%", height: "100%" }}
+              id="outlined-textarea"
+              label="Paragraph"
+              placeholder="Enter paragraph here..."
+              multiline
+              spellCheck={false}
+              inputRef={inputRef}
+              error={!!paragraphError}
+              helperText={paragraphError}
+              onChange={() => {
+                setParagraphError("");
+              }}
+              slotProps={{
+                htmlInput: {
+                  style: {
+                    height: "380px",
+                  },
+                },
+              }}
+            />
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            padding: 3,
+            paddingTop: 0,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            onClick={handleSubmitParagraph}
+            variant="outlined"
+            startIcon={<AutoAwesomeIcon />}
+          >
+            Generate
+          </Button>
+          <audio ref={audioRef} hidden key={voiceSelected?.id} controls>
+            <source src={voiceSelected?.preview_audio || ""} />
+            Your browser does not support the audio element.
+          </audio>
+        </Box>
+      </CustomModal>
     </>
   );
 };
