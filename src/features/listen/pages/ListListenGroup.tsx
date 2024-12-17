@@ -226,10 +226,12 @@ const ListListenGroup = () => {
                                             padding: "10px 12px",
                                             width: "100%",
                                             boxSizing: "border-box",
-                                            textAlign: "center",
-                                            backgroundColor: "#F0F8FF",
+                                            textAlign: "start",
+                                            backgroundColor: "#f3f3f3",
                                             borderRadius: "10px",
                                             color: "#203A90",
+                                            border: "none",
+                                            boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
                                           }}
                                           size="medium"
                                           label={
