@@ -271,7 +271,7 @@ const ListListenGroup = () => {
                 (listenGroupSetData?.limit || 1),
             )}
             page={page}
-            onChange={(e, page) => {
+            onChange={(_, page) => {
               window.history.pushState(
                 {},
                 "",

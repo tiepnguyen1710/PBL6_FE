@@ -430,14 +430,14 @@ const ListenPractice: React.FC = () => {
                         cursor: "pointer",
                         backgroundColor:
                           currIndex === index + 1
-                            ? "#ffa726"
+                            ? "#203A90"
                             : !answerState[index]
-                              ? "#90caf9"
+                              ? "#ccc"
                               : answerState[index].state === "success"
                                 ? "#66bb6a"
                                 : answerState[index].state === "error"
                                   ? "#f44336"
-                                  : "#90caf9",
+                                  : "#ccc",
 
                         "&:hover": {
                           opacity: "0.8",
