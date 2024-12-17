@@ -7,16 +7,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-// import { getExerciseSet } from "../../voca/utils/exercise-helper";
+
 import { useQuery } from "@tanstack/react-query";
-import {
-  Link,
-  Navigate,
-  // useNavigate,
-  useParams,
-  // useSearchParams,
-} from "react-router-dom";
-// import { getLessonById } from "../../admin/vocasets/api/lesson-api";
+import { Link, Navigate, useParams } from "react-router-dom";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import Content from "../../../components/layout/Content";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -24,13 +17,7 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { getListenLessonById } from "../api/ListenLessonApi";
 const ListenPractice: React.FC = () => {
-  // const navigate = useNavigate();
   const { lessonId } = useParams();
-
-  //   const [vocabularies, setVocabularies] = useState<VocabularyModel[]>([]);
-  //   // console.log("vocabularies", vocabularies);
-
-  //   const [correctVocaIds, setCorrectVocaIds] = useState<string[]>([]);
   const [currIndex, setCurrIndex] = useState(1);
   const [showAnswer, setShowAnswer] = useState(false);
   const [answer, setAnswer] = useState([""]);
@@ -52,118 +39,6 @@ const ListenPractice: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  //   const [exerciseIdx, setExerciseIdx] = useState(0);
-
-  //   const repeatTimes = useMemo(() => {
-  //     const numOfVocabularies = vocabularies.length;
-  //     return Math.ceil(MIN_NUMBER_OF_EXERCISES / (2 * numOfVocabularies));
-  //   }, [vocabularies]);
-
-  //   const exercises = useMemo(() => {
-  //     if (vocabularies.length === 0) {
-  //       return [];
-  //     }
-
-  //     return getExerciseSet(vocabularies, repeatTimes);
-  //   }, [vocabularies, repeatTimes]);
-
-  //   const activeExercise: Exercise | undefined = exercises[exerciseIdx];
-
-  //   const wrongAnswerAudioRef = useRef<HTMLAudioElement>(null);
-  //   const correctAnswerAudioRef = useRef<HTMLAudioElement>(null);
-
-  //   const clockTimerRef = useRef<ClockTimerRef>(null);
-
-  //   const postLearningResultMutation = useMutation({
-  //     mutationFn: createLearningResult,
-  //     onSuccess: () => {
-  //       console.log("Post learning result successfully");
-  //       navigate(
-  //         `/lesson/learning-result?id=${lessonId}&vocaSetId=${lesson?.groupTopic.id}`,
-  //       );
-  //     },
-  //   });
-
-  //   const playWrongAnswerAudio = () => {
-  //     wrongAnswerAudioRef.current?.play();
-  //   };
-
-  //   const playCorrectAnswerAudio = async () => {
-  //     await correctAnswerAudioRef.current?.play();
-  //     // Add a little delay
-  //     await new Promise((resolve) => {
-  //       setTimeout(resolve, 500);
-  //     });
-  //   };
-
-  //   const handleCorrectAnswer = async (correctVocaId: string) => {
-  //     setCorrectVocaIds((prev) => [...prev, correctVocaId]);
-  //     await playCorrectAnswerAudio();
-  //   };
-
-  //   const handleWrongAnswer = () => {
-  //     playWrongAnswerAudio();
-  //   };
-
-  //   const postLearningResult = useCallback(() => {
-  //     const listCorrectWord = new Set<string>();
-  //     const listIncorrectWord = new Set<string>();
-
-  //     for (const {
-  //       voca: { id },
-  //     } of exercises) {
-  //       // As each voca has been repeated `repeatTimes` times
-  //       // So, a voca is considered correct if it is answered correctly `repeatTimes` times
-  //       if (
-  //         correctVocaIds.filter((vocaId) => vocaId === id).length == repeatTimes
-  //       ) {
-  //         listCorrectWord.add(id);
-  //       } else {
-  //         listIncorrectWord.add(id);
-  //       }
-  //     }
-
-  //     const request: PostLearningResultRequest = {
-  //       idTopic: lessonId!,
-  //       listCorrectWord: [...listCorrectWord],
-  //       listIncorrectWord: [...listIncorrectWord],
-  //       time: takenTime,
-  //     };
-
-  //     console.log(request);
-
-  //     postLearningResultMutation.mutate(request);
-  //   }, [
-  //     exercises,
-  //     correctVocaIds,
-  //     lessonId,
-  //     postLearningResultMutation,
-  //     repeatTimes,
-  //     takenTime,
-  //   ]);
-
-  //   useEffect(() => {
-  //     if (lesson) {
-  //       setVocabularies(lesson.listWord || []);
-  //     }
-  //   }, [lesson]);
-
-  //   const handleFulFillExercise = useCallback(() => {
-  //     // The callback is re-defined in each time `exerciseIdx` changes, so the `exerciseIdx` is always the latest
-  //     if (exercises.length > 0 && exerciseIdx + 1 >= exercises.length) {
-  //       // Finish lesson
-  //       postLearningResult();
-  //     } else {
-  //       setExerciseIdx((prev) => prev + 1);
-  //     }
-  //   }, [exercises.length, exerciseIdx, postLearningResult]);
-
-  //   const handleAnswerExercise = useCallback(() => {
-  //     const remainingTime = clockTimerRef.current?.stop() || 0;
-  //     const implementTime = DURATION_PER_EXERCISE - remainingTime;
-
-  //     setTakenTime((prev) => prev + implementTime);
-  //   }, [clockTimerRef, setTakenTime]);
   const handleNextSentence = () => {
     setShowAnswer(false);
     setCurrIndex((prev) => {
@@ -287,6 +162,21 @@ const ListenPractice: React.FC = () => {
     setShowAnswer(true);
   };
 
+  const handleNavigateSentence = (index: number) => {
+    const tempAnstate = [...answerState];
+    const tempAnswer = [...answer];
+    const tempSentenceCheck = [...sentenceCheck];
+    while (tempAnstate.length < index + 1) {
+      tempAnstate.push({ state: "info", checked: false });
+      tempAnswer.push("");
+      tempSentenceCheck.push([]);
+    }
+    setAnswerState(tempAnstate);
+    setAnswer(tempAnswer);
+    setSentenceCheck(tempSentenceCheck);
+    setCurrIndex(index + 1);
+  };
+
   if (!lessonId) {
     return <Navigate to="/listen" />;
   }
@@ -310,11 +200,13 @@ const ListenPractice: React.FC = () => {
               alignItems: "center",
               justifyContent: "center",
               flexGrow: 1,
+              gap: "80px",
             }}
           >
             <Card
               sx={{
                 width: "80%",
+                marginLeft: "80px",
                 height: "70%",
                 minHeight: "480px",
                 boxShadow:
@@ -389,7 +281,7 @@ const ListenPractice: React.FC = () => {
               >
                 <audio key={currIndex} controls>
                   <source
-                  src={lesson?.listenSentences[currIndex - 1]?.audio || ""}
+                    src={lesson?.listenSentences[currIndex - 1]?.audio || ""}
                   />
                   Your browser does not support the audio element.
                 </audio>
@@ -494,6 +386,78 @@ const ListenPractice: React.FC = () => {
                 </Button>
               </Box>
             </Card>
+            <Box
+              sx={{
+                height: "70%",
+                minHeight: "480px",
+                width: "200px",
+                display: "flex",
+                alignItems: "start",
+                justifyContent: "start",
+              }}
+            >
+              <Box
+                sx={{
+                  width: "200px",
+                  minHeight: "200px",
+                  boxShadow:
+                    "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
+                  padding: "30px 20px",
+                }}
+              >
+                <Typography sx={{ marginBottom: "20px" }} variant="h6">
+                  Sentences:
+                </Typography>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4, 1fr)",
+                    gap: "10px",
+                  }}
+                >
+                  {lesson?.listenSentences.map((_, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "32px",
+                        height: "32px",
+
+                        borderRadius: "4px",
+                        textAlign: "center",
+                        cursor: "pointer",
+                        backgroundColor:
+                          currIndex === index + 1
+                            ? "#ffa726"
+                            : !answerState[index]
+                              ? "#90caf9"
+                              : answerState[index].state === "success"
+                                ? "#66bb6a"
+                                : answerState[index].state === "error"
+                                  ? "#f44336"
+                                  : "#90caf9",
+
+                        "&:hover": {
+                          opacity: "0.8",
+                        },
+                      }}
+                      onClick={() => handleNavigateSentence(index)}
+                    >
+                      <Typography
+                        sx={{
+                          color: "white",
+                        }}
+                        variant="body2"
+                      >
+                        {index + 1}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            </Box>
           </Box>
         </Content>
       )}
