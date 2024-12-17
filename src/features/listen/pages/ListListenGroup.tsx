@@ -231,7 +231,8 @@ const ListListenGroup = () => {
                                             borderRadius: "10px",
                                             color: "#203A90",
                                             border: "none",
-                                            boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
+                                            boxShadow:
+                                              "0px 2px 2px rgba(0, 0, 0, 0.25)",
                                           }}
                                           size="medium"
                                           label={
@@ -278,6 +279,8 @@ const ListListenGroup = () => {
               );
               setPage(page);
             }}
+            // variant="outlined"
+            shape="rounded"
             color="primary"
           />
         </Box>
