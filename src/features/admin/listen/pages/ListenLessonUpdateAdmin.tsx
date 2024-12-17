@@ -192,7 +192,7 @@ const ListenLessonUpdateAdmin = () => {
         listenSentences: listSentence.map((sentence) => {
           return {
             id: sentence.id,
-            sentence: sentence.sentence,
+            sentence: sentence.sentence.trim(),
             audioUrl: sentence.audioUrl,
             index: sentence.index,
           };

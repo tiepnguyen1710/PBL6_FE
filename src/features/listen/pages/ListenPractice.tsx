@@ -79,12 +79,12 @@ const ListenPractice: React.FC = () => {
   };
 
   const handleCheckAnswer = () => {
-    console.log(sentenceCheck);
     let userAnswer = answer[currIndex - 1].trim().split(" ");
     userAnswer = userAnswer.filter((item) => item !== "");
     const correctAnswer = lesson?.listenSentences[currIndex - 1]
-      ?.sentence!.toLocaleLowerCase()
-      .split(" ");
+    ?.sentence!.toLocaleLowerCase()
+    .split(" ");
+    console.log(sentenceCheck, correctAnswer);
     if (!correctAnswer) return;
     let index = 0;
     let rs = true;
