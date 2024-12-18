@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { PracticeDetailConverted } from "../types/PracticeDetailConverted";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPracticeDetailUser } from "../api/api";
-import { convertPracticeResponse } from "../helper";
+import { convertPracticeResponse } from "../utils/helper";
 import Part1 from "./Part1";
 import Part2 from "./Part2";
 import Part3 from "./Part3";
@@ -37,7 +37,7 @@ const PartResultIndex = () => {
     }
   }, [ExamSetReviewData]);
 
-  const selectedParts = ["part1", "part2"];
+  const selectedParts = ["part1", "part2", "part3", "part4", "part5", "part6"];
 
   const handleNext = () => setCurrentIndex((prev) => prev + 1);
   const handlePrevious = () => setCurrentIndex((prev) => prev - 1);
@@ -49,15 +49,15 @@ const PartResultIndex = () => {
       case "part1":
         return <Part1 partData={examDataReview?.partData[0]} mode={"review"} />;
       case "part2":
-        return <Part2 partData={examDataReview?.partData[1]} />;
+        return <Part2 partData={examDataReview?.partData[1]} mode={"review"} />;
       case "part3":
-        return <Part3 partData={examDataReview?.partData[2]} />;
+        return <Part3 partData={examDataReview?.partData[2]} mode={"review"} />;
       case "part4":
-        return <Part4 partData={examDataReview?.partData[3]} />;
+        return <Part4 partData={examDataReview?.partData[3]} mode={"review"} />;
       case "part5":
-        return <Part5 partData={examDataReview?.partData[4]} />;
+        return <Part5 partData={examDataReview?.partData[4]} mode={"review"} />;
       case "part6":
-        return <Part6 partData={examDataReview?.partData[5]} />;
+        return <Part6 partData={examDataReview?.partData[5]} mode={"review"} />;
       case "part7":
         return <Part7 partData={examDataReview?.partData[6]} />;
       default:
@@ -70,7 +70,7 @@ const PartResultIndex = () => {
       <Container maxWidth="sm">
         <Box my={2}>
           <Grid2 container spacing={2}>
-            <Grid2 size={9}>
+            <Grid2 size={9.5}>
               {isPending ? (
                 <Box sx={{ marginTop: 2 }}>
                   <DotLoadingProgress />
@@ -87,7 +87,7 @@ const PartResultIndex = () => {
                 </Box>
               )}
             </Grid2>
-            <Grid2 size={3}>
+            <Grid2 size={2.5}>
               {/* <Box
                 padding={2}
                 sx={{

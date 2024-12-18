@@ -7,13 +7,18 @@ interface partDataChosenProps {
   partDataChosen: partData[];
 }
 const ListQuestion: React.FC<partDataChosenProps> = ({ partDataChosen }) => {
-  console.log(partDataChosen);
+  console.log("chosen", partDataChosen);
   const activeAnswers = useSelector(
     (state: RootState) => state.userAnswers.activeAnswers,
   );
+
+  const convertPartChosen = (partChosen: string) => {
+    return +partChosen[partChosen.length - 1];
+  };
   return (
     <>
       {partDataChosen.map((partChosen, PartChosenIndex) => {
+        const part = convertPartChosen(partChosen.part);
         return (
           <Box key={PartChosenIndex}>
             <Typography
@@ -29,7 +34,8 @@ const ListQuestion: React.FC<partDataChosenProps> = ({ partDataChosen }) => {
               {partChosen.groupQuestionData.map((group, groupIndex) => {
                 return group.questionData.map((question, questionIndex) => {
                   const isActive =
-                    activeAnswers[groupIndex]?.[questionIndex] !== undefined;
+                    activeAnswers[part]?.[groupIndex]?.[questionIndex] !==
+                    undefined;
                   return (
                     <Button
                       sx={{

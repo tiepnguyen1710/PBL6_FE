@@ -14,7 +14,6 @@ export interface groupQuestionDataConverted {
   audioPreview?: string;
   image?: { fileUrl: string; index: number }[];
   imagePreview?: string[];
-  explain?: string;
   questionData: questionDataConverted[];
 }
 
@@ -25,6 +24,7 @@ export interface questionDataConverted {
   answer: string[];
   correctAnswer?: string;
   userAnswer?: UserAnswer;
+  explain: string;
 }
 
 export interface UserAnswer {

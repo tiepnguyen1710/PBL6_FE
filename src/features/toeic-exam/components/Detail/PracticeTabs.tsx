@@ -17,11 +17,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../stores";
 import {
+  clearSelectedParts,
   setLimitTime,
   setSelectedParts,
 } from "../../../../stores/selectedPartsSlice";
 import { useNavigate, useParams } from "react-router-dom";
-import { sortPartArray } from "../../helper";
+import { sortPartArray } from "../../utils/helper";
 import { resetAnswers } from "../../../../stores/userAnswer";
 
 interface TabPanelProps {
@@ -68,6 +69,7 @@ export default function PracticeTabs() {
   const examId = routeParams.examId;
 
   useEffect(() => {
+    dispatch(clearSelectedParts());
     dispatch(resetAnswers());
   }, []);
 

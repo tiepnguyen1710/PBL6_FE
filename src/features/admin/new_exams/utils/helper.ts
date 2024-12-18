@@ -57,6 +57,7 @@ export const convertExamResponse = (data: ExamResponse) => {
         question: questionItem.question,
         answer: questionItem.answer,
         correctAnswer: questionItem.correctAnswer,
+        explain: questionItem.explain,
       };
     });
 
@@ -64,6 +65,8 @@ export const convertExamResponse = (data: ExamResponse) => {
     const groupQuestionData: groupQuestionData = {
       audioUrl: audioMedia?.url ?? null,
       image: image,
+      transcript: group.transcript,
+      detail: group.detail,
       questionData: questionData,
     };
 

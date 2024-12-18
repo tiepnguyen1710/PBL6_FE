@@ -22,6 +22,7 @@ export interface groupQuestionDetailResponse {
   part: partDetailResponse;
   audio: AudioDetailResponse[];
   image: ImageDetailResponse[];
+  transcript?: string;
 }
 
 export interface questionDetailResponse {
@@ -30,7 +31,7 @@ export interface questionDetailResponse {
   question: string;
   answer: string[];
   correctAnswer: string;
-  explain?: string;
+  explain: string;
   userAnswer?: UserAnswerDetailResponse[];
 }
 

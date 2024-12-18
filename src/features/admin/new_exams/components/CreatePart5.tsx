@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   groupQuestionData,
   TOEIC_PARTS,
@@ -20,13 +20,19 @@ import { Editor } from "@tinymce/tinymce-react";
 import { toast } from "react-toastify";
 import { uploadFile } from "../api/examApi";
 import _ from "lodash";
+import { convertExamData } from "../utils/helper";
 
 interface CrPartProps {
   updateExamData: (data: groupQuestionData[], part: string) => void;
-  //partIndex: keyof typeof TOEIC_PARTS;
+  isUpdate: boolean;
+  examData: groupQuestionData[];
 }
 
-const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
+const CreatePart5: React.FC<CrPartProps> = ({
+  updateExamData,
+  isUpdate,
+  examData,
+}) => {
   const [group, setGroup] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
   const part5Group = Array.from({
@@ -41,7 +47,8 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
         audioPreview: "",
         image: [],
         imagePreview: [],
-        passage: "",
+        detail: "",
+        transcript: "",
         questionData: Array.from(
           { length: TOEIC_PARTS.Part5.questionPerGroup },
           (_, questionIndex) => ({
@@ -50,6 +57,7 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
               groupIndex * TOEIC_PARTS.Part5.questionPerGroup +
               questionIndex,
             question: "",
+            explain: "",
             answer: Array.from(
               { length: TOEIC_PARTS.Part5.answerCount },
               (_) => "",
@@ -60,6 +68,14 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
       }),
     ),
   );
+
+  useEffect(() => {
+    if (isUpdate) {
+      console.log("kkk");
+      const convertedExamData = convertExamData(examData);
+      setPart5Data(convertedExamData);
+    }
+  }, [examData]);
 
   const getChipStyle = (state: validateState = validateState.blank) => {
     switch (state) {
@@ -159,7 +175,7 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
     }
 
     const part5DataUpdate = part5Data.map((item) =>
-      _.omit(item, ["validate", "audioPreview", "imagePreview", "passage"]),
+      _.omit(item, ["validate", "audioPreview", "imagePreview"]),
     );
     updateExamData(part5DataUpdate, "part5");
   };
@@ -193,13 +209,18 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
   ) => {
     let updateData = [...part5Data];
     updateData[groupIndex].questionData[questionDataIndex].correctAnswer =
-      `${String.fromCharCode(65 + answerIndex)}`;
+      `${updateData[groupIndex].questionData[questionDataIndex].answer[answerIndex]}`;
     setPart5Data(updateData);
   };
 
-  const handleEditorChange = (groupIndex: number, newContent: string) => {
+  const handleEditorChange = (
+    groupIndex: number,
+    questionDataIndex: number,
+    newContent: string,
+  ) => {
     let updateData = [...part5Data];
-    updateData[groupIndex].passage = newContent;
+    console.log(groupIndex, questionDataIndex, newContent);
+    updateData[groupIndex].questionData[questionDataIndex].explain = newContent;
     setPart5Data(updateData);
   };
 
@@ -408,29 +429,6 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
               </Stack>
             </Grid>
             <Grid size={9}>
-              <Stack flexDirection="column" flexGrow={1}>
-                <Editor
-                  apiKey={import.meta.env.VITE_TINY_KEY}
-                  value={part5Data[group].passage}
-                  init={{
-                    height: 300,
-                    width: "100%",
-                    menubar: false,
-                    plugins: [
-                      "advlist autolink lists link image charmap print preview anchor",
-                      "searchreplace visualblocks code fullscreen",
-                      "insertdatetime media table paste code help wordcount",
-                    ],
-                    toolbar:
-                      "undo redo | formatselect | bold italic backcolor | \
-               alignleft aligncenter alignright alignjustify | \
-               bullist numlist outdent indent | removeformat | help",
-                  }}
-                  onEditorChange={(newContent) =>
-                    handleEditorChange(group, newContent)
-                  }
-                />
-              </Stack>
               {part5Data[group].questionData.map(
                 (questionData, questionDataIndex) => {
                   return (
@@ -477,8 +475,8 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
                             control={
                               <Radio
                                 checked={
-                                  questionData.correctAnswer ===
-                                  `${String.fromCharCode(65 + answerIndex)}`
+                                  answer != "" &&
+                                  questionData.correctAnswer === answer
                                 }
                                 onChange={() =>
                                   handleChangeCorrectAnswer(
@@ -512,6 +510,34 @@ const CreatePart5: React.FC<CrPartProps> = ({ updateExamData }) => {
                           />
                         </Stack>
                       ))}
+                      <Typography my={0.75}>Explain</Typography>
+                      <Stack flexDirection="column" flexGrow={1}>
+                        <Editor
+                          apiKey={import.meta.env.VITE_TINY_KEY}
+                          value={questionData.explain}
+                          init={{
+                            height: 200,
+                            width: "100%",
+                            menubar: false,
+                            plugins: [
+                              "advlist autolink lists link image charmap print preview anchor",
+                              "searchreplace visualblocks code fullscreen",
+                              "insertdatetime media table paste code help wordcount",
+                            ],
+                            toolbar:
+                              "undo redo | formatselect | bold italic backcolor | \
+               alignleft aligncenter alignright alignjustify | \
+               bullist numlist outdent indent | removeformat | help",
+                          }}
+                          onEditorChange={(newContent) =>
+                            handleEditorChange(
+                              group,
+                              questionDataIndex,
+                              newContent,
+                            )
+                          }
+                        />
+                      </Stack>
                     </Box>
                   );
                 },

@@ -11,6 +11,7 @@ export interface ExamResponse {
 export interface groupQuestionResponse {
   id: string;
   detail?: string;
+  transcript?: string;
   describeAnswer?: string;
   questions: questionResponse[];
   questionMedia: questionMediaResponse[];
@@ -23,7 +24,7 @@ export interface questionResponse {
   question: string;
   answer: string[];
   correctAnswer: string;
-  explain?: string;
+  explain: string;
 }
 
 export interface questionMediaResponse {

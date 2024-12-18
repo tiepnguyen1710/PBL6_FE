@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { toHHMMSS } from "../../helper";
+import { toHHMMSS } from "../../utils/helper";
 
 export interface TimerCountdownRef {
   submit: () => number;

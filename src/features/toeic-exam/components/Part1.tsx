@@ -1,9 +1,16 @@
-import { Box, Paper, Stack, styled, Typography } from "@mui/material";
+import { Box, Divider, Paper, Stack, styled, Typography } from "@mui/material";
 
 import { partData } from "../../admin/new_exams/types/examType";
 import { useDispatch, useSelector } from "react-redux";
-import { setAnswer, setActiveAnswer } from "../../../stores/userAnswer";
+import {
+  setAnswer,
+  setActiveAnswer,
+  setExplain,
+} from "../../../stores/userAnswer";
 import { RootState } from "../../../stores";
+import InfoIcon from "@mui/icons-material/Info";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import parse from "html-react-parser";
 
 interface Part1Props {
   partData?: partData;
@@ -17,12 +24,14 @@ const Item = styled(Paper)(
     isCorrect,
     isIncorrect,
     isChosen,
+    isExplain,
   }: {
-    isActive: boolean;
+    isActive?: boolean;
     isDisabled?: boolean;
     isCorrect?: boolean;
     isIncorrect?: boolean;
     isChosen?: boolean;
+    isExplain?: boolean;
   }) => ({
     backgroundColor: isActive
       ? "#EBF5FF"
@@ -40,9 +49,11 @@ const Item = styled(Paper)(
         ? "1px solid #00B035"
         : isIncorrect
           ? "1px solid #E20D2C"
-          : isDisabled
-            ? ""
-            : "1px solid #f0f0f0",
+          : isExplain && isDisabled
+            ? "1px solid #0071F9"
+            : isDisabled
+              ? ""
+              : "1px solid #f0f0f0",
     borderRadius: "10px",
     "&:hover": {
       backgroundColor: isActive ? "#EBF5FF" : isDisabled ? "" : "",
@@ -66,11 +77,16 @@ const Item = styled(Paper)(
 
 const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
   console.log(partData);
+  const PART = 1;
   const dispatch = useDispatch();
   const activeAnswers = useSelector(
     (state: RootState) => state.userAnswers.activeAnswers,
   );
+  const explainAnswers = useSelector(
+    (state: RootState) => state.userAnswers.explainAnswers,
+  );
   const handleClick = (
+    part: number,
     groupIndex: number,
     questionIndex: number,
     answerIndex: number,
@@ -79,6 +95,7 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
   ) => {
     dispatch(
       setActiveAnswer({
+        part,
         groupIndex,
         questionIndex,
         answerIndex,
@@ -87,6 +104,29 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
 
     dispatch(setAnswer({ idQuestion: questionId, answer }));
   };
+
+  const handleExpandExplain = (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => {
+    dispatch(setExplain({ part, groupIndex, questionIndex }));
+  };
+
+  const isItemExpanded = (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => {
+    const found = explainAnswers.find(
+      (item) =>
+        item.part === part &&
+        item.groupIndex === groupIndex &&
+        item.questionIndex === questionIndex,
+    );
+    return found?.isExpanded ?? false;
+  };
+
   return (
     <>
       <Typography
@@ -136,12 +176,6 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
                 }}
               >
                 <>
-                  <audio controls>
-                    <source src={group?.audioUrl ?? ""} type="audio/mp3" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </>
-                <>
                   {group.image?.map((img, imgIndex) => {
                     return (
                       <img
@@ -156,6 +190,12 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
                       />
                     );
                   })}
+                  <>
+                    <audio controls>
+                      <source src={group?.audioUrl ?? ""} type="audio/mp3" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  </>
                 </>
               </Stack>
             </Box>
@@ -164,6 +204,13 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
             <Box sx={{ width: "100%" }}>
               {group.questionData.map((question, questionIndex) => {
                 let isCorrectQuestion = question.userAnswer?.isCorrect;
+                let isDisabled = mode === "review";
+                let isExplain = mode === "review";
+                let isExpanded = isItemExpanded(
+                  PART,
+                  groupIndex,
+                  questionIndex,
+                );
                 return (
                   <Stack spacing={1}>
                     <Box
@@ -190,9 +237,9 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
                     </Box>
                     {question.answer.map((answer, answerIndex) => {
                       let isActive =
-                        activeAnswers[groupIndex]?.[questionIndex] ===
+                        activeAnswers[PART]?.[groupIndex]?.[questionIndex] ===
                         answerIndex;
-                      let isDisabled = mode === "review";
+
                       let isCorrect =
                         answer === question.correctAnswer && mode === "review";
                       let isIncorrect =
@@ -210,6 +257,7 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
                           onClick={() =>
                             !isDisabled &&
                             handleClick(
+                              PART,
                               groupIndex,
                               questionIndex,
                               answerIndex,
@@ -258,6 +306,56 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
                         </Item>
                       );
                     })}
+                    {isExplain && (
+                      <Item
+                        isDisabled={isDisabled}
+                        isExplain={isExplain}
+                        onClick={() =>
+                          handleExpandExplain(PART, groupIndex, questionIndex)
+                        }
+                        sx={{
+                          display: "flex",
+                          gap: "15px",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Stack direction="column">
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Stack direction="row" gap={1}>
+                              <InfoIcon color="primary" />
+                              <Typography
+                                sx={{
+                                  fontWeight: "500",
+                                  color: "primary.main",
+                                }}
+                              >
+                                Explain
+                              </Typography>
+                            </Stack>
+                            <Box>
+                              <ArrowDropDownIcon />
+                            </Box>
+                          </Box>
+
+                          {isExpanded && (
+                            <Box mt={1} onClick={(e) => e.stopPropagation()}>
+                              <Divider />
+                              <Typography mt={1}>
+                                {question.explain
+                                  ? parse(question.explain)
+                                  : "No explain"}
+                              </Typography>
+                            </Box>
+                          )}
+                        </Stack>
+                      </Item>
+                    )}
                   </Stack>
                 );
               })}

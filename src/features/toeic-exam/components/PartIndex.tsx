@@ -83,7 +83,7 @@ const PartIndex = () => {
       <Container maxWidth="sm">
         <Box my={2}>
           <Grid2 container spacing={2}>
-            <Grid2 size={9}>
+            <Grid2 size={9.5}>
               {isPending ? (
                 "...Loading"
               ) : (
@@ -98,7 +98,7 @@ const PartIndex = () => {
                 </Box>
               )}
             </Grid2>
-            <Grid2 size={3}>
+            <Grid2 size={2.5}>
               <Box
                 padding={2}
                 sx={{
@@ -115,7 +115,7 @@ const PartIndex = () => {
           </Grid2>
         </Box>
 
-        <div style={{ marginTop: "2rem" }}>
+        <div style={{ margin: "1rem 0", float: "left" }}>
           <Button
             variant="outlined"
             disabled={currentIndex === 0}

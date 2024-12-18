@@ -266,7 +266,11 @@ export default function CreateExam() {
               <Typography>Part 2</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <CreatePart2 updateExamData={updateExamData} />
+              <CreatePart2
+                updateExamData={updateExamData}
+                isUpdate={isUpdate}
+                examData={examData.partData[1].groupQuestionData}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -278,7 +282,11 @@ export default function CreateExam() {
               <Typography>Part 3</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <CreatePart3 updateExamData={updateExamData} />
+              <CreatePart3
+                updateExamData={updateExamData}
+                isUpdate={isUpdate}
+                examData={examData.partData[2].groupQuestionData}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -290,7 +298,11 @@ export default function CreateExam() {
               <Typography>Part 4</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <CreatePart4 updateExamData={updateExamData} />
+              <CreatePart4
+                updateExamData={updateExamData}
+                isUpdate={isUpdate}
+                examData={examData.partData[3].groupQuestionData}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -302,7 +314,11 @@ export default function CreateExam() {
               <Typography>Part 5</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <CreatePart5 updateExamData={updateExamData} />
+              <CreatePart5
+                updateExamData={updateExamData}
+                isUpdate={isUpdate}
+                examData={examData.partData[4].groupQuestionData}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -314,7 +330,11 @@ export default function CreateExam() {
               <Typography>Part 6</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <CreatePart6 updateExamData={updateExamData} />
+              <CreatePart6
+                updateExamData={updateExamData}
+                isUpdate={isUpdate}
+                examData={examData.partData[5].groupQuestionData}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion>

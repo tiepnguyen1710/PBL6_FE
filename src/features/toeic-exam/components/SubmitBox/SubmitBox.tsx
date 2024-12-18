@@ -10,7 +10,7 @@ import { PracticeRequest } from "../../types/PracticeRequest";
 import { useMutation } from "@tanstack/react-query";
 import { postPractice } from "../../api/api";
 import { toast } from "react-toastify";
-import { countTotalQuestions } from "../../helper";
+import { countTotalQuestions } from "../../utils/helper";
 import { resetAnswers } from "../../../../stores/userAnswer";
 import { clearSelectedParts } from "../../../../stores/selectedPartsSlice";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";

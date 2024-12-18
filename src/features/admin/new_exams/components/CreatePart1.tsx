@@ -47,7 +47,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
         audioPreview: "",
         image: [],
         imagePreview: [],
-        passage: "",
+        transcript: "",
         questionData: Array.from(
           { length: TOEIC_PARTS.Part1.questionPerGroup },
           (_, questionIndex) => ({
@@ -56,6 +56,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
               questionIndex +
               1,
             question: "",
+            explain: "",
             answer: Array.from(
               { length: TOEIC_PARTS.Part1.answerCount },
               (_) => "",
@@ -174,7 +175,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
     }
 
     const part1DataUpdate = part1Data.map((item) =>
-      _.omit(item, ["validate", "audioPreview", "imagePreview", "passage"]),
+      _.omit(item, ["validate", "audioPreview", "imagePreview"]),
     );
     if (updateExamData) {
       updateExamData(part1DataUpdate, "part1");
@@ -216,9 +217,20 @@ const CreatePart1: React.FC<CrPartProps1> = ({
     setPart1Data(updateData);
   };
 
-  const handleEditorChange = (groupIndex: number, newContent: string) => {
+  const handleEditorChange = (
+    groupIndex: number,
+    questionDataIndex: number,
+    newContent: string,
+  ) => {
     let updateData = [...part1Data];
-    updateData[groupIndex].passage = newContent;
+    console.log(groupIndex, questionDataIndex, newContent);
+    updateData[groupIndex].questionData[questionDataIndex].explain = newContent;
+    setPart1Data(updateData);
+  };
+
+  const handleEditorChangeScript = (groupIndex: number, newContent: string) => {
+    let updateData = [...part1Data];
+    updateData[groupIndex].transcript = newContent;
     setPart1Data(updateData);
   };
 
@@ -427,12 +439,13 @@ const CreatePart1: React.FC<CrPartProps1> = ({
               </Stack>
             </Grid>
             <Grid size={9}>
+              <Typography my={0.75}>Transcript</Typography>
               <Stack flexDirection="column" flexGrow={1}>
                 <Editor
                   apiKey={import.meta.env.VITE_TINY_KEY}
-                  value={part1Data[group].passage}
+                  value={part1Data[group].transcript}
                   init={{
-                    height: 300,
+                    height: 200,
                     width: "100%",
                     menubar: false,
                     plugins: [
@@ -446,7 +459,7 @@ const CreatePart1: React.FC<CrPartProps1> = ({
                bullist numlist outdent indent | removeformat | help",
                   }}
                   onEditorChange={(newContent) =>
-                    handleEditorChange(group, newContent)
+                    handleEditorChangeScript(group, newContent)
                   }
                 />
               </Stack>
@@ -530,6 +543,34 @@ const CreatePart1: React.FC<CrPartProps1> = ({
                           />
                         </Stack>
                       ))}
+                      <Typography my={0.75}>Explain</Typography>
+                      <Stack flexDirection="column" flexGrow={1}>
+                        <Editor
+                          apiKey={import.meta.env.VITE_TINY_KEY}
+                          value={questionData.explain}
+                          init={{
+                            height: 200,
+                            width: "100%",
+                            menubar: false,
+                            plugins: [
+                              "advlist autolink lists link image charmap print preview anchor",
+                              "searchreplace visualblocks code fullscreen",
+                              "insertdatetime media table paste code help wordcount",
+                            ],
+                            toolbar:
+                              "undo redo | formatselect | bold italic backcolor | \
+               alignleft aligncenter alignright alignjustify | \
+               bullist numlist outdent indent | removeformat | help",
+                          }}
+                          onEditorChange={(newContent) =>
+                            handleEditorChange(
+                              group,
+                              questionDataIndex,
+                              newContent,
+                            )
+                          }
+                        />
+                      </Stack>
                     </Box>
                   );
                 },

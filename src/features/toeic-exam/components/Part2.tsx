@@ -1,36 +1,92 @@
-import { Box, Paper, Stack, styled, Typography } from "@mui/material";
+import { Box, Divider, Paper, Stack, styled, Typography } from "@mui/material";
 
 import { partData } from "../../admin/new_exams/types/examType";
 import { useDispatch, useSelector } from "react-redux";
-import { setAnswer, setActiveAnswer } from "../../../stores/userAnswer";
+import {
+  setAnswer,
+  setActiveAnswer,
+  setExplain,
+} from "../../../stores/userAnswer";
 import { RootState } from "../../../stores";
+import InfoIcon from "@mui/icons-material/Info";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import parse from "html-react-parser";
 
 interface Part2Props {
   partData?: partData;
+  mode?: string;
 }
 
-const Item = styled(Paper)(({ isActive }: { isActive: boolean }) => ({
-  backgroundColor: isActive ? "#EBF5FF" : "#fff",
-  padding: "15px",
-  border: isActive ? "1px solid #0071F9" : "1px solid #f0f0f0",
-  borderRadius: "10px",
-  "&:hover": {
-    backgroundColor: isActive ? "#EBF5FF" : "#F9FAFB",
-    border: isActive ? "1px solid #0071F9" : "1px solid #F9A95A",
-    cursor: "pointer",
-    "& .innerBox": {
-      backgroundColor: isActive ? "#0071F9" : "#6B7280",
-      color: "white",
+const Item = styled(Paper)(
+  ({
+    isActive,
+    isDisabled,
+    isCorrect,
+    isIncorrect,
+    isChosen,
+    isExplain,
+  }: {
+    isActive?: boolean;
+    isDisabled?: boolean;
+    isCorrect?: boolean;
+    isIncorrect?: boolean;
+    isChosen?: boolean;
+    isExplain?: boolean;
+  }) => ({
+    backgroundColor: isActive
+      ? "#EBF5FF"
+      : isCorrect && isChosen
+        ? "#F0FDF4"
+        : isCorrect
+          ? "white"
+          : isIncorrect
+            ? "#FDF2F3"
+            : "#fff",
+    padding: "15px",
+    border: isActive
+      ? "1px solid #0071F9"
+      : isCorrect
+        ? "1px solid #00B035"
+        : isIncorrect
+          ? "1px solid #E20D2C"
+          : isExplain && isDisabled
+            ? "1px solid #0071F9"
+            : isDisabled
+              ? ""
+              : "1px solid #f0f0f0",
+    borderRadius: "10px",
+    "&:hover": {
+      backgroundColor: isActive ? "#EBF5FF" : isDisabled ? "" : "",
+      border: isDisabled
+        ? undefined
+        : isActive
+          ? "1px solid #0071F9"
+          : "1px solid #F9A95A",
+      cursor: "pointer",
+      "& .innerBox": {
+        backgroundColor: isDisabled
+          ? undefined
+          : isActive
+            ? "#0071F9"
+            : "#6B7280",
+        color: isDisabled ? undefined : "white",
+      },
     },
-  },
-}));
-const Part2: React.FC<Part2Props> = ({ partData }) => {
+  }),
+);
+
+const Part2: React.FC<Part2Props> = ({ partData, mode }) => {
   console.log(partData);
+  const PART = 2;
   const dispatch = useDispatch();
   const activeAnswers = useSelector(
     (state: RootState) => state.userAnswers.activeAnswers,
   );
+  const explainAnswers = useSelector(
+    (state: RootState) => state.userAnswers.explainAnswers,
+  );
   const handleClick = (
+    part: number,
     groupIndex: number,
     questionIndex: number,
     answerIndex: number,
@@ -39,6 +95,7 @@ const Part2: React.FC<Part2Props> = ({ partData }) => {
   ) => {
     dispatch(
       setActiveAnswer({
+        part,
         groupIndex,
         questionIndex,
         answerIndex,
@@ -46,6 +103,28 @@ const Part2: React.FC<Part2Props> = ({ partData }) => {
     );
 
     dispatch(setAnswer({ idQuestion: questionId, answer }));
+  };
+
+  const handleExpandExplain = (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => {
+    dispatch(setExplain({ part, groupIndex, questionIndex }));
+  };
+
+  const isItemExpanded = (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => {
+    const found = explainAnswers.find(
+      (item) =>
+        item.part === part &&
+        item.groupIndex === groupIndex &&
+        item.questionIndex === questionIndex,
+    );
+    return found?.isExpanded ?? false;
   };
   return (
     <>
@@ -95,6 +174,12 @@ const Part2: React.FC<Part2Props> = ({ partData }) => {
                   alignItems: "center",
                 }}
               >
+                <>
+                  <audio controls>
+                    <source src={group?.audioUrl ?? ""} type="audio/mp3" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </>
                 {group.image?.map((img, imgIndex) => {
                   return (
                     <img
@@ -115,11 +200,24 @@ const Part2: React.FC<Part2Props> = ({ partData }) => {
             {/* List of Items */}
             <Box sx={{ width: "100%" }}>
               {group.questionData.map((question, questionIndex) => {
+                let isCorrectQuestion = question.userAnswer?.isCorrect;
+                let isDisabled = mode === "review";
+                let isExplain = mode === "review";
+                let isExpanded = isItemExpanded(
+                  PART,
+                  groupIndex,
+                  questionIndex,
+                );
                 return (
                   <Stack spacing={1}>
                     <Box
                       sx={{
-                        background: "var(--color-primary-main)",
+                        background:
+                          isCorrectQuestion === true
+                            ? "#00B035"
+                            : isCorrectQuestion === false
+                              ? "#E20D2C"
+                              : "var(--color-primary-main)",
                         color: "white",
                         fontWeight: "400",
                         borderRadius: "50%",
@@ -136,14 +234,26 @@ const Part2: React.FC<Part2Props> = ({ partData }) => {
                     </Box>
                     {question.answer.map((answer, answerIndex) => {
                       let isActive =
-                        activeAnswers[groupIndex]?.[questionIndex] ===
+                        activeAnswers[PART]?.[groupIndex]?.[questionIndex] ===
                         answerIndex;
+                      let isCorrect =
+                        answer === question.correctAnswer && mode === "review";
+                      let isIncorrect =
+                        answer === question.userAnswer?.userAnswer &&
+                        answer !== question.correctAnswer;
+                      let isChosen = answer === question.userAnswer?.userAnswer;
                       return (
                         <Item
                           key={answerIndex}
                           isActive={isActive}
+                          isDisabled={isDisabled}
+                          isCorrect={isCorrect}
+                          isIncorrect={isIncorrect}
+                          isChosen={isChosen}
                           onClick={() =>
+                            !isDisabled &&
                             handleClick(
+                              PART,
                               groupIndex,
                               questionIndex,
                               answerIndex,
@@ -160,8 +270,20 @@ const Part2: React.FC<Part2Props> = ({ partData }) => {
                           <Box
                             className="innerBox"
                             sx={{
-                              background: isActive ? "#0071F9" : "#F3F4F6",
-                              color: isActive ? "white" : "",
+                              background: isActive
+                                ? "#0071F9"
+                                : isCorrect
+                                  ? "#00B035"
+                                  : isIncorrect
+                                    ? "#E20D2C"
+                                    : "#F3F4F6",
+                              color: isActive
+                                ? "white"
+                                : isCorrect
+                                  ? "#F0FDF4"
+                                  : isIncorrect
+                                    ? "#FDF2F3"
+                                    : "",
                               fontWeight: "500",
                               borderRadius: "50%",
                               padding: "15px",
@@ -180,6 +302,56 @@ const Part2: React.FC<Part2Props> = ({ partData }) => {
                         </Item>
                       );
                     })}
+                    {isExplain && (
+                      <Item
+                        isDisabled={isDisabled}
+                        isExplain={isExplain}
+                        onClick={() =>
+                          handleExpandExplain(PART, groupIndex, questionIndex)
+                        }
+                        sx={{
+                          display: "flex",
+                          gap: "15px",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Stack direction="column">
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Stack direction="row" gap={1}>
+                              <InfoIcon color="primary" />
+                              <Typography
+                                sx={{
+                                  fontWeight: "500",
+                                  color: "primary.main",
+                                }}
+                              >
+                                Explain
+                              </Typography>
+                            </Stack>
+                            <Box>
+                              <ArrowDropDownIcon />
+                            </Box>
+                          </Box>
+
+                          {isExpanded && (
+                            <Box mt={1} onClick={(e) => e.stopPropagation()}>
+                              <Divider />
+                              <Typography mt={1}>
+                                {question.explain
+                                  ? parse(question.explain)
+                                  : "No explain"}
+                              </Typography>
+                            </Box>
+                          )}
+                        </Stack>
+                      </Item>
+                    )}
                   </Stack>
                 );
               })}

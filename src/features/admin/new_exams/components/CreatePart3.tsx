@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   groupQuestionData,
   TOEIC_PARTS,
@@ -20,13 +20,19 @@ import { Editor } from "@tinymce/tinymce-react";
 import { toast } from "react-toastify";
 import { uploadFile } from "../api/examApi";
 import _ from "lodash";
+import { convertExamData } from "../utils/helper";
 
 interface CrPartProps {
   updateExamData: (data: groupQuestionData[], part: string) => void;
-  //partIndex: keyof typeof TOEIC_PARTS;
+  isUpdate: boolean;
+  examData: groupQuestionData[];
 }
 
-const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
+const CreatePart3: React.FC<CrPartProps> = ({
+  updateExamData,
+  isUpdate,
+  examData,
+}) => {
   const [group, setGroup] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
   const part3Group = Array.from({
@@ -41,7 +47,7 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
         audioPreview: "",
         image: [],
         imagePreview: [],
-        passage: "",
+        transcript: "",
         questionData: Array.from(
           { length: TOEIC_PARTS.Part3.questionPerGroup },
           (_, questionIndex) => ({
@@ -50,6 +56,7 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
               groupIndex * TOEIC_PARTS.Part3.questionPerGroup +
               questionIndex,
             question: "",
+            explain: "",
             answer: Array.from(
               { length: TOEIC_PARTS.Part3.answerCount },
               (_) => "",
@@ -60,6 +67,14 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
       }),
     ),
   );
+
+  useEffect(() => {
+    if (isUpdate) {
+      console.log("kkk");
+      const convertedExamData = convertExamData(examData);
+      setPart3Data(convertedExamData);
+    }
+  }, [examData]);
 
   const getChipStyle = (state: validateState = validateState.blank) => {
     switch (state) {
@@ -160,7 +175,7 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
     }
 
     const part3DataUpdate = part3Data.map((item) =>
-      _.omit(item, ["validate", "audioPreview", "imagePreview", "passage"]),
+      _.omit(item, ["validate", "audioPreview", "imagePreview"]),
     );
     updateExamData(part3DataUpdate, "part3");
   };
@@ -194,13 +209,24 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
   ) => {
     let updateData = [...part3Data];
     updateData[groupIndex].questionData[questionDataIndex].correctAnswer =
-      `${String.fromCharCode(65 + answerIndex)}`;
+      `${updateData[groupIndex].questionData[questionDataIndex].answer[answerIndex]}`;
     setPart3Data(updateData);
   };
 
-  const handleEditorChange = (groupIndex: number, newContent: string) => {
+  const handleEditorChange = (
+    groupIndex: number,
+    questionDataIndex: number,
+    newContent: string,
+  ) => {
     let updateData = [...part3Data];
-    updateData[groupIndex].passage = newContent;
+    console.log(groupIndex, questionDataIndex, newContent);
+    updateData[groupIndex].questionData[questionDataIndex].explain = newContent;
+    setPart3Data(updateData);
+  };
+
+  const handleEditorChangeScript = (groupIndex: number, newContent: string) => {
+    let updateData = [...part3Data];
+    updateData[groupIndex].transcript = newContent;
     setPart3Data(updateData);
   };
 
@@ -359,8 +385,8 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
                       style={{ marginTop: "15px", width: "250px" }}
                     >
                       <source
-                        src={part3Data[group].audioPreview}
-                        type={part3Data[group].audioUrl}
+                        src={part3Data[group].audioUrl}
+                        type="audio/mpeg"
                       />
                     </audio>
                   )}
@@ -409,12 +435,13 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
               </Stack>
             </Grid>
             <Grid size={9}>
+              <Typography my={0.75}>Transcript</Typography>
               <Stack flexDirection="column" flexGrow={1}>
                 <Editor
                   apiKey={import.meta.env.VITE_TINY_KEY}
-                  value={part3Data[group].passage}
+                  value={part3Data[group].transcript}
                   init={{
-                    height: 300,
+                    height: 200,
                     width: "100%",
                     menubar: false,
                     plugins: [
@@ -428,7 +455,7 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
                bullist numlist outdent indent | removeformat | help",
                   }}
                   onEditorChange={(newContent) =>
-                    handleEditorChange(group, newContent)
+                    handleEditorChangeScript(group, newContent)
                   }
                 />
               </Stack>
@@ -477,9 +504,10 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
                             value="female"
                             control={
                               <Radio
+                                key={answerIndex}
                                 checked={
-                                  questionData.correctAnswer ===
-                                  `${String.fromCharCode(65 + answerIndex)}`
+                                  answer != "" &&
+                                  questionData.correctAnswer === answer
                                 }
                                 onChange={() =>
                                   handleChangeCorrectAnswer(
@@ -513,6 +541,34 @@ const CreatePart3: React.FC<CrPartProps> = ({ updateExamData }) => {
                           />
                         </Stack>
                       ))}
+                      <Typography my={0.75}>Explain</Typography>
+                      <Stack flexDirection="column" flexGrow={1}>
+                        <Editor
+                          apiKey={import.meta.env.VITE_TINY_KEY}
+                          value={questionData.explain}
+                          init={{
+                            height: 200,
+                            width: "100%",
+                            menubar: false,
+                            plugins: [
+                              "advlist autolink lists link image charmap print preview anchor",
+                              "searchreplace visualblocks code fullscreen",
+                              "insertdatetime media table paste code help wordcount",
+                            ],
+                            toolbar:
+                              "undo redo | formatselect | bold italic backcolor | \
+               alignleft aligncenter alignright alignjustify | \
+               bullist numlist outdent indent | removeformat | help",
+                          }}
+                          onEditorChange={(newContent) =>
+                            handleEditorChange(
+                              group,
+                              questionDataIndex,
+                              newContent,
+                            )
+                          }
+                        />
+                      </Stack>
                     </Box>
                   );
                 },

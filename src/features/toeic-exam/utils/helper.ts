@@ -1,12 +1,12 @@
 import {
   groupQuestionData,
   TOEIC_PARTS,
-} from "../admin/new_exams/types/examType";
-import { PracticeDetailConverted } from "./types/PracticeDetailConverted";
+} from "../../admin/new_exams/types/examType";
+import { PracticeDetailConverted } from "../types/PracticeDetailConverted";
 import {
   groupQuestionDetailResponse,
   PracticeDetailResponse,
-} from "./types/PracticeDetailResponse";
+} from "../types/PracticeDetailResponse";
 
 export const toHHMMSS = (secs: number) => {
   //const sec_num = parseInt(secs, 10);
@@ -108,6 +108,7 @@ export const convertPracticeResponse = (data: PracticeDetailResponse) => {
           userAnswer: questionItem?.userAnswer?.[0]?.userAnswer ?? null,
           isCorrect: questionItem?.userAnswer?.[0]?.isCorrect ?? null,
         },
+        explain: questionItem.explain,
       };
     });
 
@@ -115,6 +116,8 @@ export const convertPracticeResponse = (data: PracticeDetailResponse) => {
     const groupQuestionData: groupQuestionData = {
       audioUrl: audioMedia?.url ?? null,
       image: image,
+      transcript: group.transcript,
+      detail: group.detail,
       questionData: questionData,
     };
 
@@ -122,4 +125,10 @@ export const convertPracticeResponse = (data: PracticeDetailResponse) => {
   });
 
   return result;
+};
+
+export const parseHtmlToText = (htmlString: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, "text/html");
+  return doc.body.textContent || "";
 };

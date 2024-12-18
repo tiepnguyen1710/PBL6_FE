@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { PracticeHistory } from "../types/PracticeHistory";
-import { toHHMMSS } from "../../toeic-exam/helper";
+import { toHHMMSS } from "../../toeic-exam/utils/helper";
 import { Link } from "react-router-dom";
 
 const HeadRowStyle = {

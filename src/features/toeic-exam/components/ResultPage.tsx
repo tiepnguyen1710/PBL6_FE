@@ -16,7 +16,7 @@ import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import HeadphonesIcon from "@mui/icons-material/Headphones";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { useNavigate, useParams } from "react-router-dom";
-import { toHHMMSS } from "../helper";
+import { toHHMMSS } from "../utils/helper";
 import Content from "../../../components/layout/Content";
 import { fetchPracticeDetailUser } from "../api/api";
 import { useQuery } from "@tanstack/react-query";

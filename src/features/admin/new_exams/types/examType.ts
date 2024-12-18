@@ -15,8 +15,9 @@ export interface groupQuestionData {
   audioPreview?: string;
   image?: { fileUrl: string; index: number }[];
   imagePreview?: string[];
-  passage?: string;
   questionData: questionData[];
+  transcript?: string;
+  detail?: string;
 }
 
 export interface questionData {
@@ -26,6 +27,7 @@ export interface questionData {
   answer: string[];
   correctAnswer?: string;
   userAnswer?: UserAnswer;
+  explain: string;
 }
 
 export interface UserAnswer {
