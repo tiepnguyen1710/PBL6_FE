@@ -11,6 +11,7 @@ import { RootState } from "../../../stores";
 import InfoIcon from "@mui/icons-material/Info";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import parse from "html-react-parser";
+import useScrollToTop from "../hooks/useScrollToTop";
 
 interface Part1Props {
   partData?: partData;
@@ -78,6 +79,7 @@ const Item = styled(Paper)(
 const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
   console.log(partData);
   const PART = 1;
+  useScrollToTop();
   const dispatch = useDispatch();
   const activeAnswers = useSelector(
     (state: RootState) => state.userAnswers.activeAnswers,
