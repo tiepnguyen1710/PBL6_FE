@@ -3,10 +3,10 @@ import { TranslationResult } from "../../types/translate";
 import { WordItem, WordResult } from "../../types/voca-search";
 import { VocabularyWordClassAbbr } from "../../types/VocabularyModel";
 
+const VOCA_SEARCH_API = "https://api.dictionaryapi.dev/api/v2/entries/en/";
+
 export async function searchWord(word: string) {
-  const response = await axiosClient.get<WordResult[]>(
-    import.meta.env.VITE_VOCA_SEARCH_API + word,
-  );
+  const response = await axiosClient.get<WordResult[]>(VOCA_SEARCH_API + word);
 
   const wordResult = response.data[0];
 
