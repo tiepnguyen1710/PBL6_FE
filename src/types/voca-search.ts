@@ -27,4 +27,5 @@ export type WordItem = {
   partOfSpeech: string;
   definition: string;
   example?: string;
+  meaning?: string;
 };

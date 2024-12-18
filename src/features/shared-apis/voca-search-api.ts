@@ -1,4 +1,5 @@
 import axiosClient from "../../axios";
+import { TranslationResult } from "../../types/translate";
 import { WordItem, WordResult } from "../../types/voca-search";
 import { VocabularyWordClassAbbr } from "../../types/VocabularyModel";
 
@@ -39,7 +40,28 @@ export async function searchWord(word: string) {
     }
   }
 
+  // Translate the definition to get the meaning
+  const definitions = wordItems.map((item) => item.definition);
+  const meanings = await translateListOfText(definitions);
+
+  wordItems.forEach((item, index) => {
+    item.meaning = meanings[index].text;
+  });
+
   return wordItems;
+}
+
+export async function translateListOfText(listOfParagraph: string[]) {
+  const response = await axiosClient.post<TranslationResult[]>(
+    "translate/listText",
+    {
+      from: "en",
+      to: "vi",
+      listText: listOfParagraph,
+    },
+  );
+
+  return response.data;
 }
 
 function shortenPartOfSpeech(partOfSpeech: string) {
@@ -56,6 +78,8 @@ function shortenPartOfSpeech(partOfSpeech: string) {
       return VocabularyWordClassAbbr.PRONOUN;
     case "preposition":
       return VocabularyWordClassAbbr.PREPOSITION;
+    case "conjunction":
+      return VocabularyWordClassAbbr.CONJUNCTION;
   }
 
   return partOfSpeech;

@@ -94,7 +94,7 @@ const FolderDetailsPage = () => {
           <Typography>{folder?.description}</Typography>
         </Box>
 
-        <VocaSearching />
+        <VocaSearching containerSx={{ marginTop: 1.5 }} />
       </Box>
 
       {/* List of pinned words */}

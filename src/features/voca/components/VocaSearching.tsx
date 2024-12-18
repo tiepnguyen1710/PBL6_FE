@@ -1,4 +1,10 @@
-import { Box, OutlinedInput, SvgIcon, Typography } from "@mui/material";
+import {
+  Box,
+  OutlinedInput,
+  SvgIcon,
+  SxProps,
+  Typography,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { searchWord } from "../../shared-apis/voca-search-api";
@@ -6,7 +12,11 @@ import useDebounce from "../../../hooks/useDebounce";
 import Popup from "../../../components/UI/Popup";
 import VocaSearchResultItem from "./VocaSearchResultItem";
 
-const VocaSearching = () => {
+type VocaSearchingProps = {
+  containerSx?: SxProps;
+};
+
+const VocaSearching: React.FC<VocaSearchingProps> = ({ containerSx }) => {
   const anchorEle = useRef<HTMLDivElement>(null);
 
   const [wordInput, setWordInput] = useState("");
@@ -23,12 +33,12 @@ const VocaSearching = () => {
   } = useQuery({
     queryKey: ["voca-search", { word: wordInputDebounce }],
     queryFn: () => searchWord(wordInputDebounce),
-    enabled: wordInput.length > 0,
+    enabled: wordInputDebounce.length > 0,
     retry: false,
   });
   return (
-    <>
-      <Box sx={{ marginTop: 1.5, position: "relative" }} ref={anchorEle}>
+    <Box sx={containerSx}>
+      <Box sx={{ position: "relative" }} ref={anchorEle}>
         <Typography
           sx={{
             fontSize: "20px",
@@ -96,7 +106,7 @@ const VocaSearching = () => {
                   key={wordItem.definition}
                   word={wordItem.word}
                   partOfSpeech={wordItem.partOfSpeech}
-                  meaning={wordItem.definition}
+                  meaning={wordItem.meaning || wordItem.definition}
                   onClick={() => console.log(wordItem)}
                 />
               ))}
@@ -142,7 +152,7 @@ const VocaSearching = () => {
           display: openPopup ? "block" : "none",
         }}
       ></Box>
-    </>
+    </Box>
   );
 };
 export default VocaSearching;
