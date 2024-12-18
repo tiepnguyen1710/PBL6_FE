@@ -10,11 +10,14 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAllListenGroup } from "../api/ListListenGroupApi";
 import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 import { IListenGroupSetInfor } from "../types/ListenGroup.type";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import SearchInput from "../../../components/UI/SearchInput";
 import TabPanel from "../../../components/UI/TabPanel";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { Link } from "react-router-dom";
+import { debounce } from "../../../utils/debounce";
+import Pagination from "@mui/material/Pagination";
+
 const LISTEN_TABS = [
   {
     index: 0,
@@ -47,10 +50,17 @@ const ListListenGroup = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [tabValue, setTabValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [searchValueDebounce, setSearchValueDebounce] = useState("");
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    setPage(parseInt(query.get("page") || "1", 10));
+  }, []);
 
   const { data: listenGroupSetData, isLoading } = useQuery({
-    queryKey: ["fetchListenGroup", tabValue, searchValue],
-    queryFn: () => fetchAllListenGroup(tabValue, searchValue),
+    queryKey: ["fetchListenGroup", tabValue, searchValueDebounce, page],
+    queryFn: () => fetchAllListenGroup(tabValue, searchValueDebounce, page),
   });
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -62,7 +72,16 @@ const ListListenGroup = () => {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setSearchValue(event.target.value);
+    debouncedSearch(event.target.value);
+    window.history.pushState({}, "", `${window.location.pathname}?page=${1}`);
+    setPage(1);
   };
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setSearchValueDebounce(value);
+    }, 1000),
+    [],
+  );
 
   return (
     <>
@@ -88,7 +107,10 @@ const ListListenGroup = () => {
               <Tab label="Advanced" />
             </Tabs>
             <Box sx={{ position: "absolute", right: 0, top: 0 }}>
-              <SearchInput onChange={handleSearchInputChange} />
+              <SearchInput
+                value={searchValue}
+                onChange={handleSearchInputChange}
+              />
             </Box>
           </Box>
           {isLoading && (
@@ -110,13 +132,13 @@ const ListListenGroup = () => {
                       id: listenGroup.id,
                       name: listenGroup.name,
                       level: listenGroup.level,
-                      listenLessions: listenGroup.listenLessions.map(
-                        (listenLession) => {
-                          const listenLessionSetInfo = {
-                            id: listenLession.id,
-                            name: listenLession.name,
+                      listenLessons: listenGroup.listenLessons.map(
+                        (listenLesson) => {
+                          const listenLessonSetInfo = {
+                            id: listenLesson.id,
+                            name: listenLesson.name,
                           };
-                          return listenLessionSetInfo;
+                          return listenLessonSetInfo;
                         },
                       ),
                     };
@@ -182,7 +204,7 @@ const ListListenGroup = () => {
                               <Typography
                                 sx={{ color: "gray", fontSize: "14px" }}
                               >
-                                ({listenGroup.listenLessions.length} Lession)
+                                ({listenGroup.listenLessons.length} Lesson)
                               </Typography>
                             </Box>
                           </AccordionSummary>
@@ -193,36 +215,35 @@ const ListListenGroup = () => {
                               rowGap={0.5}
                               spacing={2}
                             >
-                              {listenGroup.listenLessions.map(
-                                (listenLession, index) => {
+                              {listenGroup.listenLessons.map(
+                                (listenLesson, index) => {
                                   return (
-                                    <>
-                                      <Grid2 size={3} key={listenLession.id}>
-                                        <Link
-                                          to={`/listen/${listenLession.id}`}
-                                        >
-                                          <Chip
-                                            variant="outlined"
-                                            sx={{
-                                              padding: "10px 12px",
-                                              width: "100%",
-                                              boxSizing: "border-box",
-                                              textAlign: "center",
-                                              backgroundColor: "#F0F8FF",
-                                              borderRadius: "10px",
-                                              color: "#203A90",
-                                            }}
-                                            size="medium"
-                                            label={
-                                              "#" +
-                                              (index + 1) +
-                                              ". " +
-                                              listenLession.name
-                                            }
-                                          />
-                                        </Link>
-                                      </Grid2>
-                                    </>
+                                    <Grid2 size={3} key={listenLesson.id}>
+                                      <Link to={`/listen/${listenLesson.id}`}>
+                                        <Chip
+                                          variant="outlined"
+                                          sx={{
+                                            padding: "10px 12px",
+                                            width: "100%",
+                                            boxSizing: "border-box",
+                                            textAlign: "start",
+                                            backgroundColor: "#f3f3f3",
+                                            borderRadius: "10px",
+                                            color: "#203A90",
+                                            border: "none",
+                                            boxShadow:
+                                              "0px 2px 2px rgba(0, 0, 0, 0.25)",
+                                          }}
+                                          size="medium"
+                                          label={
+                                            "#" +
+                                            (index + 1) +
+                                            ". " +
+                                            listenLesson.name
+                                          }
+                                        />
+                                      </Link>
+                                    </Grid2>
                                   );
                                 },
                               )}
@@ -235,6 +256,33 @@ const ListListenGroup = () => {
               </Grid2>
             </TabPanel>
           ))}
+        </Box>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <Pagination
+            count={Math.ceil(
+              (listenGroupSetData?.total || 1) /
+                (listenGroupSetData?.limit || 1),
+            )}
+            page={page}
+            onChange={(_, page) => {
+              window.history.pushState(
+                {},
+                "",
+                `${window.location.pathname}?page=${page}`,
+              );
+              setPage(page);
+            }}
+            // variant="outlined"
+            shape="rounded"
+            color="primary"
+          />
         </Box>
       </Content>
     </>

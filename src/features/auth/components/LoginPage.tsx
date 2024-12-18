@@ -15,15 +15,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import RoundedInput from "../../../components/UI/RoundedInput";
 import RoundedPasswordInput from "./RoundedPasswordInput";
 
-import { authActions, loginAction } from "../../../stores/authSlice";
+import { authActions } from "../../../stores/authSlice";
 import { AppDispatch } from "../../../stores";
-import LoginRequest from "../types/LoginRequest";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import { Alert } from "@mui/material";
-import { loginGoggle } from "../api/account-api";
+import { loginGoggle, postLogin } from "../api/account-api";
 import LoginResponse from "../types/LoginResponse";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import Link from "../../../components/UI/Link";
+import { RoleEnum } from "../../../types/auth";
 
 // Interface for form data
 interface FormData {
@@ -54,29 +54,39 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { mutate, isPending, isError, error, reset } = useMutation({
-    mutationFn: async ({ username, password }: LoginRequest) => {
-      await dispatch(loginAction(username, password));
-    },
-    onSuccess: () => {
-      navigate("/");
-      toast.success("Login successful!");
-    },
-  });
-
-  const loginGoogleMutation = useMutation({
-    mutationFn: loginGoggle,
-    onSuccess: (responseData: LoginResponse) => {
+  const handleLoginSuccess = useCallback(
+    (responseData: LoginResponse) => {
       dispatch(
         authActions.login({
           token: responseData.token,
+          refreshToken: responseData.refreshToken,
           user: responseData.user,
         }),
       );
 
-      navigate("/");
+      const roles = responseData.user.roles;
+      if (
+        roles.includes(RoleEnum.Admin) ||
+        roles.includes(RoleEnum.Moderator)
+      ) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+
       toast.success("Login successful!");
     },
+    [dispatch, navigate],
+  );
+
+  const { mutate, isPending, isError, error, reset } = useMutation({
+    mutationFn: postLogin,
+    onSuccess: handleLoginSuccess,
+  });
+
+  const loginGoogleMutation = useMutation({
+    mutationFn: loginGoggle,
+    onSuccess: handleLoginSuccess,
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
@@ -176,11 +186,12 @@ const LoginPage: React.FC = () => {
         <GoogleLogin
           onSuccess={handleCredentialResponse}
           onError={() => console.log("Oauth error")}
-          useOneTap
+          useOneTap={false}
           theme="outline"
           size="large"
           shape="circle"
           text="signin_with" // Tùy chỉnh văn bản
+          auto_select={false}
         />
       </Stack>
     </>

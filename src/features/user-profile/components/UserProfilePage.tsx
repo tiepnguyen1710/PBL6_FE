@@ -26,13 +26,21 @@ import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import updateUserProfile from "../api/user-profile";
+import { updatePassword, updateUserProfile } from "../api/user-profile";
 import { me } from "../../auth/api/account-api";
+import PasswordTextField from "../../../components/UI/PasswordTextField";
+import { getPhoneValidator } from "../../../utils/helper";
 
 type ProfileFormData = {
   name: string;
   email?: string;
   phone?: string | null;
+};
+
+type ChangePasswordFormData = {
+  currentPassword: string;
+  password: string;
+  passwordConfirm: string;
 };
 
 const UserProfilePage: React.FC = () => {
@@ -57,12 +65,31 @@ const UserProfilePage: React.FC = () => {
 
   const updateProfileMutation = useMutation({
     mutationFn: updateUserProfile,
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
       toast.success("Your profile/avatar has been updated");
-      queryClient.invalidateQueries({ queryKey: ["user"], exact: true });
+      queryClient.setQueryData(["user"], updatedUser);
+
+      // reset state
+      updateProfileMutation.reset();
+    },
+  });
+
+  const changePasswordForm = useForm<ChangePasswordFormData>({
+    defaultValues: { currentPassword: "", password: "", passwordConfirm: "" },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: updatePassword,
+    onSuccess: () => {
+      toast.success("Your password has been updated");
 
       // reset mutation state
-      updateProfileMutation.reset();
+      changePasswordMutation.reset();
+      changePasswordForm.reset({
+        currentPassword: "",
+        password: "",
+        passwordConfirm: "",
+      });
     },
   });
 
@@ -71,8 +98,6 @@ const UserProfilePage: React.FC = () => {
   };
 
   const handleSaveProfile: SubmitHandler<ProfileFormData> = (data) => {
-    console.log("Save profile: ", data);
-
     const request: Record<string, unknown> = {};
     if (data.name !== user?.name) {
       request.name = data.name;
@@ -82,11 +107,17 @@ const UserProfilePage: React.FC = () => {
       request.email = data.email;
     }
 
-    if (data.phone !== user?.phone) {
+    if (data.phone && data.phone !== user?.phone) {
       request.phone = data.phone;
     }
 
     updateProfileMutation.mutate(request);
+  };
+
+  const handleSaveChangePassword: SubmitHandler<ChangePasswordFormData> = (
+    data,
+  ) => {
+    changePasswordMutation.mutate(data);
   };
 
   const {
@@ -107,7 +138,7 @@ const UserProfilePage: React.FC = () => {
 
       setFileSrc(user.avatar || DefaultAvatar);
     }
-  }, [user, profileForm, setFileSrc]);
+  }, [user, setFileSrc, profileForm]);
 
   const handleChangeAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleChangeFileInput(event, (newFileSrc) => {
@@ -227,10 +258,8 @@ const UserProfilePage: React.FC = () => {
                       error={!!profileForm.formState.errors.phone}
                       helperText={profileForm.formState.errors.phone?.message}
                       {...profileForm.register("phone", {
-                        pattern: {
-                          value: /^[0-9]{10,11}$/,
-                          message: "Phone number must be 10 or 11 digits",
-                        },
+                        ...(user?.phone && { required: "Phone is required" }),
+                        ...getPhoneValidator(),
                       })}
                     />
                   </Grid2>
@@ -251,8 +280,77 @@ const UserProfilePage: React.FC = () => {
                 </Grid2>
               )}
             </TabPanel>
-            <TabPanel value={tabIndex} index={1}>
-              Tab 2
+            <TabPanel value={tabIndex} index={1} sx={{ padding: "24px" }}>
+              <Grid2
+                container
+                spacing={2}
+                sx={{ "& .MuiTextField-root": { width: "100%" } }}
+              >
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <PasswordTextField
+                    label={"Current Password"}
+                    variant="standard"
+                    error={
+                      !!changePasswordForm.formState.errors.currentPassword
+                    }
+                    helperText={
+                      changePasswordForm.formState.errors.currentPassword
+                        ?.message
+                    }
+                    register={changePasswordForm.register("currentPassword", {
+                      required: "You must provide your current password",
+                    })}
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <PasswordTextField
+                    label={"New Password"}
+                    variant="standard"
+                    error={!!changePasswordForm.formState.errors.password}
+                    helperText={
+                      changePasswordForm.formState.errors.password?.message
+                    }
+                    register={changePasswordForm.register("password", {
+                      required: "New password is required",
+                    })}
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <PasswordTextField
+                    variant="standard"
+                    label="Confirm Password"
+                    register={changePasswordForm.register("passwordConfirm", {
+                      required: "Confirm your new password!",
+                      validate: (value: string) =>
+                        value === changePasswordForm.getValues("password") ||
+                        "Password does not match",
+                    })}
+                    error={
+                      !!changePasswordForm.formState.errors.passwordConfirm
+                    }
+                    helperText={
+                      changePasswordForm.formState.errors.passwordConfirm
+                        ?.message
+                    }
+                  />
+                </Grid2>
+                <Grid2 size={12}>
+                  <Button
+                    variant="contained"
+                    onClick={changePasswordForm.handleSubmit(
+                      handleSaveChangePassword,
+                    )}
+                    sx={{ px: 3, height: "40px" }}
+                    disabled={changePasswordMutation.isPending}
+                  >
+                    {changePasswordMutation.isPending ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      "Change"
+                    )}
+                  </Button>
+                </Grid2>
+              </Grid2>
             </TabPanel>
           </>
         </Paper>

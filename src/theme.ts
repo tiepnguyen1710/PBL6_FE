@@ -135,6 +135,7 @@ const theme = createTheme({
     success: {
       light: "#F0FDF4",
       main: "#00B035",
+      contrastText: "#fff",
     },
   },
   typography: {

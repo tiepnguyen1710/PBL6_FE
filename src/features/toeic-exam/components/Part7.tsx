@@ -26,11 +26,13 @@ const Item = styled(Paper)(({ isActive }: { isActive: boolean }) => ({
 }));
 const Part7: React.FC<Part7Props> = ({ partData }) => {
   console.log(partData);
+  const PART = 7;
   const dispatch = useDispatch();
   const activeAnswers = useSelector(
     (state: RootState) => state.userAnswers.activeAnswers,
   );
   const handleClick = (
+    part: number,
     groupIndex: number,
     questionIndex: number,
     answerIndex: number,
@@ -39,6 +41,7 @@ const Part7: React.FC<Part7Props> = ({ partData }) => {
   ) => {
     dispatch(
       setActiveAnswer({
+        part,
         groupIndex,
         questionIndex,
         answerIndex,
@@ -136,7 +139,7 @@ const Part7: React.FC<Part7Props> = ({ partData }) => {
                     </Box>
                     {question.answer.map((answer, answerIndex) => {
                       let isActive =
-                        activeAnswers[groupIndex]?.[questionIndex] ===
+                        activeAnswers[PART]?.[groupIndex]?.[questionIndex] ===
                         answerIndex;
                       return (
                         <Item
@@ -144,6 +147,7 @@ const Part7: React.FC<Part7Props> = ({ partData }) => {
                           isActive={isActive}
                           onClick={() =>
                             handleClick(
+                              PART,
                               groupIndex,
                               questionIndex,
                               answerIndex,

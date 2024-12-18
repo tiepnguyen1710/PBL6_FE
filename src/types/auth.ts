@@ -3,14 +3,29 @@ export interface User {
   username: string;
   name: string;
   email: string;
-  avatar?: string | null;
-  phone?: string | null;
+  avatar?: string;
+  phone?: string;
   roles: Role[];
 
   targetScore: number;
   testDate: string;
 
+  isActive: boolean;
+
   createdAt: string;
 }
 
-export type Role = "admin" | "user";
+export type Role = "admin" | "user" | "moderator";
+
+export enum RoleEnum {
+  Admin = "admin",
+  User = "user",
+  Moderator = "moderator",
+}
+
+export function canAccessAdminPage(user: User) {
+  return (
+    user.roles.includes(RoleEnum.Admin) ||
+    user.roles.includes(RoleEnum.Moderator)
+  );
+}

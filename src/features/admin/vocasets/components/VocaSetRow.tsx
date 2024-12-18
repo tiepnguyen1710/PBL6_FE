@@ -5,7 +5,10 @@ import { capitalizeFirstLetter } from "../../../../utils/stringFormatter";
 import VocaSetModel from "../../../../types/VocaSetModel";
 import { Image } from "../../../../components/UI/Image";
 
-const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
+const VocaSetRow: React.FC<{
+  vocaSet: VocaSetModel;
+  onDelete?: () => void;
+}> = ({ vocaSet, onDelete }) => {
   const actionRef = useRef<HTMLSpanElement>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -39,9 +42,11 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
         />
       </TableCell>
       <TableCell>{vocaSet.name}</TableCell>
-      <TableCell>{capitalizeFirstLetter(vocaSet.level)}</TableCell>
-      <TableCell align="right">{0}</TableCell>
-      <TableCell align="right">{vocaSet?.topics?.length || 0}</TableCell>
+      <TableCell align="center">
+        {capitalizeFirstLetter(vocaSet.level)}
+      </TableCell>
+      <TableCell align="center">{0}</TableCell>
+      <TableCell align="center">{vocaSet?.topics?.length || 0}</TableCell>
       <TableCell
         onClick={handleClick}
         align="center"
@@ -71,7 +76,7 @@ const VocaSetRow: React.FC<{ vocaSet: VocaSetModel }> = ({ vocaSet }) => {
           <Link to={`details?id=${vocaSet.id}`}>
             <MenuItem>Manage</MenuItem>
           </Link>
-          <MenuItem>Delete</MenuItem>
+          <MenuItem onClick={onDelete}>Delete</MenuItem>
         </MenuList>
       </Menu>
     </TableRow>

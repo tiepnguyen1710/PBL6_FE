@@ -1,8 +1,9 @@
 import { Box } from "@mui/material";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logos/logo.svg";
 import LogoMini from "../../../assets/logos/logomini.png";
+import Link from "../../UI/Link";
 
 const SideBar = (props: any) => {
   const { collapsed, toggled } = props;
@@ -47,6 +48,9 @@ const SideBar = (props: any) => {
         }}
       >
         <MenuItem onClick={() => navigate("/admin")}>Dashboard</MenuItem>
+        <Link to="/admin/account">
+          <MenuItem> Account </MenuItem>
+        </Link>
         <SubMenu label="Exams">
           <MenuItem onClick={() => navigate("/admin/exam-set")}>
             {" "}
@@ -61,6 +65,9 @@ const SideBar = (props: any) => {
           <MenuItem>Lessons</MenuItem>
           <MenuItem>Vocabularies</MenuItem>
         </SubMenu>
+        <MenuItem onClick={() => navigate("/admin/listen-group")}>
+          Listen Practice
+        </MenuItem>
         <MenuItem> Account </MenuItem>
       </Menu>
     </Sidebar>

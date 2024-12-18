@@ -1,8 +1,4 @@
-import { ThunkAction } from "redux-thunk";
-import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Dispatch } from "redux";
-import { postLogin } from "../features/auth/api/account-api";
-import { RootState } from "./index";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../types/auth";
 
 export interface AuthState {
@@ -12,8 +8,8 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem("token") || null,
-  isAuthenticated: localStorage.getItem("token") ? true : false,
+  token: null,
+  isAuthenticated: false,
   user: null,
 };
 
@@ -21,13 +17,34 @@ const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
-    login(state, action: PayloadAction<{ token: string; user: User }>) {
-      const { token, user } = action.payload;
+    login(
+      state,
+      action: PayloadAction<{
+        token: string;
+        user: User;
+        refreshToken: string;
+      }>,
+    ) {
+      const { token, user, refreshToken } = action.payload;
       state.token = token;
       state.isAuthenticated = true;
       state.user = user;
 
       localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
+    },
+    refreshToken(
+      state,
+      action: PayloadAction<{
+        token: string;
+        refreshToken: string;
+      }>,
+    ) {
+      const { token, refreshToken } = action.payload;
+      state.token = token;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
     },
     logout(state) {
       state.token = null;
@@ -35,21 +52,10 @@ const authSlice = createSlice({
       state.user = null;
 
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
     },
   },
 });
-
-export const loginAction =
-  (
-    username: string,
-    password: string,
-  ): ThunkAction<Promise<void>, RootState, unknown, AnyAction> =>
-  async (dispatch: Dispatch) => {
-    const response = await postLogin(username, password);
-    const { user, token } = response;
-
-    dispatch(authActions.login({ token, user }));
-  };
 
 export const authActions = authSlice.actions;
 

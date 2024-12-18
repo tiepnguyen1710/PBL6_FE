@@ -4,6 +4,7 @@ import {
   CircularProgress,
   Divider,
   Grid2,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -22,7 +23,7 @@ import DefaultLessonImage from "../assets/default-lesson-img.webp";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { LessonCard } from "../../../../components/LessonCard";
 import AdminTableContainer from "./AdminTableContainer";
-import useAdminTablePagination from "../hooks/useAdminTablePagination";
+import useAdminTablePagination from "../../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getLessonById, updateLesson } from "../api/lesson-api";
@@ -83,10 +84,6 @@ const LessonDetailsPage = () => {
     mutationFn: updateLesson,
     onSuccess: (responseData: UpdateLessonResponse) => {
       toast.success("Lesson updated successfully");
-      // queryClient.invalidateQueries({
-      //   queryKey: ["lesson", { id: lessonId }],
-      //   exact: true,
-      // });
       queryClient.setQueryData(
         ["lesson", { id: lessonId }],
         (oldData: LessonModel) => ({
@@ -182,7 +179,7 @@ const LessonDetailsPage = () => {
             alignItems="center"
           >
             <Typography variant="h4" sx={{ marginBottom: 1 }}>
-              Lesson Details
+              Lesson
             </Typography>
             <GoBackButton />
           </Stack>
@@ -315,17 +312,18 @@ const LessonDetailsPage = () => {
                     </TableCell>
                     <TableCell>{voca.translate}</TableCell>
                     <TableCell align="right">
-                      <Stack direction="row" spacing={0.5}>
+                      <Stack direction="row" justifyContent="center">
                         <Link to={`/admin/voca?id=${voca.id}`}>
-                          <Button startIcon={<Edit />}>Edit</Button>
+                          <IconButton color="primary">
+                            <Edit />
+                          </IconButton>
                         </Link>
-                        <Button
-                          startIcon={<Delete />}
+                        <IconButton
                           color="error"
                           onClick={() => handleClickDeleteVoca(voca.id)}
                         >
-                          Delete
-                        </Button>
+                          <Delete />
+                        </IconButton>
                       </Stack>
                     </TableCell>
                   </TableRow>

@@ -104,11 +104,12 @@ export function mustBeAudioIfExistValue(fileList?: FileList) {
 }
 
 export function shuffleArray<T>(array: T[]): T[] {
-  for (let i = array.length - 1; i > 0; i--) {
+  const cloneArr = [...array];
+  for (let i = cloneArr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1)); // Pick a random index from 0 to i
-    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+    [cloneArr[i], cloneArr[j]] = [cloneArr[j], cloneArr[i]]; // Swap elements
   }
-  return array;
+  return cloneArr;
 }
 
 export function secondToMinuteSecondFormat(seconds: number) {
@@ -124,4 +125,13 @@ export function randInt(min: number, max: number) {
 export function validateEmail(email: string) {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return regex.test(email);
+}
+
+export function getPhoneValidator(errorMessage?: string) {
+  return {
+    pattern: {
+      value: /^[0-9]{10,11}$/,
+      message: errorMessage || "Phone number must be 10 or 11 digits",
+    },
+  };
 }

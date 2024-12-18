@@ -4,6 +4,7 @@ import {
   CardMedia,
   CircularProgress,
   Grid2,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -21,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import VocaSet from "../../../../components/VocaSet";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import AdminTableContainer from "./AdminTableContainer";
-import useAdminTablePagination from "../hooks/useAdminTablePagination";
+import useAdminTablePagination from "../../hooks/useAdminTablePagination";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import SearchInput from "../../../../components/UI/SearchInput";
 import { Add, Delete, Tune } from "@mui/icons-material";
@@ -51,7 +52,7 @@ interface VocaSetFormData {
   description: string;
 }
 
-const LESSON_PAGE_SIZE = 2;
+const LESSON_PAGE_SIZE = 4;
 
 const VocaSetDetailsPage = () => {
   const [searchParams] = useSearchParams();
@@ -72,7 +73,10 @@ const VocaSetDetailsPage = () => {
     },
     onSuccess: (responseData) => {
       toast.success("Update successfully!");
-      queryClient.setQueryData(["vocaSet", { id: vocaSetId }], responseData);
+      queryClient.setQueryData(["vocaSet", { id: vocaSetId }], {
+        ...responseData,
+        topics: data?.topics,
+      });
     },
   });
 
@@ -84,7 +88,8 @@ const VocaSetDetailsPage = () => {
         queryKey: ["vocaSet", { id: vocaSetId }],
         exact: true,
       });
-      setPage(0);
+
+      invalidatePage(data!.topics.length - 1);
     },
     onSettled: () => {
       // reset state
@@ -121,11 +126,17 @@ const VocaSetDetailsPage = () => {
 
   const lessons = data?.topics || [];
 
-  const filteredlessons = lessons.filter((lesson) =>
-    lesson.name.toLowerCase().includes(searchLesson),
+  const filteredLessons = lessons.filter((lesson) =>
+    lesson.name.toLowerCase().includes(searchLesson.toLowerCase()),
   );
-  const { page, setPage, emptyRows, pageData, handleChangePage } =
-    useAdminTablePagination<LessonModel>(filteredlessons, LESSON_PAGE_SIZE);
+  const {
+    page,
+    setPage,
+    emptyRows,
+    pageData,
+    handleChangePage,
+    invalidatePage,
+  } = useAdminTablePagination<LessonModel>(filteredLessons, LESSON_PAGE_SIZE);
 
   // console.log("pageData", pageData);
   // console.log("data.topic", data?.topics);
@@ -144,6 +155,7 @@ const VocaSetDetailsPage = () => {
 
   useEffect(() => {
     if (data) {
+      //  Reset form data
       const vocaSetFormData: VocaSetFormData = {
         id: data.id,
         name: data.name,
@@ -196,8 +208,6 @@ const VocaSetDetailsPage = () => {
     return <Navigate to="/admin/voca-set/" />;
   }
 
-  console.log("register level", register("level"));
-
   return (
     <>
       {isLoading ? (
@@ -210,7 +220,7 @@ const VocaSetDetailsPage = () => {
             alignItems="center"
           >
             <Typography variant="h4" sx={{ marginBottom: 1 }}>
-              Vocabulary Set Details
+              Vocabulary Set
             </Typography>
             <GoBackButton />
           </Stack>
@@ -397,7 +407,7 @@ const VocaSetDetailsPage = () => {
                     >
                       {lesson.id}
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       <Image
                         src={lesson.thumbnail}
                         sx={{
@@ -408,19 +418,22 @@ const VocaSetDetailsPage = () => {
                       />
                     </TableCell>
                     <TableCell>{lesson.name}</TableCell>
-                    <TableCell>{lesson?.listWord.length || 0}</TableCell>
+                    <TableCell align="center">
+                      {lesson?.listWord.length || 0}
+                    </TableCell>
                     <TableCell align="right">
-                      <Stack direction="row" spacing={0.5}>
+                      <Stack direction="row" justifyContent="center">
                         <Link to={`/admin/lesson?id=${lesson.id}`}>
-                          <Button startIcon={<Tune />}>Manage</Button>
+                          <IconButton color="primary">
+                            <Tune />
+                          </IconButton>
                         </Link>
-                        <Button
-                          startIcon={<Delete />}
+                        <IconButton
                           color="error"
                           onClick={() => handleClickDeleteLesson(lesson.id)}
                         >
-                          Delete
-                        </Button>
+                          <Delete />
+                        </IconButton>
                       </Stack>
                     </TableCell>
                   </TableRow>

@@ -1,7 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 
 import AppBar from "@mui/material/AppBar";
 import {
@@ -30,11 +29,12 @@ import Logo from "../../assets/logos/logo.svg";
 import { AppDispatch, RootState } from "../../stores";
 import DefaultAvatar from "../../assets/avatars/default.svg";
 import { authActions, AuthState } from "../../stores/authSlice";
-import { me } from "../../features/auth/api/account-api";
 import PinIcon from "../UI/PinIcon";
+import AdminIcon from "../UI/AdminIcon";
+import { canAccessAdminPage } from "../../types/auth";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, token } = useSelector<RootState, AuthState>(
+  const { isAuthenticated, user } = useSelector<RootState, AuthState>(
     (state) => state.auth,
   );
 
@@ -42,12 +42,6 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => me(token!),
-    enabled: isAuthenticated,
-  });
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
@@ -171,6 +165,17 @@ const Header: React.FC = () => {
                     <ListItemText>Word Folders</ListItemText>
                   </MenuItem>
                 </Link>
+
+                {user && canAccessAdminPage(user) && (
+                  <Link to="/admin">
+                    <MenuItem>
+                      <ListItemIcon>
+                        <AdminIcon sx={{ fontSize: "20px" }} />
+                      </ListItemIcon>
+                      <ListItemText>Admin Dashboard</ListItemText>
+                    </MenuItem>
+                  </Link>
+                )}
 
                 <Divider sx={{ margin: "8px !important" }} />
                 <MenuItem onClick={handleLogout}>
