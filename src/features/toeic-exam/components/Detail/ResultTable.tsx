@@ -99,8 +99,12 @@ const ResultTable: React.FC<ResultTableProps> = ({ examId }) => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ ...HeadRowStyle }}>Date</TableCell>
-                <TableCell sx={{ ...HeadRowStyle }}>Part</TableCell>
+                <TableCell sx={{ ...HeadRowStyle, width: "15%" }}>
+                  Date
+                </TableCell>
+                <TableCell sx={{ ...HeadRowStyle, width: "35%" }}>
+                  Part
+                </TableCell>
                 <TableCell sx={{ ...HeadRowStyle }}>Result</TableCell>
                 <TableCell sx={{ ...HeadRowStyle }}>Time</TableCell>
                 <TableCell sx={{ ...HeadRowStyle }}>Action</TableCell>
@@ -135,7 +139,9 @@ const ResultTable: React.FC<ResultTableProps> = ({ examId }) => {
                           </Box>
 
                           {row.dateTest.tags.map((tag) => {
-                            return <Chip label={tag} sx={{ ...chipStyle }} />;
+                            return (
+                              <Chip label={tag} sx={{ ...chipStyle, mb: 1 }} />
+                            );
                           })}
                         </>
                       )}
