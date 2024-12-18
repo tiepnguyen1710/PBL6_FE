@@ -42,6 +42,8 @@ import { updateUserProfile } from "../../user-profile/api/user-profile";
 import { toast } from "react-toastify";
 import { differenceInDays, format } from "date-fns";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
+import { fetchLast4PracticeDetailUser } from "../api/lastPractice.api";
+import { getTop8Vocab } from "../api/TopVocab.api";
 
 type UserTargetFormData = {
   testDate: Date;
@@ -55,6 +57,20 @@ const UserHomePage = () => {
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: () => me(token!),
+  });
+
+  const { data: lastPractice } = useQuery({
+    queryKey: ["last4PracticeUser"],
+    queryFn: () => fetchLast4PracticeDetailUser(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
+
+  const { data: top8Vocab } = useQuery({
+    queryKey: ["top8Vocab"],
+    queryFn: () => getTop8Vocab(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const [openChangeTargetModal, setOpenChangeTargetModal] = useState(false);
@@ -107,7 +123,16 @@ const UserHomePage = () => {
     console.log("userTargetForm", data);
     updateUserTargetMutation.mutate(data);
   };
-
+  const convertSecondsToHMS = (seconds: number): string => {
+    const h = Math.floor(seconds / 3600)
+      .toString()
+      .padStart(2, "0");
+    const m = Math.floor((seconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  };
   return (
     <>
       {isLoading && <CustomBackdrop />}
@@ -166,7 +191,26 @@ const UserHomePage = () => {
               useFlexGap
               sx={{ flexWrap: "wrap" }}
             >
-              <PracticeResult
+              {lastPractice?.lastPractice?.map((practice) => {
+                return (
+                  <PracticeResult
+                    key={practice.id}
+                    id={practice.id}
+                    testTitle={practice.test.name}
+                    tags={
+                      practice.isFullTest ? ["Full test"] : practice.listPart
+                    }
+                    dateTaken={format(
+                      new Date(practice.createdAt),
+                      "dd/MM/yyyy",
+                    )}
+                    completionTime={`${convertSecondsToHMS(practice.time)}`}
+                    result={`${practice.numCorrect}/${practice.totalQuestion}`}
+                    score={practice.LCScore + practice.RCScore}
+                  />
+                );
+              })}
+              {/* <PracticeResult
                 testTitle="2024 Practice Set Test 10"
                 tags={["Part 7"]}
                 dateTaken="30/12/2024"
@@ -195,7 +239,7 @@ const UserHomePage = () => {
                 completionTime="1:58:39"
                 result="65/200"
                 score={335}
-              />
+              /> */}
             </Stack>
 
             <ViewMoreButton>View All</ViewMoreButton>
@@ -242,75 +286,24 @@ const UserHomePage = () => {
                 }}
                 style={{ paddingBottom: "40px" }}
               >
-                <SwiperSlide>
-                  <VocaSet
-                    id={"10"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Medium"
-                    topic="Biology"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"11"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Easy"
-                    topic="Family"
-                    takenNumber="10.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"1"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Medium"
-                    topic="Biology"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"2"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Easy"
-                    topic="Family"
-                    takenNumber="10.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"3"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Advanced"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"4"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Advanced"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"5"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Medium"
-                    topic="Biology"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"6"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Advanced"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
+                {top8Vocab?.map((vocab) => {
+                  return (
+                    <SwiperSlide
+                      onClick={() => {
+                        window.location.href = `/voca/${vocab.groupTopic_id}/lessons`;
+                      }}
+                      key={vocab.groupTopic_id}
+                    >
+                      <VocaSet
+                        id={vocab.groupTopic_id}
+                        title={vocab.groupTopic_name}
+                        qualification={vocab.groupTopic_level}
+                        takenNumber={vocab.userCount.toString()}
+                        image={vocab.groupTopic_thumbnail}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             </Box>
           </Box>

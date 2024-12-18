@@ -9,6 +9,7 @@ interface PracticeResultProps {
   completionTime: string;
   result: string;
   score?: number;
+  id: string;
 }
 
 const PracticeResult: React.FC<PracticeResultProps> = ({
@@ -19,6 +20,7 @@ const PracticeResult: React.FC<PracticeResultProps> = ({
   completionTime,
   result,
   score,
+  id,
 }) => {
   const chipStyle = {
     backgroundColor: "#ff6f00",
@@ -59,7 +61,10 @@ const PracticeResult: React.FC<PracticeResultProps> = ({
           {score !== undefined && <Typography>Score: {score}</Typography>}
         </Stack>
       </Stack>
-      <Button sx={{ alignSelf: "start" }}>
+      <Button
+        sx={{ alignSelf: "start" }}
+        onClick={() => (window.location.href = `/exams/result/${id}`)}
+      >
         <Typography color="primary.main">[View Details]</Typography>
       </Button>
     </Card>

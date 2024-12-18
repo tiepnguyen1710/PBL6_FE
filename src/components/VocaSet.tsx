@@ -47,6 +47,7 @@ const VocaSet: React.FC<VocaSetProps> = ({
         width: "250px",
         display: "flex",
         flexDirection: "column",
+        cursor: "pointer",
       }}
     >
       <CardMedia component="img" height="140" image={image} />
