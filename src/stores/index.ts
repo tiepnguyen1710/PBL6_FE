@@ -5,7 +5,7 @@ import userAnswerReducer from "./userAnswer";
 import folderPracticeReducer from "./folderPracticeSlice";
 
 import seletedScript from "./selectedScript";
-
+import notedQuestions from "./notedQuestionSlice";
 import globalMessageReducer from "./globalMessageSlice";
 
 const store = configureStore({
@@ -16,7 +16,7 @@ const store = configureStore({
     folderPractice: folderPracticeReducer,
 
     seletedScript: seletedScript,
-
+    notedQuestions: notedQuestions,
     globalMessage: globalMessageReducer,
   },
 });

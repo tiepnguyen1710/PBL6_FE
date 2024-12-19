@@ -102,7 +102,7 @@ const PartResultIndex = () => {
           </Grid2>
         </Box>
 
-        <div style={{ marginTop: "2rem" }}>
+        <div style={{ margin: "1rem" }}>
           <Button
             variant="outlined"
             disabled={currentIndex === 0}

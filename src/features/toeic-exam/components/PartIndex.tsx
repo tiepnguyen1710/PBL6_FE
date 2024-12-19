@@ -14,6 +14,7 @@ import Part7 from "./Part7";
 import Part6 from "./Part6";
 import SubMitBox from "./SubmitBox/SubmitBox";
 import Content from "../../../components/layout/Content";
+import { QuestionProvider } from "./QuestionProvider";
 
 const PartIndex = () => {
   const [searchParams] = useSearchParams();
@@ -81,57 +82,78 @@ const PartIndex = () => {
   return (
     <Content>
       <Container maxWidth="sm">
-        <Box my={2}>
-          <Grid2 container spacing={2}>
-            <Grid2 size={9.5}>
-              {isPending ? (
-                "...Loading"
-              ) : (
+        <QuestionProvider>
+          <Box my={2}>
+            {selectedParts.map((part, partIndex) => {
+              return (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    borderRadius: 5,
+                    marginRight: 0.25,
+                    marginBottom: 0.25,
+                  }}
+                  onClick={() => setCurrentIndex(partIndex)}
+                >
+                  {part}
+                </Button>
+              );
+            })}
+            <Grid2 container spacing={2}>
+              <Grid2 size={9.5}>
+                {isPending ? (
+                  "...Loading"
+                ) : (
+                  <Box
+                    sx={{
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                      borderRadius: 3,
+                    }}
+                    padding={3}
+                  >
+                    {renderPart()}
+                  </Box>
+                )}
+              </Grid2>
+              <Grid2 size={2.5}>
                 <Box
+                  padding={2}
                   sx={{
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                     borderRadius: 3,
+                    position: "sticky",
+                    top: "50px",
+                    alignSelf: "flex-start",
                   }}
-                  padding={3}
                 >
-                  {renderPart()}
+                  <SubMitBox
+                    partData={examData?.partData || []}
+                    setCurrentIndex={setCurrentIndex}
+                  />
                 </Box>
-              )}
+              </Grid2>
             </Grid2>
-            <Grid2 size={2.5}>
-              <Box
-                padding={2}
-                sx={{
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  borderRadius: 3,
-                  position: "sticky",
-                  top: "50px",
-                  alignSelf: "flex-start",
-                }}
-              >
-                <SubMitBox partData={examData?.partData || []} />
-              </Box>
-            </Grid2>
-          </Grid2>
-        </Box>
+          </Box>
 
-        <div style={{ margin: "1rem 0", float: "left" }}>
-          <Button
-            variant="outlined"
-            disabled={currentIndex === 0}
-            onClick={handlePrevious}
-            sx={{ marginRight: 1 }}
-          >
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            disabled={currentIndex === selectedParts.length - 1}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </div>
+          <div style={{ margin: "1rem 0", float: "left" }}>
+            <Button
+              variant="outlined"
+              disabled={currentIndex === 0}
+              onClick={handlePrevious}
+              sx={{ marginRight: 1 }}
+            >
+              Back
+            </Button>
+            <Button
+              variant="contained"
+              disabled={currentIndex === selectedParts.length - 1}
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          </div>
+        </QuestionProvider>
       </Container>
     </Content>
   );

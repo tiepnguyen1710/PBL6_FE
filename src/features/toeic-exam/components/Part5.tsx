@@ -12,6 +12,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import parse from "html-react-parser";
 import useScrollToTop from "../hooks/useScrollToTop";
+import { useQuestionContext } from "./QuestionProvider";
 
 interface Part5Props {
   partData?: partData;
@@ -79,6 +80,7 @@ const Item = styled(Paper)(
 const Part5: React.FC<Part5Props> = ({ partData, mode }) => {
   console.log(partData);
   const PART = 5;
+  const { questionRefs } = useQuestionContext();
   useScrollToTop();
   const dispatch = useDispatch();
   const activeAnswers = useSelector(
@@ -210,6 +212,19 @@ const Part5: React.FC<Part5Props> = ({ partData, mode }) => {
                   <Stack spacing={1} marginTop={1}>
                     <Stack direction="row" gap={1} alignItems="center">
                       <Box
+                        ref={(el) => {
+                          if (el) {
+                            if (!questionRefs.current[PART]) {
+                              questionRefs.current[PART] = [];
+                            }
+                            if (!questionRefs.current[PART][groupIndex]) {
+                              questionRefs.current[PART][groupIndex] = [];
+                            }
+                            questionRefs.current[PART][groupIndex][
+                              questionIndex
+                            ] = el as HTMLDivElement;
+                          }
+                        }}
                         sx={{
                           background:
                             isCorrectQuestion === true

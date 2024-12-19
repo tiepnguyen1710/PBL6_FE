@@ -17,8 +17,9 @@ import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 
 interface PartDataProps {
   partData: partData[];
+  setCurrentIndex: (index: number) => void;
 }
-const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
+const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
   console.log("submit box", partData);
   const [partDataChosen, setPartDataChosen] = useState<partData[]>([]);
   const dispatch = useDispatch();
@@ -137,7 +138,10 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData }) => {
             </Button>
           </Box>
           <Box>
-            <ListQuestion partDataChosen={partDataChosen} />
+            <ListQuestion
+              partDataChosen={partDataChosen}
+              setCurrentIndex={setCurrentIndex}
+            />
           </Box>
         </>
       )}

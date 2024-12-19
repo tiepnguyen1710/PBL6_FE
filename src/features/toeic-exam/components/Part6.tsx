@@ -14,6 +14,7 @@ import { setScript } from "../../../stores/selectedScript";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import InfoIcon from "@mui/icons-material/Info";
 import useScrollToTop from "../hooks/useScrollToTop";
+import { useQuestionContext } from "./QuestionProvider";
 
 interface Part6Props {
   partData?: partData;
@@ -79,6 +80,7 @@ const Item = styled(Paper)(
 );
 const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
   console.log(partData);
+  const { questionRefs } = useQuestionContext();
   const PART = 6;
   useScrollToTop();
   const dispatch = useDispatch();
@@ -176,7 +178,7 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
         let isExplain = mode === "review";
         let isScriptExpanded = checkScriptExpanded(PART, groupIndex);
         return (
-          <Box sx={{ display: "flex", gap: "30px", height: "80vh" }} mb={2}>
+          <Box sx={{ display: "flex", gap: "30px" }} mb={2}>
             <Box
               sx={{
                 width: "55%",
@@ -188,7 +190,9 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                 flexDirection: "column",
               }}
             >
-              <PerfectScrollbar style={{ flexGrow: 1 }}>
+              <PerfectScrollbar
+                style={{ flexGrow: 1, maxHeight: "100%", overflow: "auto" }}
+              >
                 <Typography mb={1}>
                   {/* Add your passage text here */}
                   {group.detail ? parse(group.detail) : "No Content"}
@@ -249,6 +253,20 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                       }}
                     >
                       <Box
+                        key={`question-${groupIndex}-${questionIndex}`}
+                        ref={(el) => {
+                          if (el) {
+                            if (!questionRefs.current[PART]) {
+                              questionRefs.current[PART] = [];
+                            }
+                            if (!questionRefs.current[PART][groupIndex]) {
+                              questionRefs.current[PART][groupIndex] = [];
+                            }
+                            questionRefs.current[PART][groupIndex][
+                              questionIndex
+                            ] = el as HTMLDivElement;
+                          }
+                        }}
                         sx={{
                           display: "flex",
                           alignItems: "center",

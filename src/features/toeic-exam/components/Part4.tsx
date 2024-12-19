@@ -13,6 +13,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import parse from "html-react-parser";
 import { setScript } from "../../../stores/selectedScript";
 import useScrollToTop from "../hooks/useScrollToTop";
+import { useQuestionContext } from "./QuestionProvider";
 
 interface Part4Props {
   partData?: partData;
@@ -79,6 +80,7 @@ const Item = styled(Paper)(
 
 const Part4: React.FC<Part4Props> = ({ partData, mode }) => {
   console.log(partData);
+  const { questionRefs } = useQuestionContext();
   const PART = 4;
   useScrollToTop();
   const dispatch = useDispatch();
@@ -279,6 +281,19 @@ const Part4: React.FC<Part4Props> = ({ partData, mode }) => {
                   <Stack spacing={1} marginTop={1}>
                     <Stack direction="row" gap={1} alignItems="center">
                       <Box
+                        ref={(el) => {
+                          if (el) {
+                            if (!questionRefs.current[PART]) {
+                              questionRefs.current[PART] = [];
+                            }
+                            if (!questionRefs.current[PART][groupIndex]) {
+                              questionRefs.current[PART][groupIndex] = [];
+                            }
+                            questionRefs.current[PART][groupIndex][
+                              questionIndex
+                            ] = el as HTMLDivElement;
+                          }
+                        }}
                         sx={{
                           background:
                             isCorrectQuestion === true
