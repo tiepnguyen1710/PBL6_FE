@@ -120,7 +120,6 @@ const UserHomePage = () => {
   }, [user, userTargetForm, userTestDate]);
 
   const handleUpdateUserTarget: SubmitHandler<UserTargetFormData> = (data) => {
-    console.log("userTargetForm", data);
     updateUserTargetMutation.mutate(data);
   };
   const convertSecondsToHMS = (seconds: number): string => {
@@ -293,6 +292,7 @@ const UserHomePage = () => {
                         window.location.href = `/voca/${vocab.groupTopic_id}/lessons`;
                       }}
                       key={vocab.groupTopic_id}
+                      style={{ alignSelf: "stretch", height: "auto" }}
                     >
                       <VocaSet
                         id={vocab.groupTopic_id}

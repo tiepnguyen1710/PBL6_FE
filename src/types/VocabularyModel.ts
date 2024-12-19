@@ -21,6 +21,7 @@ export enum VocabularyWordClassAbbr {
   PREPOSITION = "prep",
   CONJUNCTION = "conj",
   INTERJECTION = "int",
+  DETERMINER = "det",
 }
 
 export enum VocabularyWordClass {
@@ -32,4 +33,5 @@ export enum VocabularyWordClass {
   PREPOSITION = "prepositions",
   CONJUNCTION = "conjunctions",
   INTERJECTION = "interjections",
+  DETERMINER = "determiners",
 }
