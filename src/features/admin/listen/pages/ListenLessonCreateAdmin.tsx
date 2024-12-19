@@ -247,7 +247,7 @@ const ListenLessonCreateAdmin = () => {
       .replace(/\n/g, "")
       .split(/[.!?]/)
       .map((sentence) => {
-      return sentence.trim();
+        return sentence.trim();
       })
       .filter((it) => it !== "");
     if (paragraph?.length && voiceSelected) {
@@ -421,6 +421,7 @@ const ListenLessonCreateAdmin = () => {
                     label="Sentence"
                     multiline
                     value={sentence.sentence}
+                    sx={{ marginTop: "8px" }}
                     onChange={(event) => {
                       handleSetSentence(index, event.target.value);
                     }}
@@ -549,7 +550,6 @@ const ListenLessonCreateAdmin = () => {
           </Stack>
         </Stack>
       </Stack>
-
       <CustomModal open={openAutoModal} onClose={handleCloseAutoModal}>
         <Box
           sx={{

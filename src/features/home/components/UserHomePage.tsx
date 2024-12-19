@@ -198,8 +198,9 @@ const UserHomePage = () => {
                     id={practice.id}
                     testTitle={practice.test.name}
                     tags={
-                      practice.isFullTest ? ["Full test"] : practice.listPart
+                      practice.isFullTest ? [] : practice.listPart
                     }
+                    fullTest={practice.isFullTest}
                     dateTaken={format(
                       new Date(practice.createdAt),
                       "dd/MM/yyyy",
