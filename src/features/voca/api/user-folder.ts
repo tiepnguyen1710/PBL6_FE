@@ -70,3 +70,11 @@ export async function pinNewWordToExistingFolder(
 
   return response.data;
 }
+
+export async function unpinWordFromFolder(folderId: string, vocaId: string) {
+  const response = await axiosClient.delete(
+    `user-topic/${folderId}/word/${vocaId}`,
+  );
+
+  return response.data;
+}

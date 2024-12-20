@@ -12,6 +12,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import {
   getUserFolderById,
   pinNewWordToExistingFolder,
+  unpinWordFromFolder,
 } from "../api/user-folder";
 import { Edit } from "@mui/icons-material";
 import ListWords from "./ListWords";
@@ -57,12 +58,28 @@ const FolderDetailsPage = () => {
     },
   });
 
+  const unpinWordMutation = useMutation({
+    mutationFn: (request: { folderId: string; vocaId: string }) =>
+      unpinWordFromFolder(request.folderId, request.vocaId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["userFolders", { id: folderId }],
+      });
+    },
+    onError: () => {
+      toast.error("Unpin word failed!");
+    },
+    onSettled: () => {
+      unpinWordMutation.reset();
+      setDeletedVocaId(null);
+    },
+  });
+
   const handleClickOnWordItem = (wordItem: WordItem) => {
     if (!folderId) {
       return;
     }
 
-    console.log(wordItem);
     const request: PinNewWordToExistingFolderRequest = {
       folderId,
       word: wordItem.word,
@@ -75,6 +92,14 @@ const FolderDetailsPage = () => {
     };
 
     pinNewWordMutation.mutate(request);
+  };
+
+  const handleUnpinWord = () => {
+    if (!folderId || !deletedVocaId) {
+      return;
+    }
+
+    unpinWordMutation.mutate({ folderId, vocaId: deletedVocaId });
   };
 
   if (!folderId) {
@@ -205,10 +230,10 @@ const FolderDetailsPage = () => {
             <Button
               variant="contained"
               color="error"
-              // onClick={handleDeleteUser}
+              onClick={handleUnpinWord}
               sx={{ boxShadow: "none", minWidth: "85px" }}
             >
-              OK
+              {unpinWordMutation.isPending ? "Deleting..." : "OK"}
             </Button>
             <Button
               color="error"

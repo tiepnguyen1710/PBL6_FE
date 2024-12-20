@@ -31,7 +31,7 @@ const VocaSearching: React.FC<VocaSearchingProps> = ({
 
   const {
     data: wordItems,
-    // isLoading,
+    isLoading,
     isError,
     isSuccess,
     error,
@@ -121,6 +121,12 @@ const VocaSearching: React.FC<VocaSearchingProps> = ({
                   onClick={() => handleClickWordItem?.(wordItem)}
                 />
               ))}
+
+            {isLoading && (
+              <Typography sx={{ textAlign: "center", marginTop: 1 }}>
+                Searching...
+              </Typography>
+            )}
 
             {/* Error message */}
             {isError && (
