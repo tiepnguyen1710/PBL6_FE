@@ -1,8 +1,18 @@
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Content from "../../../components/layout/Content";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { getUserFolderById } from "../api/user-folder";
+import {
+  getUserFolderById,
+  pinNewWordToExistingFolder,
+} from "../api/user-folder";
 import { Edit } from "@mui/icons-material";
 import ListWords from "./ListWords";
 import { VocabularyCardState } from "../../../components/VocabularyCard";
@@ -11,6 +21,11 @@ import UpdateFolderModal from "./UpdateFolderModal";
 import { useState } from "react";
 import BoldStrokeButton from "./BoldStrokeButton";
 import VocaSearching from "./VocaSearching";
+import { toast } from "react-toastify";
+import PinNewWordToExistingFolderRequest from "../types/PinNewWordToExistingFolderRequest";
+import { WordItem } from "../../../types/voca-search";
+import { vocaWordClassAbrr2FullName } from "../../../utils/helper";
+import CustomModal from "../../../components/UI/CustomModal";
 
 const FolderDetailsPage = () => {
   const navigate = useNavigate();
@@ -24,6 +39,43 @@ const FolderDetailsPage = () => {
   });
 
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [deletedVocaId, setDeletedVocaId] = useState<string | null>(null);
+
+  const pinNewWordMutation = useMutation({
+    mutationFn: pinNewWordToExistingFolder,
+    onSuccess: () => {
+      toast.success("Pin new word successfully!");
+      queryClient.invalidateQueries({
+        queryKey: ["userFolders", { id: folderId }],
+      });
+    },
+    onError: () => {
+      toast.error("Pin new word failed!");
+    },
+    onSettled: () => {
+      pinNewWordMutation.reset();
+    },
+  });
+
+  const handleClickOnWordItem = (wordItem: WordItem) => {
+    if (!folderId) {
+      return;
+    }
+
+    console.log(wordItem);
+    const request: PinNewWordToExistingFolderRequest = {
+      folderId,
+      word: wordItem.word,
+      pronunciation: wordItem.phonetic || "",
+      audioUrl: wordItem.phoneticAudio,
+      translate: wordItem.meaning || "",
+      wordClass: vocaWordClassAbrr2FullName(wordItem.partOfSpeech),
+      example: wordItem.example,
+      definition: wordItem.definition,
+    };
+
+    pinNewWordMutation.mutate(request);
+  };
 
   if (!folderId) {
     return <Navigate to="/personal-word-folder" />;
@@ -94,7 +146,10 @@ const FolderDetailsPage = () => {
           <Typography>{folder?.description}</Typography>
         </Box>
 
-        <VocaSearching containerSx={{ marginTop: 1.5 }} />
+        <VocaSearching
+          containerSx={{ marginTop: 1.5 }}
+          onClickWord={handleClickOnWordItem}
+        />
       </Box>
 
       {/* List of pinned words */}
@@ -104,6 +159,7 @@ const FolderDetailsPage = () => {
             title="Pinned words"
             vocabularies={folder?.words || []}
             status={VocabularyCardState.DEFAULT}
+            onCloseWordCard={(vocaId: string) => setDeletedVocaId(vocaId)}
           />
 
           {folder?.words.length == 0 && (
@@ -126,6 +182,44 @@ const FolderDetailsPage = () => {
           }
         />
       )}
+
+      {/* Confirm deleting word modal */}
+      <CustomModal
+        open={deletedVocaId !== null}
+        onClose={() => setDeletedVocaId(null)}
+      >
+        <Box sx={{ py: 1.5, maxWidth: "400px", textAlign: "center" }}>
+          <Typography variant="h6" sx={{ mx: 2, fontWeight: "bold" }}>
+            Confirm remove word
+          </Typography>
+          <Divider sx={{ my: 0.5 }} />
+          <Typography sx={{ mx: 2 }}>
+            Are you sure you want to delete the word from this folder?
+          </Typography>
+          <Stack
+            direction="row"
+            spacing={0.5}
+            justifyContent="center"
+            sx={{ marginTop: 1 }}
+          >
+            <Button
+              variant="contained"
+              color="error"
+              // onClick={handleDeleteUser}
+              sx={{ boxShadow: "none", minWidth: "85px" }}
+            >
+              OK
+            </Button>
+            <Button
+              color="error"
+              variant="outlined"
+              onClick={() => setDeletedVocaId(null)}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </CustomModal>
     </Content>
   );
 };

@@ -1,5 +1,6 @@
 import axiosClient from "../../../axios";
 import { UserFolder } from "../../../types/user-folder";
+import PinNewWordToExistingFolderRequest from "../types/PinNewWordToExistingFolderRequest";
 import {
   NewUserFolderRequest,
   UpdateFolderRequest,
@@ -56,4 +57,16 @@ export async function pinWordToNewFolder(
   const updatedFolder = await pinWordToFolder(folder.id, vocaId);
 
   return updatedFolder;
+}
+
+export async function pinNewWordToExistingFolder(
+  request: PinNewWordToExistingFolderRequest,
+) {
+  const { folderId, ...body } = request;
+  const response = await axiosClient.post<UserFolder>(
+    `word/user-topic/${folderId}`,
+    body,
+  );
+
+  return response.data;
 }

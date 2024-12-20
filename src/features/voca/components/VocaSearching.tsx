@@ -11,12 +11,17 @@ import { searchWord } from "../../shared-apis/voca-search-api";
 import useDebounce from "../../../hooks/useDebounce";
 import Popup from "../../../components/UI/Popup";
 import VocaSearchResultItem from "./VocaSearchResultItem";
+import { WordItem } from "../../../types/voca-search";
 
 type VocaSearchingProps = {
   containerSx?: SxProps;
+  onClickWord?: (wordItem: WordItem) => void;
 };
 
-const VocaSearching: React.FC<VocaSearchingProps> = ({ containerSx }) => {
+const VocaSearching: React.FC<VocaSearchingProps> = ({
+  containerSx,
+  onClickWord,
+}) => {
   const anchorEle = useRef<HTMLDivElement>(null);
 
   const [wordInput, setWordInput] = useState("");
@@ -36,6 +41,12 @@ const VocaSearching: React.FC<VocaSearchingProps> = ({ containerSx }) => {
     enabled: wordInputDebounce.length > 0,
     retry: false,
   });
+
+  const handleClickWordItem = (wordItem: WordItem) => {
+    onClickWord?.(wordItem);
+    setWordInput(""); // close the popup
+  };
+
   return (
     <Box sx={containerSx}>
       <Box sx={{ position: "relative" }} ref={anchorEle}>
@@ -107,7 +118,7 @@ const VocaSearching: React.FC<VocaSearchingProps> = ({ containerSx }) => {
                   word={wordItem.word}
                   partOfSpeech={wordItem.partOfSpeech}
                   meaning={wordItem.meaning || wordItem.definition}
-                  onClick={() => console.log(wordItem)}
+                  onClick={() => handleClickWordItem?.(wordItem)}
                 />
               ))}
 
