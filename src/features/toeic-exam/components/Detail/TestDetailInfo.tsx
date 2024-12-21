@@ -16,7 +16,7 @@ const TestDetailInfo: React.FC<TestDetailInfoProps> = ({ examId }) => {
   return (
     <>
       <Typography variant="h4" color="primary.main">
-        {testDetailPractice?.test.name}
+        {testDetailPractice?.test?.name}
       </Typography>
       <Button
         variant="contained"

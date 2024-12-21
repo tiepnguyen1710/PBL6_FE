@@ -1,12 +1,15 @@
 import { Box, Divider, Typography } from "@mui/material";
 import ResultTable from "./ResultTable";
 import PracticeTabs from "./PracticeTabs";
-import { useParams } from "react-router-dom";
+
 import TestDetailInfo from "./TestDetailInfo";
 
-const DetailContent = () => {
-  const routeParams = useParams<{ examId: string }>();
-  const examId = routeParams.examId;
+interface DetailProps {
+  examId?: string;
+}
+const DetailContent: React.FC<DetailProps> = ({ examId }) => {
+  // const routeParams = useParams<{ examId: string }>();
+  // const examId = routeParams.examId;
 
   return (
     <>
@@ -27,9 +30,11 @@ const DetailContent = () => {
         <ResultTable examId={examId} />
       </Box>
 
-      <Box sx={{ width: "100%" }}>
+      <Box sx={{ width: "100%", my: 2 }}>
         <PracticeTabs />
       </Box>
+
+      <Box></Box>
     </>
   );
 };

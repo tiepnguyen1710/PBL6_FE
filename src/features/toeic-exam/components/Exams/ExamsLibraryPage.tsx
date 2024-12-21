@@ -49,7 +49,7 @@ const ExamsLibraryPage = () => {
 
   const handleTagClick = (tag: Tag) => {
     setSelectedTag(tag);
-    setSearchParams(tag.id ? { tag_id: tag.id } : {});
+    setSearchParams(tag.id !== "" ? { tag_id: tag.id } : {});
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +83,7 @@ const ExamsLibraryPage = () => {
                     label={"All"}
                     clickable
                     color={selectedTag === null ? "primary" : "default"}
-                    onClick={() => handleTagClick({ id: null, name: "All" })}
+                    onClick={() => handleTagClick({ id: "", name: "All" })}
                     sx={{ padding: 0.9, marginRight: 0.75 }}
                   />
                   {tags?.map((tag) => {

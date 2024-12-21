@@ -28,7 +28,7 @@ const uploadFile = async (file: File) => {
 
 const fetchAllExam = async (
   tagId: string,
-  page: number,
+  page: number = 1,
   limit: number = 12,
   //search: string,
 ) => {
