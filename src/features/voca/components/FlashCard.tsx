@@ -18,7 +18,7 @@ const FlashCard: React.FC<FlashCardProps> = ({
   return (
     <Stack
       sx={{
-        padding: "45px 25px",
+        padding: "40px 25px",
         height: "338px",
         border: "2px solid #e5e5e5",
         borderRadius: "30px",

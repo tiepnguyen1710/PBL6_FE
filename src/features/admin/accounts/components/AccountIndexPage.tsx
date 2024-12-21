@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { AddCircleOutline, FilterAltOff } from "@mui/icons-material";
+import { FilterAltOff } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../api/user-api";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
@@ -114,9 +114,9 @@ const AccountIndexPage: React.FC = () => {
           <Typography variant="h4" sx={{ marginBottom: 1 }}>
             User Accounts
           </Typography>
-          <Button variant="outlined" startIcon={<AddCircleOutline />}>
+          {/* <Button variant="outlined" startIcon={<AddCircleOutline />}>
             Add an user
-          </Button>
+          </Button> */}
         </Stack>
 
         <form

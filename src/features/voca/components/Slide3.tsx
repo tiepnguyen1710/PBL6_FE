@@ -60,7 +60,7 @@ const Slide3: React.FC<Slide3> = ({ onClick, voca, phoneticAudioRef }) => {
           audioUrl={voca.phoneticAudio}
           audioRef={phoneticAudioRef}
         />
-        <Typography component="span" color="#777777" sx={{ fontSize: "22px" }}>
+        <Typography component="span" color="#777777" sx={{ fontSize: "20px" }}>
           {voca.phonetic}
         </Typography>
       </Stack>
@@ -71,17 +71,19 @@ const Slide3: React.FC<Slide3> = ({ onClick, voca, phoneticAudioRef }) => {
         sx={{ marginTop: "20px" }}
       >
         <AudioIconButton iconSize={41} audioUrl={voca.exampleAudio} />
-        <div style={{ marginTop: "-5px", marginRight: "100px" }}>
-          <Typography
-            component="span"
-            color="#4C4C4C"
-            sx={{ fontSize: "25px" }}
-          >
-            {displayExample}
-          </Typography>
-          <Typography color="#777777" sx={{ fontSize: "20px" }}>
-            {voca.exampleMeaning}
-          </Typography>
+        <div
+          style={{ marginTop: "-5px", marginRight: "115px", overflowY: "auto" }}
+        >
+          <div>
+            <Typography
+              component="span"
+              color="#4C4C4C"
+              sx={{ fontSize: "20px" }}
+            >
+              {displayExample}
+            </Typography>
+            <Typography color="#777777">{voca.exampleMeaning}</Typography>
+          </div>
         </div>
       </Stack>
     </FlashCard>
