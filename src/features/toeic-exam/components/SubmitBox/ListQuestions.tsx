@@ -25,10 +25,25 @@ const ListQuestion: React.FC<partDataChosenProps> = ({
   const convertPartChosen = (partChosen: string) => {
     return +partChosen[partChosen.length - 1];
   };
+
+  const isNotedQuestion = (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => {
+    const found = notedQuestions.find(
+      (item) =>
+        item.part === part &&
+        item.groupIndex === groupIndex &&
+        item.questionIndex === questionIndex,
+    );
+    return found?.isNoted ?? false;
+  };
   return (
     <>
       {partDataChosen.map((partChosen, PartChosenIndex) => {
         const part = convertPartChosen(partChosen.part);
+
         return (
           <Box key={PartChosenIndex}>
             <Typography
@@ -43,8 +58,11 @@ const ListQuestion: React.FC<partDataChosenProps> = ({
             <Box>
               {partChosen.groupQuestionData.map((group, groupIndex) => {
                 return group.questionData.map((question, questionIndex) => {
-                  // const isNoted =
-                  //   notedQuestions[part]?.[groupIndex] !== undefined;
+                  let isNoted = isNotedQuestion(
+                    part,
+                    groupIndex,
+                    questionIndex,
+                  );
                   const isActive =
                     activeAnswers[part]?.[groupIndex]?.[questionIndex] !==
                     undefined;
@@ -60,19 +78,27 @@ const ListQuestion: React.FC<partDataChosenProps> = ({
                         minWidth: "24px",
                         width: "24px",
                         height: "24px",
-                        border: isActive
-                          ? "1px solid white"
-                          : "1px solid var(--color-primary-main)",
+                        border: isNoted
+                          ? "orange"
+                          : isActive
+                            ? "1px solid white"
+                            : "1px solid var(--color-primary-main)",
                         marginRight: "4px",
                         marginBottom: "4px",
                         "&:hover": {
                           border: isActive ? "" : "1px solid #F9A95A",
-                          color: isActive ? "" : "#F9A95A",
+                          color: isNoted ? "" : isActive ? "" : "#F9A95A",
                         },
-                        background: isActive
-                          ? "var(--color-primary-main)"
-                          : "white",
-                        color: isActive ? "white" : "var(--color-primary-main)",
+                        background: isNoted
+                          ? "orange"
+                          : isActive
+                            ? "var(--color-primary-main)"
+                            : "white",
+                        color: isNoted
+                          ? "white"
+                          : isActive
+                            ? "white"
+                            : "var(--color-primary-main)",
                       }}
                     >
                       <Typography sx={{ fontSize: "11px" }}>

@@ -18,6 +18,16 @@ import { useQuestionContext } from "./QuestionProvider";
 interface Part4Props {
   partData?: partData;
   mode?: string;
+  handleNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => void;
+  isNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => boolean;
 }
 
 const Item = styled(Paper)(
@@ -78,7 +88,12 @@ const Item = styled(Paper)(
   }),
 );
 
-const Part4: React.FC<Part4Props> = ({ partData, mode }) => {
+const Part4: React.FC<Part4Props> = ({
+  partData,
+  mode,
+  handleNotedQuestion = () => {},
+  isNotedQuestion = () => false,
+}) => {
   console.log(partData);
   const { questionRefs } = useQuestionContext();
   const PART = 4;
@@ -277,6 +292,7 @@ const Part4: React.FC<Part4Props> = ({ partData, mode }) => {
                   groupIndex,
                   questionIndex,
                 );
+                let isNoted = isNotedQuestion(PART, groupIndex, questionIndex);
                 return (
                   <Stack spacing={1} marginTop={1}>
                     <Stack direction="row" gap={1} alignItems="center">
@@ -295,8 +311,9 @@ const Part4: React.FC<Part4Props> = ({ partData, mode }) => {
                           }
                         }}
                         sx={{
-                          background:
-                            isCorrectQuestion === true
+                          background: isNoted
+                            ? "orange"
+                            : isCorrectQuestion === true
                               ? "#00B035"
                               : isCorrectQuestion === false
                                 ? "#E20D2C"
@@ -310,7 +327,11 @@ const Part4: React.FC<Part4Props> = ({ partData, mode }) => {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
+                          cursor: "pointer",
                         }}
+                        onClick={() =>
+                          handleNotedQuestion(PART, groupIndex, questionIndex)
+                        }
                       >
                         {question.questionNumber}
                       </Box>

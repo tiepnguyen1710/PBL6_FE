@@ -14,6 +14,7 @@ import Part5 from "./Part5";
 import Part6 from "./Part6";
 import Part7 from "./Part7";
 import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
+import { QuestionProvider } from "./QuestionProvider";
 
 const PartResultIndex = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -68,27 +69,28 @@ const PartResultIndex = () => {
   return (
     <Content>
       <Container maxWidth="sm">
-        <Box my={2}>
-          <Grid2 container spacing={2}>
-            <Grid2 size={9.5}>
-              {isPending ? (
-                <Box sx={{ marginTop: 2 }}>
-                  <DotLoadingProgress />
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                    borderRadius: 3,
-                  }}
-                  padding={3}
-                >
-                  {renderPart()}
-                </Box>
-              )}
-            </Grid2>
-            <Grid2 size={2.5}>
-              {/* <Box
+        <QuestionProvider>
+          <Box my={2}>
+            <Grid2 container spacing={2}>
+              <Grid2 size={9.5}>
+                {isPending ? (
+                  <Box sx={{ marginTop: 2 }}>
+                    <DotLoadingProgress />
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                      borderRadius: 3,
+                    }}
+                    padding={3}
+                  >
+                    {renderPart()}
+                  </Box>
+                )}
+              </Grid2>
+              <Grid2 size={2.5}>
+                {/* <Box
                 padding={2}
                 sx={{
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -98,27 +100,28 @@ const PartResultIndex = () => {
                   alignSelf: "flex-start",
                 }}
               ></Box> */}
+              </Grid2>
             </Grid2>
-          </Grid2>
-        </Box>
+          </Box>
 
-        <div style={{ margin: "1rem" }}>
-          <Button
-            variant="outlined"
-            disabled={currentIndex === 0}
-            onClick={handlePrevious}
-            sx={{ marginRight: 1 }}
-          >
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            disabled={currentIndex === selectedParts.length - 1}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        </div>
+          <div style={{ margin: "1rem" }}>
+            <Button
+              variant="outlined"
+              disabled={currentIndex === 0}
+              onClick={handlePrevious}
+              sx={{ marginRight: 1 }}
+            >
+              Back
+            </Button>
+            <Button
+              variant="contained"
+              disabled={currentIndex === selectedParts.length - 1}
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          </div>
+        </QuestionProvider>
       </Container>
     </Content>
   );

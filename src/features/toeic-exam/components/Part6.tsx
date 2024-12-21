@@ -19,6 +19,16 @@ import { useQuestionContext } from "./QuestionProvider";
 interface Part6Props {
   partData?: partData;
   mode?: string;
+  handleNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => void;
+  isNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => boolean;
 }
 
 const Item = styled(Paper)(
@@ -78,7 +88,12 @@ const Item = styled(Paper)(
     },
   }),
 );
-const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
+const Part6: React.FC<Part6Props> = ({
+  partData,
+  mode,
+  handleNotedQuestion = () => {},
+  isNotedQuestion = () => false,
+}) => {
   console.log(partData);
   const { questionRefs } = useQuestionContext();
   const PART = 6;
@@ -241,7 +256,11 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                     groupIndex,
                     questionIndex,
                   );
-
+                  let isNoted = isNotedQuestion(
+                    PART,
+                    groupIndex,
+                    questionIndex,
+                  );
                   return (
                     <Box
                       sx={{
@@ -276,8 +295,9 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                       >
                         <Box
                           sx={{
-                            background:
-                              isCorrectQuestion === true
+                            background: isNoted
+                              ? "orange"
+                              : isCorrectQuestion === true
                                 ? "#00B035"
                                 : isCorrectQuestion === false
                                   ? "#E20D2C"
@@ -291,7 +311,11 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
+                            cursor: "pointer",
                           }}
+                          onClick={() =>
+                            handleNotedQuestion(PART, groupIndex, questionIndex)
+                          }
                         >
                           {question.questionNumber}
                         </Box>

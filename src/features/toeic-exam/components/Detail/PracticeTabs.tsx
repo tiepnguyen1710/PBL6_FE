@@ -25,6 +25,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { sortPartArray } from "../../utils/helper";
 import { resetAnswers } from "../../../../stores/userAnswer";
 import { toast } from "react-toastify";
+import { resetNotedQuestion } from "../../../../stores/notedQuestionSlice";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -72,6 +73,7 @@ export default function PracticeTabs() {
   useEffect(() => {
     dispatch(clearSelectedParts());
     dispatch(resetAnswers());
+    dispatch(resetNotedQuestion());
   }, []);
 
   const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {

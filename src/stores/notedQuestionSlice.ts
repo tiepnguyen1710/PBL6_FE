@@ -1,17 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface NotedQuestion {
-  [part: number]: {
-    [groupIndex: number]: number;
-  };
+export interface NotedQuestion {
+  part: number;
+  groupIndex: number;
+  questionIndex: number;
+  isNoted: boolean;
 }
 
 interface NotedQuestionState {
-  notedQuestions: NotedQuestion;
+  notedQuestions: NotedQuestion[];
 }
 
 const initialState: NotedQuestionState = {
-  notedQuestions: {},
+  notedQuestions: [],
 };
 
 const notedQuestionsSlice = createSlice({
@@ -27,14 +28,31 @@ const notedQuestionsSlice = createSlice({
       }>,
     ) => {
       const { part, groupIndex, questionIndex } = action.payload;
-      if (!state.notedQuestions[part]) {
-        state.notedQuestions[part] = {};
+      const index = state.notedQuestions.findIndex(
+        (item) =>
+          item.part === part &&
+          item.groupIndex === groupIndex &&
+          item.questionIndex === questionIndex,
+      );
+      if (index !== -1) {
+        const updatedItems = [...state.notedQuestions];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          isNoted: !updatedItems[index].isNoted,
+        };
+        return { ...state, notedQuestions: updatedItems };
       }
-      state.notedQuestions[part][groupIndex] = questionIndex;
+      return {
+        ...state,
+        notedQuestions: [
+          ...state.notedQuestions,
+          { ...action.payload, isNoted: true },
+        ],
+      };
     },
 
     resetNotedQuestion: (state) => {
-      state.notedQuestions = {};
+      state.notedQuestions = [];
     },
   },
 });

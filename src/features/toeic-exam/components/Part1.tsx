@@ -13,11 +13,21 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import parse from "html-react-parser";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useQuestionContext } from "./QuestionProvider";
-import { setNotedQuestion } from "../../../stores/notedQuestionSlice";
 
 interface Part1Props {
   partData?: partData;
   mode?: string;
+
+  handleNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => void;
+  isNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => boolean;
 }
 
 const Item = styled(Paper)(
@@ -78,7 +88,12 @@ const Item = styled(Paper)(
   }),
 );
 
-const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
+const Part1: React.FC<Part1Props> = ({
+  partData,
+  mode,
+  handleNotedQuestion = () => {},
+  isNotedQuestion = () => false,
+}) => {
   console.log(partData);
   const { questionRefs } = useQuestionContext();
   const PART = 1;
@@ -130,14 +145,6 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
         item.questionIndex === questionIndex,
     );
     return found?.isExpanded ?? false;
-  };
-
-  const handleNotedQuestion = (
-    part: number,
-    groupIndex: number,
-    questionIndex: number,
-  ) => {
-    dispatch(setNotedQuestion({ part, groupIndex, questionIndex }));
   };
 
   return (
@@ -224,6 +231,7 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
                   groupIndex,
                   questionIndex,
                 );
+                let isNoted = isNotedQuestion(PART, groupIndex, questionIndex);
                 return (
                   <Stack spacing={1}>
                     <Box
@@ -241,8 +249,9 @@ const Part1: React.FC<Part1Props> = ({ partData, mode }) => {
                         }
                       }}
                       sx={{
-                        background:
-                          isCorrectQuestion === true
+                        background: isNoted
+                          ? "orange"
+                          : isCorrectQuestion === true
                             ? "#00B035"
                             : isCorrectQuestion === false
                               ? "#E20D2C"
