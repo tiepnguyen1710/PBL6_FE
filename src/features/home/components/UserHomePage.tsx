@@ -42,6 +42,9 @@ import { updateUserProfile } from "../../user-profile/api/user-profile";
 import { toast } from "react-toastify";
 import { differenceInDays, format } from "date-fns";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
+import { fetchLast4PracticeDetailUser } from "../api/lastPractice.api";
+import { getTop8Vocab } from "../api/TopVocab.api";
+import { getTopTestTaken } from "../api/TopTest.api";
 
 type UserTargetFormData = {
   testDate: Date;
@@ -55,6 +58,27 @@ const UserHomePage = () => {
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: () => me(token!),
+  });
+
+  const { data: lastPractice } = useQuery({
+    queryKey: ["last4PracticeUser"],
+    queryFn: () => fetchLast4PracticeDetailUser(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
+
+  const { data: top8Vocab } = useQuery({
+    queryKey: ["top8Vocab"],
+    queryFn: () => getTop8Vocab(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
+
+  const { data: topTest } = useQuery({
+    queryKey: ["top8Test"],
+    queryFn: () => getTopTestTaken(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const [openChangeTargetModal, setOpenChangeTargetModal] = useState(false);
@@ -104,10 +128,18 @@ const UserHomePage = () => {
   }, [user, userTargetForm, userTestDate]);
 
   const handleUpdateUserTarget: SubmitHandler<UserTargetFormData> = (data) => {
-    console.log("userTargetForm", data);
     updateUserTargetMutation.mutate(data);
   };
-
+  const convertSecondsToHMS = (seconds: number): string => {
+    const h = Math.floor(seconds / 3600)
+      .toString()
+      .padStart(2, "0");
+    const m = Math.floor((seconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${h}:${m}:${s}`;
+  };
   return (
     <>
       {isLoading && <CustomBackdrop />}
@@ -166,7 +198,25 @@ const UserHomePage = () => {
               useFlexGap
               sx={{ flexWrap: "wrap" }}
             >
-              <PracticeResult
+              {lastPractice?.lastPractice?.map((practice) => {
+                return (
+                  <PracticeResult
+                    key={practice.id}
+                    id={practice.id}
+                    testTitle={practice.test.name}
+                    tags={practice.isFullTest ? [] : practice.listPart}
+                    fullTest={practice.isFullTest}
+                    dateTaken={format(
+                      new Date(practice.createdAt),
+                      "dd/MM/yyyy",
+                    )}
+                    completionTime={`${convertSecondsToHMS(practice.time)}`}
+                    result={`${practice.numCorrect}/${practice.totalQuestion}`}
+                    score={practice.LCScore + practice.RCScore}
+                  />
+                );
+              })}
+              {/* <PracticeResult
                 testTitle="2024 Practice Set Test 10"
                 tags={["Part 7"]}
                 dateTaken="30/12/2024"
@@ -195,7 +245,7 @@ const UserHomePage = () => {
                 completionTime="1:58:39"
                 result="65/200"
                 score={335}
-              />
+              /> */}
             </Stack>
 
             <ViewMoreButton>View All</ViewMoreButton>
@@ -242,75 +292,25 @@ const UserHomePage = () => {
                 }}
                 style={{ paddingBottom: "40px" }}
               >
-                <SwiperSlide>
-                  <VocaSet
-                    id={"10"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Medium"
-                    topic="Biology"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"11"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Easy"
-                    topic="Family"
-                    takenNumber="10.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"1"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Medium"
-                    topic="Biology"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"2"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Easy"
-                    topic="Family"
-                    takenNumber="10.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"3"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Advanced"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"4"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Advanced"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"5"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Medium"
-                    topic="Biology"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <VocaSet
-                    id={"6"}
-                    title="400 Words of TOEFL - Intermediate English"
-                    qualification="Advanced"
-                    takenNumber="2.1m"
-                  />
-                </SwiperSlide>
+                {top8Vocab?.map((vocab) => {
+                  return (
+                    <SwiperSlide
+                      onClick={() => {
+                        window.location.href = `/voca/${vocab.groupTopic_id}/lessons`;
+                      }}
+                      key={vocab.groupTopic_id}
+                      style={{ alignSelf: "stretch", height: "auto" }}
+                    >
+                      <VocaSet
+                        id={vocab.groupTopic_id}
+                        title={vocab.groupTopic_name}
+                        qualification={vocab.groupTopic_level}
+                        takenNumber={vocab.userCount.toString()}
+                        image={vocab.groupTopic_thumbnail}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             </Box>
           </Box>
@@ -319,7 +319,7 @@ const UserHomePage = () => {
           {/* Most recent tests section */}
           <Box sx={{ py: 7 }}>
             <Typography variant="h4" color="primary.main" textAlign={"center"}>
-              Most Recent Tests
+              Most Taken Tests
             </Typography>
             <Box display="flex" justifyContent="center" sx={{ marginTop: 2 }}>
               <Grid2
@@ -329,7 +329,23 @@ const UserHomePage = () => {
                 columnSpacing={{ xs: "10px", md: 1.5 }}
                 justifyContent="center"
               >
-                <Grid2>
+                {topTest?.map((test) => {
+                  return (
+                    <Grid2 key={test.testId}>
+                      <ExamCard
+                        id={test.testId}
+                        title={test.testName}
+                        duration={`${test.time} minutes`}
+                        totalParticipants={test.userCount}
+                        totalComments={test.commentCount}
+                        numOfParts={test.partCount}
+                        numOfQuestions={test.totalQuestion}
+                        tags={["Listening", "Reading"]}
+                      />
+                    </Grid2>
+                  );
+                })}
+                {/* <Grid2>
                   <ExamCard
                     id="7"
                     title="IELTS Simulation Listening test 1"
@@ -424,7 +440,7 @@ const UserHomePage = () => {
                     numOfQuestions={40}
                     tags={["Listening", "Reading"]}
                   />
-                </Grid2>
+                </Grid2> */}
               </Grid2>
             </Box>
           </Box>

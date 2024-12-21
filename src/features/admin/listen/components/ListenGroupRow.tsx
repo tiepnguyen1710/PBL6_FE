@@ -32,7 +32,7 @@ const ListenGroupRow: React.FC<{
         {listenGroup.id}
       </TableCell>
 
-      <TableCell>{listenGroup.name}</TableCell>
+      <TableCell sx={{ textAlign: "center" }}>{listenGroup.name}</TableCell>
       <TableCell align="center">
         {capitalizeFirstLetter(listenGroup.level)}
       </TableCell>

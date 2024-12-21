@@ -9,6 +9,8 @@ export default interface VocaSetModel {
   description: string;
 
   topics: LessonModel[];
+  topicCount: number;
+  userCount: number;
 }
 
 export interface VocaSetWithUserProgress extends VocaSetModel {

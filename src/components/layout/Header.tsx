@@ -75,7 +75,7 @@ const Header: React.FC = () => {
           <Stack direction="row">
             <NavLink to="/">
               {({ isActive }) => (
-                <CustomNavLink isActive={isActive}>Learn English</CustomNavLink>
+                <CustomNavLink isActive={isActive}>Home</CustomNavLink>
               )}
             </NavLink>
             <NavLink to="/voca">

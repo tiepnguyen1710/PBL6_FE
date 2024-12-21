@@ -33,7 +33,11 @@ const LessonCourse: React.FC<LessonCourseProps> = ({
   };
 
   return (
-    <Stack spacing={1.25} sx={{ width: "205px", position: "relative" }}>
+    <Stack
+      spacing={1.25}
+      justifyContent="space-between"
+      sx={{ width: "205px", position: "relative" }}
+    >
       <LessonCard
         name={name}
         image={thumbnail}

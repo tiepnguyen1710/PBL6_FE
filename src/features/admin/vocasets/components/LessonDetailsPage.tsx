@@ -296,7 +296,7 @@ const LessonDetailsPage = () => {
                     >
                       {voca.id}
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       <Image
                         src={voca.thumbnail}
                         sx={{
@@ -307,7 +307,7 @@ const LessonDetailsPage = () => {
                       />
                     </TableCell>
                     <TableCell>{voca.word}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       {vocaWordClassFullName2Abbr(voca.wordClass)}
                     </TableCell>
                     <TableCell>{voca.translate}</TableCell>

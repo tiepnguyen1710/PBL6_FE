@@ -23,7 +23,7 @@ const CompleteLearningLessonPage: React.FC = () => {
       <LessonHeader
         title="finish"
         lessonName={lessonName || ""}
-        onExit={() => navigate(`/voca/${vocaSetId}/lessons`)}
+        onExit={() => navigate(vocaSetId ? `/voca/${vocaSetId}/lessons` : "/")}
       />
       <LessonMainContent
         sx={{
@@ -84,7 +84,7 @@ const CompleteLearningLessonPage: React.FC = () => {
           </Link>
 
           <Link
-            to={`/lesson/confirm-start-testing?id=${lessonId}&name=${lessonName}`}
+            to={`/lesson/confirm-start-testing?id=${lessonId}&name=${lessonName}&vocaSetId=${vocaSetId}`}
           >
             <BoldStrokeButton
               variant="contained"

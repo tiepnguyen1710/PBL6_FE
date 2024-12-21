@@ -40,11 +40,16 @@ const VocaSetRatingModal: React.FC<VocaSetRatingModalProps> = ({
       customModalProps.onClose?.();
       onPosted?.();
 
-      toast("Thank you, we really appreciate your review!", {
-        position: "bottom-center",
-        hideProgressBar: true,
-        autoClose: 3000,
-      });
+      toast(
+        <p style={{ textAlign: "center" }}>
+          Thank you, we really appreciate your review!
+        </p>,
+        {
+          position: "bottom-center",
+          hideProgressBar: true,
+          autoClose: 3000,
+        },
+      );
     },
     onError: (error: { message: string }) => {
       if (error.message == "Rating already exists") {

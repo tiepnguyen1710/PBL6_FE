@@ -10,6 +10,7 @@ type ListWordsProps = {
   vocabularies: VocabularyModel[];
   status: VocabularyCardState;
   sx?: SxProps;
+  onCloseWordCard?: (vocabularyId: string) => void;
 };
 
 const ListWords: React.FC<ListWordsProps> = ({
@@ -17,6 +18,7 @@ const ListWords: React.FC<ListWordsProps> = ({
   vocabularies,
   status,
   sx,
+  onCloseWordCard,
 }) => {
   let badgeTypoStyle = {
     color: "#58CC02",
@@ -67,6 +69,7 @@ const ListWords: React.FC<ListWordsProps> = ({
             meaning={vocabulary.translate}
             audio={vocabulary.audio}
             state={status}
+            onDelete={onCloseWordCard && (() => onCloseWordCard(vocabulary.id))}
           />
         ))}
       </Box>

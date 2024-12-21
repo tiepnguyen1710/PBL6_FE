@@ -7,14 +7,16 @@ import RuleItem from "./RuleItem";
 import TargetRuleIcon from "../assets/test-rule-images/target-rule.svg";
 import ExitRuleIcon from "../assets/test-rule-images/exit-rule.svg";
 import TimeRuleIcon from "../assets/test-rule-images/time-rule.svg";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import Link from "../../../components/UI/Link";
 import BoldStrokeButton from "./BoldStrokeButton";
 
 const VocaTestConfirmPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("id");
   const lessonName = searchParams.get("name");
+  const vocaSetId = searchParams.get("vocaSetId");
 
   if (!lessonId) {
     return <Navigate to="/" />;
@@ -22,7 +24,11 @@ const VocaTestConfirmPage: React.FC = () => {
 
   return (
     <Stack sx={{ minHeight: "100vh" }}>
-      <LessonHeader title="test" lessonName={lessonName || ""} />
+      <LessonHeader
+        title="test"
+        lessonName={lessonName || ""}
+        onExit={() => navigate(vocaSetId ? `/voca/${vocaSetId}/lessons` : "/")}
+      />
       <LessonMainContent sx={{ paddingTop: "50px", maxWidth: "780px" }}>
         <Stack direction="row">
           <Image

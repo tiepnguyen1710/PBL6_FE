@@ -327,7 +327,13 @@ const ListenGroupDetailAdmin = () => {
                       {lesson.id}
                     </TableCell>
 
-                    <TableCell>{lesson.name}</TableCell>
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                      }}
+                    >
+                      {lesson.name}
+                    </TableCell>
                     <TableCell>{lesson?.listenSentences.length || 0}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" spacing={0.5}>
