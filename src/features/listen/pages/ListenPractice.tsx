@@ -80,10 +80,20 @@ const ListenPractice: React.FC = () => {
 
   const handleCheckAnswer = () => {
     let userAnswer = answer[currIndex - 1].trim().split(" ");
-    userAnswer = userAnswer.filter((item) => item !== "");
+    userAnswer = userAnswer
+      .filter((item) => item !== "")
+      .map((word) => {
+        let temp = "";
+        for (const char of word) {
+          if (char != "." && char != "," && char != "!" && char != "?") {
+            temp += char;
+          }
+        }
+        return temp;
+      });
     const correctAnswer = lesson?.listenSentences[currIndex - 1]
-    ?.sentence!.toLocaleLowerCase()
-    .split(" ");
+      ?.sentence!.toLocaleLowerCase()
+      .split(" ");
     console.log(sentenceCheck, correctAnswer);
     if (!correctAnswer) return;
     let index = 0;

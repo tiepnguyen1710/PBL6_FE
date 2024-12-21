@@ -44,6 +44,7 @@ import { differenceInDays, format } from "date-fns";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import { fetchLast4PracticeDetailUser } from "../api/lastPractice.api";
 import { getTop8Vocab } from "../api/TopVocab.api";
+import { getTopTestTaken } from "../api/TopTest.api";
 
 type UserTargetFormData = {
   testDate: Date;
@@ -69,6 +70,13 @@ const UserHomePage = () => {
   const { data: top8Vocab } = useQuery({
     queryKey: ["top8Vocab"],
     queryFn: () => getTop8Vocab(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
+
+  const { data: topTest } = useQuery({
+    queryKey: ["top8Test"],
+    queryFn: () => getTopTestTaken(),
     refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
@@ -196,9 +204,7 @@ const UserHomePage = () => {
                     key={practice.id}
                     id={practice.id}
                     testTitle={practice.test.name}
-                    tags={
-                      practice.isFullTest ? [] : practice.listPart
-                    }
+                    tags={practice.isFullTest ? [] : practice.listPart}
                     fullTest={practice.isFullTest}
                     dateTaken={format(
                       new Date(practice.createdAt),
@@ -313,7 +319,7 @@ const UserHomePage = () => {
           {/* Most recent tests section */}
           <Box sx={{ py: 7 }}>
             <Typography variant="h4" color="primary.main" textAlign={"center"}>
-              Most Recent Tests
+              Most Taken Tests
             </Typography>
             <Box display="flex" justifyContent="center" sx={{ marginTop: 2 }}>
               <Grid2
@@ -323,7 +329,23 @@ const UserHomePage = () => {
                 columnSpacing={{ xs: "10px", md: 1.5 }}
                 justifyContent="center"
               >
-                <Grid2>
+                {topTest?.map((test) => {
+                  return (
+                    <Grid2 key={test.testId}>
+                      <ExamCard
+                        id={test.testId}
+                        title={test.testName}
+                        duration={`${test.time} minutes`}
+                        totalParticipants={test.userCount}
+                        totalComments={test.commentCount}
+                        numOfParts={test.partCount}
+                        numOfQuestions={test.totalQuestion}
+                        tags={["Listening", "Reading"]}
+                      />
+                    </Grid2>
+                  );
+                })}
+                {/* <Grid2>
                   <ExamCard
                     id="7"
                     title="IELTS Simulation Listening test 1"
@@ -418,7 +440,7 @@ const UserHomePage = () => {
                     numOfQuestions={40}
                     tags={["Listening", "Reading"]}
                   />
-                </Grid2>
+                </Grid2> */}
               </Grid2>
             </Box>
           </Box>
