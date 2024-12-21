@@ -45,8 +45,8 @@ const VocaSetRow: React.FC<{
       <TableCell align="center">
         {capitalizeFirstLetter(vocaSet.level)}
       </TableCell>
-      <TableCell align="center">{0}</TableCell>
-      <TableCell align="center">{vocaSet?.topics?.length || 0}</TableCell>
+      <TableCell align="center">{vocaSet?.userCount}</TableCell>
+      <TableCell align="center">{vocaSet?.topicCount}</TableCell>
       <TableCell
         onClick={handleClick}
         align="center"
