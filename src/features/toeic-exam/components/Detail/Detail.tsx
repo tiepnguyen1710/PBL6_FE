@@ -2,8 +2,12 @@ import { Box, Container } from "@mui/material";
 import DetailContent from "./DetailContent";
 import InforUserBox from "../InforUserBox";
 import Content from "../../../../components/layout/Content";
+import Comments from "../../../comment/components/Comments";
+import { useParams } from "react-router-dom";
 
 const Detail = () => {
+  const routeParams = useParams<{ examId: string }>();
+  const examId = routeParams.examId;
   return (
     <Content>
       <Container>
@@ -15,15 +19,26 @@ const Detail = () => {
             marginBottom: 6,
           }}
         >
-          <Box
-            sx={{
-              width: "75%",
-              padding: 3,
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              borderRadius: 2,
-            }}
-          >
-            <DetailContent />
+          <Box sx={{ width: "75%" }}>
+            <Box
+              sx={{
+                padding: 3,
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                borderRadius: 2,
+                marginBottom: 2,
+              }}
+            >
+              <DetailContent examId={examId} />
+            </Box>
+            <Box
+              sx={{
+                padding: 3,
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                borderRadius: 2,
+              }}
+            >
+              <Comments examId={examId} />
+            </Box>
           </Box>
           <Box
             sx={{

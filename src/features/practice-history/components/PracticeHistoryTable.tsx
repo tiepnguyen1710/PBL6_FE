@@ -81,7 +81,7 @@ const PracticeHistoryTable: React.FC<PracticeHistoryTableProps> = ({
                       >
                         {historyRow.isFullTest ? (
                           <Chip
-                            label="fulltest"
+                            label="Fulltest"
                             sx={{
                               ...chipStyle,
                               backgroundColor: "success.main",
@@ -90,7 +90,7 @@ const PracticeHistoryTable: React.FC<PracticeHistoryTableProps> = ({
                         ) : (
                           <>
                             <Box sx={{ mb: 1 }}>
-                              <Chip label="practice" sx={{ ...chipStyle }} />
+                              <Chip label="Practice" sx={{ ...chipStyle }} />
                             </Box>
                           </>
                         )}

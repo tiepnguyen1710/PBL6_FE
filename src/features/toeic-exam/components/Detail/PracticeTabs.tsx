@@ -24,6 +24,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { sortPartArray } from "../../utils/helper";
 import { resetAnswers } from "../../../../stores/userAnswer";
+import { toast } from "react-toastify";
+import { resetNotedQuestion } from "../../../../stores/notedQuestionSlice";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -71,6 +73,7 @@ export default function PracticeTabs() {
   useEffect(() => {
     dispatch(clearSelectedParts());
     dispatch(resetAnswers());
+    dispatch(resetNotedQuestion());
   }, []);
 
   const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
@@ -92,11 +95,15 @@ export default function PracticeTabs() {
   };
 
   const handlePractice = (isFullTest: boolean) => {
+    const selectedPartsClone = [...selectedParts];
+    const sortedSelectedParts = sortPartArray(selectedPartsClone);
+    if (selectedPartsClone.length === 0 && !isFullTest) {
+      toast.error("Please choose at least one part!");
+      return;
+    }
     if (isFullTest) {
       dispatch(setLimitTime("7200"));
     }
-    const selectedPartsClone = [...selectedParts];
-    const sortedSelectedParts = sortPartArray(selectedPartsClone);
     const query = isFullTest
       ? "part=full"
       : sortedSelectedParts.map((part) => `part=${part}`).join("&");

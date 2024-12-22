@@ -26,10 +26,15 @@ const uploadFile = async (file: File) => {
   }
 };
 
-const fetchAllExam = async (tagId: string) => {
-  const response = await axiosClient.get<IExamSetResponse>(`test`, {
-    params: tagId ? { tag_id: tagId } : {},
-  });
+const fetchAllExam = async (
+  tagId: string,
+  page: number = 1,
+  limit: number = 12,
+  //search: string,
+) => {
+  const response = await axiosClient.get<IExamSetResponse>(
+    `test?${tagId ? `tag_id=${tagId}` : ""}${page ? `&page=${page}` : ""}${limit ? `&limit=${limit}` : ""}`,
+  );
   return response.data;
 };
 

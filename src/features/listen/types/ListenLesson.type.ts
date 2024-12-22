@@ -7,4 +7,6 @@ export interface IListenLesson {
   audio: string;
   listenSentences: IListenSentence[];
   listenGroup: IListenGroupModel;
+  prev: string;
+  next: string;
 }

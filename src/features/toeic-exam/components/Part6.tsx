@@ -14,10 +14,21 @@ import { setScript } from "../../../stores/selectedScript";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import InfoIcon from "@mui/icons-material/Info";
 import useScrollToTop from "../hooks/useScrollToTop";
+import { useQuestionContext } from "./QuestionProvider";
 
 interface Part6Props {
   partData?: partData;
   mode?: string;
+  handleNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => void;
+  isNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => boolean;
 }
 
 const Item = styled(Paper)(
@@ -77,8 +88,14 @@ const Item = styled(Paper)(
     },
   }),
 );
-const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
+const Part6: React.FC<Part6Props> = ({
+  partData,
+  mode,
+  handleNotedQuestion = () => {},
+  isNotedQuestion = () => false,
+}) => {
   console.log(partData);
+  const { questionRefs } = useQuestionContext();
   const PART = 6;
   useScrollToTop();
   const dispatch = useDispatch();
@@ -176,7 +193,7 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
         let isExplain = mode === "review";
         let isScriptExpanded = checkScriptExpanded(PART, groupIndex);
         return (
-          <Box sx={{ display: "flex", gap: "30px", height: "80vh" }} mb={2}>
+          <Box sx={{ display: "flex", gap: "30px" }} mb={2}>
             <Box
               sx={{
                 width: "55%",
@@ -188,7 +205,9 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                 flexDirection: "column",
               }}
             >
-              <PerfectScrollbar style={{ flexGrow: 1 }}>
+              <PerfectScrollbar
+                style={{ flexGrow: 1, maxHeight: "100%", overflow: "auto" }}
+              >
                 <Typography mb={1}>
                   {/* Add your passage text here */}
                   {group.detail ? parse(group.detail) : "No Content"}
@@ -237,7 +256,11 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                     groupIndex,
                     questionIndex,
                   );
-
+                  let isNoted = isNotedQuestion(
+                    PART,
+                    groupIndex,
+                    questionIndex,
+                  );
                   return (
                     <Box
                       sx={{
@@ -249,6 +272,20 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                       }}
                     >
                       <Box
+                        key={`question-${groupIndex}-${questionIndex}`}
+                        ref={(el) => {
+                          if (el) {
+                            if (!questionRefs.current[PART]) {
+                              questionRefs.current[PART] = [];
+                            }
+                            if (!questionRefs.current[PART][groupIndex]) {
+                              questionRefs.current[PART][groupIndex] = [];
+                            }
+                            questionRefs.current[PART][groupIndex][
+                              questionIndex
+                            ] = el as HTMLDivElement;
+                          }
+                        }}
                         sx={{
                           display: "flex",
                           alignItems: "center",
@@ -258,8 +295,9 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                       >
                         <Box
                           sx={{
-                            background:
-                              isCorrectQuestion === true
+                            background: isNoted
+                              ? "orange"
+                              : isCorrectQuestion === true
                                 ? "#00B035"
                                 : isCorrectQuestion === false
                                   ? "#E20D2C"
@@ -273,7 +311,11 @@ const Part6: React.FC<Part6Props> = ({ partData, mode }) => {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
+                            cursor: "pointer",
                           }}
+                          onClick={() =>
+                            handleNotedQuestion(PART, groupIndex, questionIndex)
+                          }
                         >
                           {question.questionNumber}
                         </Box>

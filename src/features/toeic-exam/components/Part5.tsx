@@ -12,10 +12,21 @@ import InfoIcon from "@mui/icons-material/Info";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import parse from "html-react-parser";
 import useScrollToTop from "../hooks/useScrollToTop";
+import { useQuestionContext } from "./QuestionProvider";
 
 interface Part5Props {
   partData?: partData;
   mode?: string;
+  handleNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => void;
+  isNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => boolean;
 }
 
 const Item = styled(Paper)(
@@ -76,9 +87,15 @@ const Item = styled(Paper)(
   }),
 );
 
-const Part5: React.FC<Part5Props> = ({ partData, mode }) => {
+const Part5: React.FC<Part5Props> = ({
+  partData,
+  mode,
+  handleNotedQuestion = () => {},
+  isNotedQuestion = () => false,
+}) => {
   console.log(partData);
   const PART = 5;
+  const { questionRefs } = useQuestionContext();
   useScrollToTop();
   const dispatch = useDispatch();
   const activeAnswers = useSelector(
@@ -206,13 +223,28 @@ const Part5: React.FC<Part5Props> = ({ partData, mode }) => {
                   groupIndex,
                   questionIndex,
                 );
+                let isNoted = isNotedQuestion(PART, groupIndex, questionIndex);
                 return (
                   <Stack spacing={1} marginTop={1}>
                     <Stack direction="row" gap={1} alignItems="center">
                       <Box
+                        ref={(el) => {
+                          if (el) {
+                            if (!questionRefs.current[PART]) {
+                              questionRefs.current[PART] = [];
+                            }
+                            if (!questionRefs.current[PART][groupIndex]) {
+                              questionRefs.current[PART][groupIndex] = [];
+                            }
+                            questionRefs.current[PART][groupIndex][
+                              questionIndex
+                            ] = el as HTMLDivElement;
+                          }
+                        }}
                         sx={{
-                          background:
-                            isCorrectQuestion === true
+                          background: isNoted
+                            ? "orange"
+                            : isCorrectQuestion === true
                               ? "#00B035"
                               : isCorrectQuestion === false
                                 ? "#E20D2C"
@@ -226,7 +258,11 @@ const Part5: React.FC<Part5Props> = ({ partData, mode }) => {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
+                          cursor: "pointer",
                         }}
+                        onClick={() =>
+                          handleNotedQuestion(PART, groupIndex, questionIndex)
+                        }
                       >
                         {question.questionNumber}
                       </Box>

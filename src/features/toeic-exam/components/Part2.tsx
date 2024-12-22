@@ -12,10 +12,21 @@ import InfoIcon from "@mui/icons-material/Info";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import parse from "html-react-parser";
 import useScrollToTop from "../hooks/useScrollToTop";
+import { useQuestionContext } from "./QuestionProvider";
 
 interface Part2Props {
   partData?: partData;
   mode?: string;
+  handleNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => void;
+  isNotedQuestion?: (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => boolean;
 }
 
 const Item = styled(Paper)(
@@ -76,8 +87,14 @@ const Item = styled(Paper)(
   }),
 );
 
-const Part2: React.FC<Part2Props> = ({ partData, mode }) => {
+const Part2: React.FC<Part2Props> = ({
+  partData,
+  mode,
+  handleNotedQuestion = () => {},
+  isNotedQuestion = () => false,
+}) => {
   console.log(partData);
+  const { questionRefs } = useQuestionContext();
   const PART = 2;
   useScrollToTop();
   const dispatch = useDispatch();
@@ -210,12 +227,27 @@ const Part2: React.FC<Part2Props> = ({ partData, mode }) => {
                   groupIndex,
                   questionIndex,
                 );
+                let isNoted = isNotedQuestion(PART, groupIndex, questionIndex);
                 return (
                   <Stack spacing={1}>
                     <Box
+                      ref={(el) => {
+                        if (el) {
+                          if (!questionRefs.current[PART]) {
+                            questionRefs.current[PART] = [];
+                          }
+                          if (!questionRefs.current[PART][groupIndex]) {
+                            questionRefs.current[PART][groupIndex] = [];
+                          }
+                          questionRefs.current[PART][groupIndex][
+                            questionIndex
+                          ] = el as HTMLDivElement;
+                        }
+                      }}
                       sx={{
-                        background:
-                          isCorrectQuestion === true
+                        background: isNoted
+                          ? "orange"
+                          : isCorrectQuestion === true
                             ? "#00B035"
                             : isCorrectQuestion === false
                               ? "#E20D2C"
@@ -230,7 +262,11 @@ const Part2: React.FC<Part2Props> = ({ partData, mode }) => {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
+                        cursor: "pointer",
                       }}
+                      onClick={() =>
+                        handleNotedQuestion(PART, groupIndex, questionIndex)
+                      }
                     >
                       {question.questionNumber}
                     </Box>

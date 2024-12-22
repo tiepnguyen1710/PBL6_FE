@@ -2,23 +2,48 @@ import { Box, Button, Typography } from "@mui/material";
 import { partData } from "../../../admin/new_exams/types/examType";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores";
+import { useQuestionContext } from "../QuestionProvider";
 
 interface partDataChosenProps {
   partDataChosen: partData[];
+  setCurrentIndex: (index: number) => void;
 }
-const ListQuestion: React.FC<partDataChosenProps> = ({ partDataChosen }) => {
+const ListQuestion: React.FC<partDataChosenProps> = ({
+  partDataChosen,
+  setCurrentIndex,
+}) => {
   console.log("chosen", partDataChosen);
   const activeAnswers = useSelector(
     (state: RootState) => state.userAnswers.activeAnswers,
   );
+  const notedQuestions = useSelector(
+    (state: RootState) => state.notedQuestions.notedQuestions,
+  );
+
+  const { scrollToQuestion } = useQuestionContext();
 
   const convertPartChosen = (partChosen: string) => {
     return +partChosen[partChosen.length - 1];
+  };
+
+  const isNotedQuestion = (
+    part: number,
+    groupIndex: number,
+    questionIndex: number,
+  ) => {
+    const found = notedQuestions.find(
+      (item) =>
+        item.part === part &&
+        item.groupIndex === groupIndex &&
+        item.questionIndex === questionIndex,
+    );
+    return found?.isNoted ?? false;
   };
   return (
     <>
       {partDataChosen.map((partChosen, PartChosenIndex) => {
         const part = convertPartChosen(partChosen.part);
+
         return (
           <Box key={PartChosenIndex}>
             <Typography
@@ -28,36 +53,55 @@ const ListQuestion: React.FC<partDataChosenProps> = ({ partDataChosen }) => {
                 margin: "8px 0",
               }}
             >
-              {partChosen.part}
+              {`Part ${part}`}
             </Typography>
             <Box>
               {partChosen.groupQuestionData.map((group, groupIndex) => {
                 return group.questionData.map((question, questionIndex) => {
+                  let isNoted = isNotedQuestion(
+                    part,
+                    groupIndex,
+                    questionIndex,
+                  );
                   const isActive =
                     activeAnswers[part]?.[groupIndex]?.[questionIndex] !==
                     undefined;
+
                   return (
                     <Button
+                      key={`btn-${groupIndex}-${questionIndex}`}
+                      onClick={() => {
+                        setCurrentIndex(PartChosenIndex);
+                        scrollToQuestion(part, groupIndex, questionIndex);
+                      }}
                       sx={{
-                        minWidth: "30px",
-                        width: "30px",
-                        height: "30px",
-                        border: isActive
-                          ? "1px solid white"
-                          : "1px solid var(--color-primary-main)",
-                        marginRight: "10px",
-                        marginBottom: "10px",
+                        minWidth: "24px",
+                        width: "24px",
+                        height: "24px",
+                        border: isNoted
+                          ? "orange"
+                          : isActive
+                            ? "1px solid white"
+                            : "1px solid var(--color-primary-main)",
+                        marginRight: "4px",
+                        marginBottom: "4px",
                         "&:hover": {
                           border: isActive ? "" : "1px solid #F9A95A",
-                          color: isActive ? "" : "#F9A95A",
+                          color: isNoted ? "" : isActive ? "" : "#F9A95A",
                         },
-                        background: isActive
-                          ? "var(--color-primary-main)"
-                          : "white",
-                        color: isActive ? "white" : "var(--color-primary-main)",
+                        background: isNoted
+                          ? "orange"
+                          : isActive
+                            ? "var(--color-primary-main)"
+                            : "white",
+                        color: isNoted
+                          ? "white"
+                          : isActive
+                            ? "white"
+                            : "var(--color-primary-main)",
                       }}
                     >
-                      <Typography sx={{ fontSize: "14px" }}>
+                      <Typography sx={{ fontSize: "11px" }}>
                         {question.questionNumber}
                       </Typography>
                     </Button>
