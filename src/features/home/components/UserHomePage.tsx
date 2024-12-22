@@ -45,6 +45,7 @@ import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import { fetchLast4PracticeDetailUser } from "../api/lastPractice.api";
 import { getTop8Vocab } from "../api/TopVocab.api";
 import { getTopTestTaken } from "../api/TopTest.api";
+import Link from "../../../components/UI/Link";
 
 type UserTargetFormData = {
   testDate: Date;
@@ -216,39 +217,28 @@ const UserHomePage = () => {
                   />
                 );
               })}
-              {/* <PracticeResult
-                testTitle="2024 Practice Set Test 10"
-                tags={["Part 7"]}
-                dateTaken="30/12/2024"
-                completionTime="0:57:03"
-                result="34/54"
-              />
-              <PracticeResult
-                testTitle="2024 Practice Set Test 10"
-                fullTest
-                dateTaken="31/08/2024"
-                completionTime="1:58:39"
-                result="65/200"
-                score={335}
-              />
-              <PracticeResult
-                testTitle="2024 Practice Set Test 10"
-                tags={["Part 7"]}
-                dateTaken="30/12/2024"
-                completionTime="0:57:03"
-                result="34/54"
-              />
-              <PracticeResult
-                testTitle="2024 Practice Set Test 10"
-                fullTest
-                dateTaken="31/08/2024"
-                completionTime="1:58:39"
-                result="65/200"
-                score={335}
-              /> */}
+
+              {lastPractice?.lastPractice?.length === 0 && (
+                <Box>
+                  <Typography>
+                    No practice history yet. Take your first test and track your
+                    progress.
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    sx={{ boxShadow: "none", marginTop: 1 }}
+                  >
+                    Start Your First Practice Test
+                  </Button>
+                </Box>
+              )}
             </Stack>
 
-            <ViewMoreButton>View All</ViewMoreButton>
+            {lastPractice && lastPractice?.lastPractice?.length > 0 && (
+              <Link to="/history">
+                <ViewMoreButton>View All</ViewMoreButton>
+              </Link>
+            )}
           </Box>
         </Container>
       </Box>
