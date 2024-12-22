@@ -134,13 +134,16 @@ const FolderDetailsPage = () => {
               words.
             </Typography>
           </div>
-          <BoldStrokeButton
-            variant="contained"
-            sx={{ maxWidth: "200px", borderBottomWidth: "2px" }}
-            onClick={() => navigate("practice")}
-          >
-            START PRACTICE
-          </BoldStrokeButton>
+
+          {folder && folder?.words.length >= 4 && (
+            <BoldStrokeButton
+              variant="contained"
+              sx={{ maxWidth: "200px", borderBottomWidth: "2px" }}
+              onClick={() => navigate("practice")}
+            >
+              START PRACTICE
+            </BoldStrokeButton>
+          )}
         </Stack>
 
         {/*  folder details */}
