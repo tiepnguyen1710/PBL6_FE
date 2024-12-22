@@ -38,7 +38,7 @@ import UpdateVocaSetRequest from "../types/UpdateVocaSetRequest";
 import { toast } from "react-toastify";
 import { fileList2Base64 } from "../../../../utils/helper";
 import NewLessonModal from "./NewLessonModal";
-import LessonModel from "../../../../types/LessonModel";
+import LessonModel, { getLessonThumbnail } from "../../../../types/LessonModel";
 import { deleteLesson } from "../api/lesson-api";
 import { Image } from "../../../../components/UI/Image";
 import ListItemRoundedInput from "./TextListRoundedInput";
@@ -409,7 +409,7 @@ const VocaSetDetailsPage = () => {
                     </TableCell>
                     <TableCell align="center">
                       <Image
-                        src={lesson.thumbnail}
+                        src={getLessonThumbnail(lesson)}
                         sx={{
                           width: "80px",
                           height: "80px",
@@ -440,9 +440,12 @@ const VocaSetDetailsPage = () => {
                 ))}
                 {emptyRows > 0 && (
                   <TableRow
-                    style={{ height: 53 * emptyRows, backgroundColor: "white" }}
+                    style={{
+                      height: 106 * emptyRows,
+                      backgroundColor: "white",
+                    }}
                   >
-                    <TableCell colSpan={4} />
+                    <TableCell colSpan={5} />
                   </TableRow>
                 )}
               </TableBody>

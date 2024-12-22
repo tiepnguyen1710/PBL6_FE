@@ -19,7 +19,7 @@ import RoundedInput from "../../../../components/UI/RoundedInput";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { Add, AddPhotoAlternate, Delete, Edit } from "@mui/icons-material";
-import DefaultLessonImage from "../assets/default-lesson-img.webp";
+// import DefaultLessonImage from "../assets/default-lesson-img.webp";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { LessonCard } from "../../../../components/LessonCard";
 import AdminTableContainer from "./AdminTableContainer";
@@ -39,10 +39,11 @@ import {
 } from "../../../../utils/helper";
 import queryClient from "../../../../queryClient";
 import UpdateLessonResponse from "../types/UpdateLessonResponse";
-import LessonModel from "../../../../types/LessonModel";
+import LessonModel, { getLessonThumbnail } from "../../../../types/LessonModel";
 import CustomModal from "../../../../components/UI/CustomModal";
 import { deleteVoca } from "../api/vocabulary-api";
 import { Image } from "../../../../components/UI/Image";
+import DefaultLessonThumbnail from "../../../../assets/images/voca/default-lesson-image.svg";
 
 interface LessonFormData {
   name: string;
@@ -76,7 +77,7 @@ const LessonDetailsPage = () => {
   } = useForm<LessonFormData>({
     defaultValues: {
       name: lesson?.name,
-      thumbnail: lesson?.thumbnail,
+      thumbnail: lesson?.thumbnail || "",
     },
   });
 
@@ -95,8 +96,8 @@ const LessonDetailsPage = () => {
     },
   });
 
-  const [lessonImageSrc, setLessonImageSrc] = useState<string | null>(
-    lesson?.thumbnail || DefaultLessonImage,
+  const [lessonImageSrc, setLessonImageSrc] = useState<string>(
+    lesson?.thumbnail || DefaultLessonThumbnail,
   );
 
   const lessonName = watch("name");
@@ -157,9 +158,9 @@ const LessonDetailsPage = () => {
       console.log("Lesson changes, reset form and lesson image src");
       resetLessonForm({
         name: lesson.name,
-        thumbnail: lesson.thumbnail,
+        thumbnail: lesson.thumbnail || "",
       });
-      setLessonImageSrc(lesson.thumbnail);
+      setLessonImageSrc(lesson.thumbnail || getLessonThumbnail(lesson));
     }
   }, [lesson, resetLessonForm]);
 
@@ -217,7 +218,11 @@ const LessonDetailsPage = () => {
                       gap={0.5}
                       labelColor="secondary.main"
                       padding="16.5px 14px"
-                      defaultFileSrc={lesson?.thumbnail}
+                      defaultFileSrc={
+                        lesson
+                          ? getLessonThumbnail(lesson)
+                          : DefaultLessonThumbnail
+                      }
                       iconButton={<AddPhotoAlternate />}
                       onChangeFile={(newFileSrc) =>
                         setLessonImageSrc(newFileSrc)

@@ -32,6 +32,7 @@ import { UserProgress } from "../types/UserProgress";
 import VocaSetRatingModal from "./VocaSetRatingModal";
 import { format } from "date-fns";
 import DefaultAvatar from "../../../assets/avatars/default.svg";
+import { getLessonThumbnail } from "../../../types/LessonModel";
 
 const LessonsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -124,7 +125,7 @@ const LessonsPage: React.FC = () => {
                         key={lesson.id}
                         id={lesson.id}
                         name={lesson.name}
-                        thumbnail={lesson.thumbnail}
+                        thumbnail={getLessonThumbnail(lesson)}
                         totalWords={lesson.listWord.length}
                         retainedWords={lesson.retainedWord}
                         reviewable={lesson.isLearned}
