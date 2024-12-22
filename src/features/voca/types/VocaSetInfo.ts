@@ -4,6 +4,6 @@ export default interface VocaSetInfo {
   qualification?: string;
   topic?: string;
   author?: string;
-  takenNumber: string;
+  takenNumber: number;
   image?: string;
 }

@@ -224,12 +224,14 @@ const UserHomePage = () => {
                     No practice history yet. Take your first test and track your
                     progress.
                   </Typography>
-                  <Button
-                    variant="contained"
-                    sx={{ boxShadow: "none", marginTop: 1 }}
-                  >
-                    Start Your First Practice Test
-                  </Button>
+                  <Link to="/exams">
+                    <Button
+                      variant="contained"
+                      sx={{ boxShadow: "none", marginTop: 1 }}
+                    >
+                      Start Your First Practice Test
+                    </Button>
+                  </Link>
                 </Box>
               )}
             </Stack>
@@ -295,7 +297,7 @@ const UserHomePage = () => {
                         id={vocab.groupTopic_id}
                         title={vocab.groupTopic_name}
                         qualification={vocab.groupTopic_level}
-                        takenNumber={vocab.userCount.toString()}
+                        takenNumber={vocab.userCount}
                         image={vocab.groupTopic_thumbnail}
                       />
                     </SwiperSlide>

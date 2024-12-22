@@ -13,7 +13,7 @@ export interface VocaSetProps {
   qualification?: string;
   topic?: string;
   author?: string;
-  takenNumber: string;
+  takenNumber: number;
   image?: string;
 }
 

@@ -29,3 +29,7 @@ export function canAccessAdminPage(user: User) {
     user.roles.includes(RoleEnum.Moderator)
   );
 }
+
+export function isAdmin(user: User) {
+  return user.roles.includes(RoleEnum.Admin);
+}

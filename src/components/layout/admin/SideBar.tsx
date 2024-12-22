@@ -4,10 +4,16 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logos/logo.svg";
 import LogoMini from "../../../assets/logos/logomini.png";
 import Link from "../../UI/Link";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores";
+import { AuthState } from "../../../stores/authSlice";
+import { isAdmin } from "../../../types/auth";
 
 const SideBar = (props: any) => {
   const { collapsed, toggled } = props;
   const navigate = useNavigate();
+  const { user } = useSelector<RootState, AuthState>((state) => state.auth);
+
   return (
     <Sidebar collapsed={collapsed} toggled={toggled}>
       <Box
@@ -48,9 +54,11 @@ const SideBar = (props: any) => {
         }}
       >
         <MenuItem onClick={() => navigate("/admin")}>Dashboard</MenuItem>
-        <Link to="/admin/account">
-          <MenuItem> Account </MenuItem>
-        </Link>
+        {user && isAdmin(user) && (
+          <Link to="/admin/account">
+            <MenuItem>Accounts</MenuItem>
+          </Link>
+        )}
         <SubMenu label="Exams">
           <MenuItem onClick={() => navigate("/admin/exam-set")}>
             {" "}
@@ -58,17 +66,14 @@ const SideBar = (props: any) => {
           </MenuItem>
           {/* <MenuItem onClick={() => navigate("/admin/exam")}>Exam</MenuItem> */}
         </SubMenu>
-        <SubMenu label="Vocabularies">
-          <MenuItem onClick={() => navigate("/admin/voca-set")}>
-            Voca sets
-          </MenuItem>
-          <MenuItem>Lessons</MenuItem>
-          <MenuItem>Vocabularies</MenuItem>
-        </SubMenu>
-        <MenuItem onClick={() => navigate("/admin/listen-group")}>
-          Listen Practice
+
+        <MenuItem onClick={() => navigate("/admin/voca-set")}>
+          Vocabularies
         </MenuItem>
-        <MenuItem> Account </MenuItem>
+
+        <MenuItem onClick={() => navigate("/admin/listen-group")}>
+          Listen Practices
+        </MenuItem>
       </Menu>
     </Sidebar>
   );

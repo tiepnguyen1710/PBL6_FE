@@ -479,7 +479,7 @@ const VocaSetDetailsPage = () => {
               id={formData.id}
               title={formData.name}
               author={"EngFlash"}
-              takenNumber="1.23m"
+              takenNumber={123}
               qualification={formData.level}
               image={fileSrc}
             />

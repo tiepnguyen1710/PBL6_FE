@@ -98,7 +98,7 @@ const VocaLibraryPage: React.FC = () => {
                     id: vocaSetModel.id,
                     title: vocaSetModel.name,
                     qualification: vocaSetModel.level,
-                    takenNumber: "0",
+                    takenNumber: vocaSetModel.userCount,
                     image: vocaSetModel.thumbnail,
                   };
 
