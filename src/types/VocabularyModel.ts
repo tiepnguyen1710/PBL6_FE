@@ -6,7 +6,7 @@ export default interface VocabularyModel {
   exampleAudio: string;
   exampleMeaning: string;
   pronunciation: string;
-  thumbnail: string;
+  thumbnail: string | null;
   translate: string;
   word: string;
   wordClass: VocabularyWordClass;
