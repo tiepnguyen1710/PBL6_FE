@@ -12,6 +12,7 @@ import { RootState } from "../../../stores";
 import { AuthState } from "../../../stores/authSlice";
 import PracticeHistoryTab from "./PracticeHistoryTab";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
+import StatisticalTab from "./StatisticalTab";
 
 const UserHistoryPage = () => {
   const { isAuthenticated, token } = useSelector<RootState, AuthState>(
@@ -86,7 +87,7 @@ const UserHistoryPage = () => {
               <PracticeHistoryTab />
             </TabPanel>
             <TabPanel value={tabIndex} index={1}>
-              Tab 2
+              <StatisticalTab />
             </TabPanel>
           </>
         </Paper>

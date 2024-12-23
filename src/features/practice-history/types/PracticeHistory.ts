@@ -1,7 +1,7 @@
 export interface PracticeHistory {
   id: string;
   time: number;
-  LCSCore: number;
+  LCScore: number;
   RCScore: number;
   isFullTest: boolean;
   totalQuestion: number;
