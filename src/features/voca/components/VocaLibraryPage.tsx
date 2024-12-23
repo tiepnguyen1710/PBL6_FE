@@ -1,50 +1,40 @@
-import { Box, Grid2, Tab, Tabs, Typography } from "@mui/material";
-import { useState } from "react";
+import { Box, Grid2, Pagination, Tab, Tabs, Typography } from "@mui/material";
+import { useCallback, useState } from "react";
 
 import Content from "../../../components/layout/Content";
 import VocaSet from "../../../components/VocaSet";
-import TabPanel from "../../../components/UI/TabPanel";
-import VocaSetInfo from "../types/VocaSetInfo";
 import SearchInput from "../../../components/UI/SearchInput";
-import { useQuery } from "@tanstack/react-query";
-import { getAllVocaSets } from "../../shared-apis/vocaset-api";
 import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 import Link from "../../../components/UI/Link";
+import usePaginatedVocaSets from "../../../hooks/usePaginatedVocaSets";
+import useDebounce from "../../../hooks/useDebounce";
+import { getTotalPages } from "../../../types/PaginatedData";
 
-const VOCA_TABS = [
-  {
-    index: 0,
-    qualification: "all",
-    label: "All",
-  },
-  {
-    index: 1,
-    qualification: "beginner",
-    label: "Beginner",
-  },
-  {
-    index: 2,
-    qualification: "intermediate",
-    label: "Intermediate",
-  },
-  {
-    index: 3,
-    qualification: "advanced",
-    label: "Advanced",
-  },
-];
+const VOCA_TAB_INDEX_2_LEVEL = ["all", "beginner", "intermediate", "advanced"];
 
 const VocaLibraryPage: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState<string>();
+  const [page, setPage] = useState(1);
 
-  const { data: vocaSetData, isLoading } = useQuery({
-    queryKey: ["vocaSet"],
-    queryFn: getAllVocaSets,
+  const resetPage = useCallback(() => setPage(1), [setPage]);
+  const debouncedSearchValue = useDebounce(searchValue, {
+    callbackFn: resetPage,
   });
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabIndex(newValue);
+  const filterLevel = VOCA_TAB_INDEX_2_LEVEL[tabIndex];
+
+  const { data: paginatedVocaSets, isLoading } = usePaginatedVocaSets({
+    page: page,
+    limit: 12,
+    search: debouncedSearchValue,
+    level: filterLevel,
+  });
+  const handleChangeTab = (
+    _event: React.SyntheticEvent,
+    newTabIndex: number,
+  ) => {
+    setTabIndex(newTabIndex);
   };
 
   const handleSearchInputChange = (
@@ -64,7 +54,7 @@ const VocaLibraryPage: React.FC = () => {
         <Box sx={{ position: "relative" }}>
           <Tabs
             value={tabIndex}
-            onChange={handleChange}
+            onChange={handleChangeTab}
             sx={{
               "& .MuiTab-root": { px: 0.75 },
               borderColor: "divider",
@@ -84,68 +74,40 @@ const VocaLibraryPage: React.FC = () => {
             <DotLoadingProgress />
           </Box>
         )}
-        {VOCA_TABS.map((tab) => (
-          <TabPanel
-            key={tab.index}
-            value={tabIndex}
-            index={tab.index}
-            sx={{ marginTop: 1 }}
-          >
-            <Grid2 container rowGap={1.5}>
-              {vocaSetData
-                ?.map((vocaSetModel) => {
-                  const vocaSetInfo: VocaSetInfo = {
-                    id: vocaSetModel.id,
-                    title: vocaSetModel.name,
-                    qualification: vocaSetModel.level,
-                    takenNumber: vocaSetModel.userCount,
-                    image: vocaSetModel.thumbnail,
-                  };
 
-                  return vocaSetInfo;
-                })
-                .filter((vocaSet: VocaSetInfo) => {
-                  const title = vocaSet.title.toLowerCase();
-                  const author = vocaSet.author?.toLowerCase();
-
-                  let isRendered = true;
-
-                  if (searchValue) {
-                    isRendered =
-                      author?.includes(searchValue) ||
-                      title.includes(searchValue);
-                  }
-
-                  if (tab.qualification !== "all") {
-                    isRendered &&= vocaSet.qualification === tab.qualification;
-                  }
-
-                  return isRendered;
-                })
-                .map((vocaSet: VocaSetInfo) => (
-                  <Grid2
-                    key={vocaSet.id}
-                    sx={{ width: "250px", marginRight: 1, display: "flex" }}
-                  >
-                    <Link
-                      to={`${vocaSet.id}/lessons`}
-                      style={{ display: "flex" }}
-                    >
-                      <VocaSet
-                        id={vocaSet.id}
-                        title={vocaSet.title}
-                        qualification={vocaSet.qualification}
-                        topic={vocaSet.topic}
-                        author={vocaSet.author}
-                        takenNumber={vocaSet.takenNumber}
-                        image={vocaSet.image}
-                      />
-                    </Link>
-                  </Grid2>
-                ))}
+        <Grid2 container rowGap={1.5} sx={{ marginTop: 1.5 }}>
+          {paginatedVocaSets?.data.map((vocaSet) => (
+            <Grid2
+              key={vocaSet.id}
+              sx={{ width: "250px", marginRight: 1, display: "flex" }}
+            >
+              <Link to={`${vocaSet.id}/lessons`} style={{ display: "flex" }}>
+                <VocaSet
+                  id={vocaSet.id}
+                  title={vocaSet.name}
+                  qualification={vocaSet.level}
+                  takenNumber={vocaSet.userCount}
+                  image={vocaSet.thumbnail}
+                />
+              </Link>
             </Grid2>
-          </TabPanel>
-        ))}
+          ))}
+        </Grid2>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 2,
+          }}
+        >
+          <Pagination
+            count={getTotalPages(paginatedVocaSets)}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            color="primary"
+          />
+        </Box>
       </Box>
     </Content>
   );

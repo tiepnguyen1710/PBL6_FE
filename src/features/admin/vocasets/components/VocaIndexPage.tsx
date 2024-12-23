@@ -38,14 +38,13 @@ import {
   fileList2Base64,
   getPlaceholderImage,
 } from "../../../../utils/helper.ts";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createVocaSet, deleteVocaSet } from "../api/voca-set-api.ts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import VocaSetModel from "../../../../types/VocaSetModel.ts";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop.tsx";
-import { getAllVocaSets } from "../../../shared-apis/vocaset-api.ts";
-import { GetVocaSetsRequest } from "../../../shared-apis/types/GetVocaSetsRequest.ts";
+import usePaginatedVocaSets from "../../../../hooks/usePaginatedVocaSets.ts";
 
 interface NewVocaSetFormData {
   name: string;
@@ -130,18 +129,11 @@ const VocaIndexPage: React.FC = () => {
     defaultValues: DEFAULT_FILTER_FORM_DATA,
   });
 
-  const { data: paginatedVocaSets, isLoading } = useQuery({
-    queryKey: [
-      "vocaSet",
-      {
-        page: page,
-        limit: VOCASET_PAGE_SIZE,
-        search: filterName,
-        level: filterLevel,
-      },
-    ],
-    queryFn: ({ queryKey: request }) =>
-      getAllVocaSets(request[1] as GetVocaSetsRequest),
+  const { data: paginatedVocaSets, isLoading } = usePaginatedVocaSets({
+    page: page,
+    limit: VOCASET_PAGE_SIZE,
+    search: filterName,
+    level: filterLevel,
   });
 
   const deleteVocaSetMutation = useMutation({

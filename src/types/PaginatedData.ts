@@ -10,3 +10,10 @@ export interface PageDataRequest {
   page: number;
   limit: number;
 }
+
+export function getTotalPages(data?: PaginatedData<unknown>) {
+  if (!data) {
+    return 0;
+  }
+  return Math.ceil(data.total / data.limit);
+}
