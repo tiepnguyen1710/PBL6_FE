@@ -9,7 +9,7 @@ export default interface VocaSetModel {
   description: string;
 
   topics: LessonModel[];
-  topicCount: number;
+  topicsCount: number;
   userCount: number;
 }
 

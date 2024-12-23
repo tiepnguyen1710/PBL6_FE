@@ -15,14 +15,13 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import RoundedInput from "../../../../components/UI/RoundedInput";
 import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import VocaSetRow from "./VocaSetRow";
 import AdminTableContainer from "./AdminTableContainer";
-import useAdminTablePagination from "../../hooks/useAdminTablePagination.ts";
 import {
   Add,
   AddPhotoAlternate,
@@ -46,6 +45,7 @@ import { useNavigate } from "react-router-dom";
 import VocaSetModel from "../../../../types/VocaSetModel.ts";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop.tsx";
 import { getAllVocaSets } from "../../../shared-apis/vocaset-api.ts";
+import { GetVocaSetsRequest } from "../../../shared-apis/types/GetVocaSetsRequest.ts";
 
 interface NewVocaSetFormData {
   name: string;
@@ -54,8 +54,8 @@ interface NewVocaSetFormData {
 }
 
 interface VocaSetFilterFormData {
-  filterName: string;
-  filterLevel: string;
+  filterNameInput: string;
+  filterLevelInput: string;
 }
 
 const newVocaSetRules = {
@@ -71,8 +71,8 @@ const newVocaSetRules = {
 };
 
 const DEFAULT_FILTER_FORM_DATA: VocaSetFilterFormData = {
-  filterName: "",
-  filterLevel: "all",
+  filterNameInput: "",
+  filterLevelInput: "all",
 };
 
 const VOCASET_PAGE_SIZE = 5;
@@ -118,21 +118,9 @@ const VocaIndexPage: React.FC = () => {
     },
   });
 
-  const { data: vocaSetData, isLoading } = useQuery({
-    queryKey: ["vocaSet"],
-    queryFn: getAllVocaSets,
-  });
-
-  const [vocaSets, setVocaSets] = useState<VocaSetModel[] | null>();
-
-  const {
-    page,
-    setPage,
-    emptyRows,
-    pageData,
-    handleChangePage,
-    invalidatePage,
-  } = useAdminTablePagination<VocaSetModel>(vocaSets || [], VOCASET_PAGE_SIZE);
+  const [page, setPage] = useState(1);
+  const [filterName, setFilterName] = useState<string>();
+  const [filterLevel, setFilterLevel] = useState<string>();
 
   const {
     reset: resetFilterForm,
@@ -142,13 +130,35 @@ const VocaIndexPage: React.FC = () => {
     defaultValues: DEFAULT_FILTER_FORM_DATA,
   });
 
+  const { data: paginatedVocaSets, isLoading } = useQuery({
+    queryKey: [
+      "vocaSet",
+      {
+        page: page,
+        limit: VOCASET_PAGE_SIZE,
+        search: filterName,
+        level: filterLevel,
+      },
+    ],
+    queryFn: ({ queryKey: request }) =>
+      getAllVocaSets(request[1] as GetVocaSetsRequest),
+  });
+
   const deleteVocaSetMutation = useMutation({
     mutationFn: deleteVocaSet,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vocaSet"] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "vocaSet",
+          {
+            page: page,
+            limit: VOCASET_PAGE_SIZE,
+            search: filterName,
+            level: filterLevel,
+          },
+        ],
+      });
       toast.success("Delete vocabulary set successfully!");
-
-      invalidatePage(vocaSets!.length - 1);
     },
     onSettled: () => {
       // reset state
@@ -157,14 +167,8 @@ const VocaIndexPage: React.FC = () => {
     },
   });
 
-  useEffect(() => {
-    setVocaSets(vocaSetData);
-  }, [vocaSetData]);
-
   const handleCreateVocaSet = async (data: NewVocaSetFormData) => {
-    console.log("Submit new voca set");
     data.thumbnail = await fileList2Base64(data.thumbnail as FileList);
-    console.log(data);
 
     mutate(data);
   };
@@ -172,24 +176,22 @@ const VocaIndexPage: React.FC = () => {
   const handleFilterTable: SubmitHandler<VocaSetFilterFormData> = (
     formData,
   ) => {
-    const { filterName, filterLevel } = formData;
+    const { filterNameInput, filterLevelInput } = formData;
 
-    const filteredData = vocaSetData?.filter(
-      (vocaSet) =>
-        (filterName === "" ||
-          vocaSet.name.toLowerCase().includes(filterName.toLowerCase())) &&
-        (filterLevel === "all" || vocaSet.level === filterLevel),
-    );
+    setFilterName(filterNameInput);
+    setFilterLevel(filterLevelInput === "all" ? undefined : filterLevelInput);
 
-    setVocaSets(filteredData);
-    setPage(0);
+    setPage(1);
   };
 
   const handleResetFilter = () => {
-    setVocaSets(vocaSetData);
-    setPage(0);
+    setPage(1);
 
     resetFilterForm(DEFAULT_FILTER_FORM_DATA);
+
+    // Reset filter state to trigger re-fetch data
+    setFilterName(undefined);
+    setFilterLevel(undefined);
   };
 
   const handleDeleteVocaSet = () => {
@@ -226,7 +228,7 @@ const VocaIndexPage: React.FC = () => {
           <Grid2 spacing={1} container sx={{ maxWidth: "900px" }}>
             <Grid2 size={5}>
               <Controller
-                name="filterName"
+                name="filterNameInput"
                 control={control}
                 render={({ field }) => (
                   <RoundedInput
@@ -243,7 +245,7 @@ const VocaIndexPage: React.FC = () => {
             </Grid2>
             <Grid2 size={3}>
               <Controller
-                name="filterLevel"
+                name="filterLevelInput"
                 control={control}
                 render={({ field }) => (
                   <BootstrapSelect
@@ -297,14 +299,14 @@ const VocaIndexPage: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {pageData.map((vocaSet: VocaSetModel) => (
+                {paginatedVocaSets?.data.map((vocaSet: VocaSetModel) => (
                   <VocaSetRow
                     key={vocaSet.id}
                     vocaSet={vocaSet}
                     onDelete={() => setDeletedVocaSet(vocaSet.id)}
                   />
                 ))}
-                {emptyRows > 0 && (
+                {/* {emptyRows > 0 && (
                   <TableRow
                     style={{
                       height: 106 * emptyRows,
@@ -313,16 +315,16 @@ const VocaIndexPage: React.FC = () => {
                   >
                     <TableCell colSpan={7} />
                   </TableRow>
-                )}
+                )} */}
               </TableBody>
               <TableFooter>
                 <TableRow>
                   <TablePagination
                     rowsPerPageOptions={[VOCASET_PAGE_SIZE]}
-                    count={vocaSets?.length || 0}
+                    count={paginatedVocaSets?.total || 0}
                     rowsPerPage={VOCASET_PAGE_SIZE}
-                    page={page}
-                    onPageChange={handleChangePage}
+                    page={page - 1} // Mui uses 0-based index
+                    onPageChange={(_event, newPage) => setPage(newPage + 1)}
                     ActionsComponent={TablePaginationActions}
                   />
                 </TableRow>
