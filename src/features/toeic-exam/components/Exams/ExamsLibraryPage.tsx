@@ -50,6 +50,7 @@ const ExamsLibraryPage = () => {
   const handleTagClick = (tag: Tag) => {
     setSelectedTag(tag);
     setSearchParams(tag.id !== "" ? { tag_id: tag.id } : {});
+    setPage(0);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
