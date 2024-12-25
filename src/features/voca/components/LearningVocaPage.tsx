@@ -18,6 +18,7 @@ import CuteButton from "./CuteButton.tsx";
 import PinIcon from "./PinIcon.tsx";
 import NewWordFolderModal from "./NewFolderModal.tsx";
 import PinWordModalModal from "./PinWordModal.tsx";
+import { getWordThumbnail } from "../../../utils/helper.ts";
 
 const LearningVocaPage: React.FC = () => {
   const navigate = useNavigate();
@@ -180,7 +181,7 @@ const LearningVocaPage: React.FC = () => {
                 exampleMeaning: voca.exampleMeaning,
                 meaning: voca.translate,
                 phonetic: voca.pronunciation,
-                image: voca.thumbnail,
+                image: getWordThumbnail(voca),
                 phoneticAudio: voca.audio,
                 exampleAudio: voca.exampleAudio,
               };

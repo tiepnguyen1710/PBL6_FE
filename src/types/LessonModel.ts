@@ -19,7 +19,7 @@ export function getLessonThumbnail(lesson: LessonModel): string {
     return lesson.thumbnail;
   }
 
-  let thumbnail = "";
+  let thumbnail = null;
   if (lesson.listWord.length > 1) {
     thumbnail = lesson.listWord[0].thumbnail;
   }

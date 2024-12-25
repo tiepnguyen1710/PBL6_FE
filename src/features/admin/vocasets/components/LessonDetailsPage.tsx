@@ -35,6 +35,7 @@ import UpdateLessonRequest from "../types/UpdateLessonRequest";
 import { toast } from "react-toastify";
 import {
   fileList2Base64,
+  getWordThumbnail,
   vocaWordClassFullName2Abbr,
 } from "../../../../utils/helper";
 import queryClient from "../../../../queryClient";
@@ -303,7 +304,7 @@ const LessonDetailsPage = () => {
                     </TableCell>
                     <TableCell align="center">
                       <Image
-                        src={voca.thumbnail}
+                        src={getWordThumbnail(voca)}
                         sx={{
                           width: "80px",
                           height: "80px",
