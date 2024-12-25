@@ -14,6 +14,7 @@ import { countTotalQuestions } from "../../utils/helper";
 import { resetAnswers } from "../../../../stores/userAnswer";
 import { clearSelectedParts } from "../../../../stores/selectedPartsSlice";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
+import ConfirmDrawer from "./ConfirmDrawer";
 
 interface PartDataProps {
   partData: partData[];
@@ -21,6 +22,7 @@ interface PartDataProps {
 }
 const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
   console.log("submit box", partData);
+  const [openComfirm, setOpenConfirm] = useState<boolean>(false);
   const [partDataChosen, setPartDataChosen] = useState<partData[]>([]);
   const dispatch = useDispatch();
   const limitTime = useSelector(
@@ -76,6 +78,7 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
       // queryClient.setQueryData(
       //   responseData,
       // );
+      setOpenConfirm(false);
       toast.success("Submit succesfully");
     },
     onError: (error) => {
@@ -83,6 +86,10 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
       toast.error("Failed to submit");
     },
   });
+
+  const handleButtonSubmit = () => {
+    setOpenConfirm(true);
+  };
 
   const handleSubmit = useCallback(() => {
     const remainingTime = timerCountDownRef.current?.submit() || 0;
@@ -132,7 +139,7 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
                   background: "var(--color-primary-main)",
                 },
               }}
-              onClick={handleSubmit}
+              onClick={handleButtonSubmit}
             >
               Submit
             </Button>
@@ -145,6 +152,11 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
           </Box>
         </>
       )}
+      <ConfirmDrawer
+        openConfirm={openComfirm}
+        setOpenConfirm={setOpenConfirm}
+        handleSubmit={handleSubmit}
+      />
     </>
   );
 };

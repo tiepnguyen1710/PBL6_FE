@@ -24,6 +24,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
         sx={{ width: "100%" }}
         value={text}
         onChange={(e) => setText(e.target.value)}
+        placeholder="Write your comment..."
       />
       <Button
         variant="contained"
