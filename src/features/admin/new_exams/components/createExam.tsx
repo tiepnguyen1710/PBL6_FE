@@ -27,6 +27,7 @@ import NewExamRequest from "../types/NewExamRequest";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import { convertExamResponse } from "../utils/helper";
 import TagSelect from "./TagSelect";
+import CreatePart7 from "./CreatePart7";
 
 export default function CreateExam() {
   const navigate = useNavigate();
@@ -346,11 +347,11 @@ export default function CreateExam() {
               <Typography>Part 7</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
+              <CreatePart7
+                updateExamData={updateExamData}
+                isUpdate={isUpdate}
+                examData={examData.partData[6].groupQuestionData}
+              />
             </AccordionDetails>
           </Accordion>
         </Stack>

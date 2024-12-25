@@ -179,12 +179,10 @@ const Part6: React.FC<Part6Props> = ({
         variant="body1"
         sx={{ mb: 2, fontWeight: "500", padding: "0 20px" }}
       >
-        Directions: For each question in this part, you will hear four
-        statements about a picture in your test book. When you hear the
-        statements, you must select the one statement that best describes what
-        you see in the picture. Then find the number of the question and mark
-        your answer. The statements will not be printed in your test book and
-        will be spoken only one time.
+        Directions: Read the texts that follow. A word, phrase, or sentence is
+        missing in parts of each text. Four answer choices for each question are
+        given below the text. Select the best answer to complete the text. Then
+        mark the letter (A), (B), (C) or (D) on your answer sheet.
       </Typography>
 
       {/* Group Questions */}

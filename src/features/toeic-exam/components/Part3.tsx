@@ -178,12 +178,11 @@ const Part3: React.FC<Part3Props> = ({
         variant="body1"
         sx={{ mb: 2, fontWeight: "500", padding: "0 20px" }}
       >
-        Directions: For each question in this part, you will hear four
-        statements about a picture in your test book. When you hear the
-        statements, you must select the one statement that best describes what
-        you see in the picture. Then find the number of the question and mark
-        your answer. The statements will not be printed in your test book and
-        will be spoken only one time.
+        Directions: In this part, you will listen to several conversations
+        between two or more speakers. These conversations will not be printed
+        and will only be spoken one time. For each conversation, you will be
+        asked to answer three questions. Select the best response and mark the
+        corresponding letter (A), (B), (C), or (D) on your answer sheet.
       </Typography>
 
       {/* Group Questions */}

@@ -88,5 +88,8 @@ export const TOEIC_PARTS = {
   },
   Part7: {
     questionCount: 54,
+    answerCount: 4,
+    groupQuestion: 15,
+    start: 147,
   },
 };

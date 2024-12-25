@@ -1,5 +1,5 @@
 import { ExamResponse, groupQuestionResponse } from "../types/ExamResponse";
-import { groupQuestionData } from "../types/examType";
+import { groupQuestionData, TOEIC_PARTS } from "../types/examType";
 import NewExamRequest from "../types/NewExamRequest";
 
 export const convertExamData = (data: groupQuestionData[]) => {
@@ -74,4 +74,27 @@ export const convertExamResponse = (data: ExamResponse) => {
   });
 
   return result;
+};
+
+export const generatePart7Labels = (start: number) => {
+  const labels: string[] = [];
+  let currentStart = start;
+
+  [
+    { groupCount: 4, questionPerGroup: 2 },
+    { groupCount: 2, questionPerGroup: 3 },
+    { groupCount: 1, questionPerGroup: 4 },
+    { groupCount: 1, questionPerGroup: 3 },
+    { groupCount: 2, questionPerGroup: 4 },
+    { groupCount: 5, questionPerGroup: 5 },
+  ].forEach(({ groupCount, questionPerGroup }) => {
+    for (let i = 0; i < groupCount; i++) {
+      const labelStart = currentStart;
+      const labelEnd = currentStart + questionPerGroup - 1;
+      labels.push(`Question ${labelStart} to ${labelEnd}`);
+      currentStart = labelEnd + 1; // Cập nhật điểm bắt đầu cho nhóm tiếp theo
+    }
+  });
+
+  return labels;
 };

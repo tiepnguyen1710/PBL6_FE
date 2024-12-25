@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid2 } from "@mui/material";
+import { Box, Button, Container, Grid2, Stack } from "@mui/material";
 import Content from "../../../components/layout/Content";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -15,8 +15,23 @@ import Part6 from "./Part6";
 import Part7 from "./Part7";
 import DotLoadingProgress from "../../../components/UI/DotLoadingProgress";
 import { QuestionProvider } from "./QuestionProvider";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import NavigationIcon from "@mui/icons-material/Navigation";
 
 const PartResultIndex = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      setIsVisible(scrollTop > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const routeParams = useParams<{ reviewId: string }>();
   const reviewId = routeParams.reviewId;
@@ -78,15 +93,73 @@ const PartResultIndex = () => {
                     <DotLoadingProgress />
                   </Box>
                 ) : (
-                  <Box
-                    sx={{
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                      borderRadius: 3,
-                    }}
-                    padding={3}
-                  >
-                    {renderPart()}
-                  </Box>
+                  <Stack direction={"column"} gap={1}>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        borderRadius: 3,
+                        height: 65,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 1,
+                        padding: "0 20px",
+                      }}
+                    >
+                      <Stack direction={"row"} gap={0.5}>
+                        <Button
+                          variant="text"
+                          disabled={currentIndex === 0}
+                          onClick={handlePrevious}
+                          sx={{
+                            borderRadius: 3,
+                          }}
+                        >
+                          <ArrowBackIosIcon />
+                        </Button>
+                        {selectedParts.map((part, partIndex) => {
+                          return (
+                            <Button
+                              variant={
+                                currentIndex === partIndex
+                                  ? "contained"
+                                  : "outlined"
+                              }
+                              size="small"
+                              sx={{
+                                borderRadius: 3,
+                                padding: "0 18px",
+                              }}
+                              onClick={() => setCurrentIndex(partIndex)}
+                            >
+                              {part}
+                            </Button>
+                          );
+                        })}
+                      </Stack>
+
+                      <Button
+                        variant="text"
+                        disabled={currentIndex === selectedParts.length - 1}
+                        onClick={handleNext}
+                        sx={{
+                          borderRadius: 3,
+                        }}
+                      >
+                        <ArrowForwardIosIcon />
+                      </Button>
+                    </Box>
+                    <Box
+                      sx={{
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        borderRadius: 3,
+                      }}
+                      padding={3}
+                    >
+                      {renderPart()}
+                    </Box>
+                  </Stack>
                 )}
               </Grid2>
               <Grid2 size={2.5}>
@@ -103,26 +176,21 @@ const PartResultIndex = () => {
               </Grid2>
             </Grid2>
           </Box>
-
-          <div style={{ margin: "1rem" }}>
-            <Button
-              variant="outlined"
-              disabled={currentIndex === 0}
-              onClick={handlePrevious}
-              sx={{ marginRight: 1 }}
-            >
-              Back
-            </Button>
-            <Button
-              variant="contained"
-              disabled={currentIndex === selectedParts.length - 1}
-              onClick={handleNext}
-            >
-              Next
-            </Button>
-          </div>
         </QuestionProvider>
       </Container>
+      {isVisible && (
+        <div
+          style={{
+            padding: 0,
+            position: "sticky",
+            bottom: "5px",
+            right: "15px",
+          }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <NavigationIcon color="primary" />
+        </div>
+      )}
     </Content>
   );
 };

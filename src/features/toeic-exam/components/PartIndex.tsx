@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid2 } from "@mui/material";
+import { Box, Button, Container, Grid2, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import Part1 from "./Part1";
@@ -18,8 +18,23 @@ import { QuestionProvider } from "./QuestionProvider";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../stores";
 import { setNotedQuestion } from "../../../stores/notedQuestionSlice";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import NavigationIcon from "@mui/icons-material/Navigation";
 
 const PartIndex = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      setIsVisible(scrollTop > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   const [searchParams] = useSearchParams();
   const parts = searchParams.getAll("part");
   const isFullTest = parts.includes("full");
@@ -139,7 +154,13 @@ const PartIndex = () => {
           />
         );
       case "part7":
-        return <Part7 partData={examData?.partData[6]} />;
+        return (
+          <Part7
+            partData={examData?.partData[6]}
+            handleNotedQuestion={handleNotedQuestion}
+            isNotedQuestion={isNotedQuestion}
+          />
+        );
       default:
         return <div>Cannot find this part</div>;
     }
@@ -149,36 +170,78 @@ const PartIndex = () => {
       <Container maxWidth="sm">
         <QuestionProvider>
           <Box my={2}>
-            {selectedParts.map((part, partIndex) => {
-              return (
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    borderRadius: 3,
-                    marginRight: 0.25,
-                    marginBottom: 0.25,
-                  }}
-                  onClick={() => setCurrentIndex(partIndex)}
-                >
-                  {part}
-                </Button>
-              );
-            })}
             <Grid2 container spacing={2}>
               <Grid2 size={9.5}>
                 {isPending ? (
                   "...Loading"
                 ) : (
-                  <Box
-                    sx={{
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                      borderRadius: 3,
-                    }}
-                    padding={3}
-                  >
-                    {renderPart()}
-                  </Box>
+                  <Stack direction={"column"} gap={1}>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        borderRadius: 3,
+                        height: 65,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 1,
+                        padding: "0 20px",
+                      }}
+                    >
+                      <Stack direction={"row"} gap={0.5}>
+                        <Button
+                          variant="text"
+                          disabled={currentIndex === 0}
+                          onClick={handlePrevious}
+                          sx={{
+                            borderRadius: 3,
+                          }}
+                        >
+                          <ArrowBackIosIcon />
+                        </Button>
+                        {selectedParts.map((part, partIndex) => {
+                          return (
+                            <Button
+                              variant={
+                                currentIndex === partIndex
+                                  ? "contained"
+                                  : "outlined"
+                              }
+                              size="small"
+                              sx={{
+                                borderRadius: 3,
+                                padding: "0 18px",
+                              }}
+                              onClick={() => setCurrentIndex(partIndex)}
+                            >
+                              {part}
+                            </Button>
+                          );
+                        })}
+                      </Stack>
+
+                      <Button
+                        variant="text"
+                        disabled={currentIndex === selectedParts.length - 1}
+                        onClick={handleNext}
+                        sx={{
+                          borderRadius: 3,
+                        }}
+                      >
+                        <ArrowForwardIosIcon />
+                      </Button>
+                    </Box>
+                    <Box
+                      sx={{
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        borderRadius: 3,
+                      }}
+                      padding={3}
+                    >
+                      {renderPart()}
+                    </Box>
+                  </Stack>
                 )}
               </Grid2>
               <Grid2 size={2.5}>
@@ -200,26 +263,21 @@ const PartIndex = () => {
               </Grid2>
             </Grid2>
           </Box>
-
-          <div style={{ margin: "1rem 0", float: "left" }}>
-            <Button
-              variant="outlined"
-              disabled={currentIndex === 0}
-              onClick={handlePrevious}
-              sx={{ marginRight: 1 }}
-            >
-              Back
-            </Button>
-            <Button
-              variant="contained"
-              disabled={currentIndex === selectedParts.length - 1}
-              onClick={handleNext}
-            >
-              Next
-            </Button>
-          </div>
         </QuestionProvider>
       </Container>
+      {isVisible && (
+        <div
+          style={{
+            padding: 0,
+            position: "sticky",
+            bottom: "5px",
+            right: "15px",
+          }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <NavigationIcon color="primary" />
+        </div>
+      )}
     </Content>
   );
 };
