@@ -43,7 +43,6 @@ const VocabularyCardWrapper: React.FC<{
         height: "240px",
         borderRadius: "10px",
         borderWidth: "2px",
-        cursor: "pointer",
         // backgroundColor: "white",
         position: "relative",
         ...sx,

@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 interface VocabularyCardProps {
   word: string;
   phonetic: string;
-  thumbnail: string;
+  thumbnail: string | null;
   type: string;
   meaning: string;
   state?: VocabularyCardState;
   audio?: string;
   onDelete?: () => void;
+  onEdit?: () => void;
 }
 
 export enum VocabularyCardState {
@@ -30,6 +31,7 @@ const VocabularyCard: React.FC<VocabularyCardProps> = ({
   state,
   audio,
   onDelete,
+  onEdit,
 }) => {
   const [flip, setFlip] = useState(false);
 
@@ -71,6 +73,7 @@ const VocabularyCard: React.FC<VocabularyCardProps> = ({
             phonetic={phonetic || ""}
             image={thumbnail}
             onClose={onDelete}
+            onEdit={onEdit}
           />
         </VocabularyCardWrapper>
         <VocabularyCardWrapper
