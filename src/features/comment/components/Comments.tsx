@@ -17,7 +17,7 @@ export interface IActiveComment {
 }
 const Comments: React.FC<CommentsProps> = ({ examId }) => {
   //const [BackendComments, setBackendComments] = useState<IComment[]>();
-  const [activeComment, setActiveComment] = useState<IActiveComment>();
+  const [activeComment, setActiveComment] = useState<IActiveComment | null>();
 
   const {
     data: Comments,
@@ -40,6 +40,7 @@ const Comments: React.FC<CommentsProps> = ({ examId }) => {
     onSuccess: (responseData) => {
       console.log("create comment", responseData);
       refetch();
+      setActiveComment(null);
     },
     onError: (error) => {
       console.error("Post failed:", error);
@@ -51,8 +52,8 @@ const Comments: React.FC<CommentsProps> = ({ examId }) => {
     parentId: string | null = null,
   ) => {
     const newComment = {
-      idTest: examId ?? "",
-      parentCommentId: parentId,
+      idTest: parentId === null ? (examId ?? "") : undefined,
+      idComment: parentId,
       content: content,
     };
     mutation.mutate(newComment);
@@ -64,7 +65,9 @@ const Comments: React.FC<CommentsProps> = ({ examId }) => {
   // }, [Comments]);
   return (
     <>
-      <Typography mb={1}>Comment</Typography>
+      <Typography variant="h5" mb={1}>
+        Comment
+      </Typography>
       <Box>
         {isPending ? (
           "Loading..."
@@ -82,7 +85,7 @@ const Comments: React.FC<CommentsProps> = ({ examId }) => {
                 />
               ))
             ) : (
-              <Typography>No comments available</Typography>
+              <Typography>No comments </Typography>
             )}
           </>
         )}

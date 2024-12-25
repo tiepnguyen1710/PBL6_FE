@@ -17,8 +17,8 @@ export interface IComment {
 }
 
 export interface ISingleComment {
-  idTest: string;
+  idTest?: string;
   questionId?: string;
-  parentCommentId: string | null;
+  idComment: string | null;
   content: string;
 }

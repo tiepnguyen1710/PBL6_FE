@@ -2,11 +2,12 @@ import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { IComment } from "../types/IComment";
 import dayjs from "dayjs";
 import { IActiveComment } from "./Comments";
+import CommentForm from "./CommentForm";
 
 interface CommentProps {
   comment: IComment;
-  activeComment?: IActiveComment;
-  setActiveComment: (v: IActiveComment) => void;
+  activeComment?: IActiveComment | null;
+  setActiveComment: (v: IActiveComment | null) => void;
   addComment: (text: string, parentId: string | null) => void;
 }
 
@@ -16,10 +17,13 @@ const Comment: React.FC<CommentProps> = ({
   setActiveComment,
   addComment,
 }) => {
-  // const isReplying =
-  //   activeComment &&
-  //   activeComment.id === comment.id &&
-  //   activeComment.type === "Replying";
+  const isReplying =
+    activeComment &&
+    activeComment.id === comment.id &&
+    activeComment.type === "Replying";
+  {
+    console.log("subcomment", comment.subComment);
+  }
   return (
     <>
       <Box mb={1}>
@@ -43,25 +47,27 @@ const Comment: React.FC<CommentProps> = ({
             >
               Reply
             </Typography>
-            {/* {isReplying && (
+            {isReplying && (
               <CommentForm
                 submitLabel="Reply"
                 handleSubmit={(text) => addComment(text, comment.id)}
               />
-            )} */}
+            )}
           </Box>
         </Stack>
-        {comment.subComment.length > 0 &&
-          comment.subComment.map((sub) => {
-            return (
-              <Comment
-                comment={sub}
-                setActiveComment={setActiveComment}
-                activeComment={activeComment}
-                addComment={addComment}
-              />
-            );
-          })}
+        <Box ml={3.5} mt={0.5}>
+          {comment.subComment.length > 0 &&
+            comment.subComment.map((sub) => {
+              return (
+                <Comment
+                  comment={sub}
+                  setActiveComment={setActiveComment}
+                  activeComment={activeComment}
+                  addComment={addComment}
+                />
+              );
+            })}
+        </Box>
       </Box>
     </>
   );

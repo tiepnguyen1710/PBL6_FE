@@ -18,9 +18,10 @@ const CommentForm: React.FC<CommentFormProps> = ({
     setText("");
   };
   return (
-    <Stack direction="row" gap={1}>
+    <Stack direction="row" gap={1} mb={1}>
       <TextField
         size="small"
+        sx={{ width: "100%" }}
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
