@@ -17,6 +17,7 @@ import VocabularyBackSide from "../../../../components/VocabularyBackSide";
 import {
   fileList2Base64,
   getPlaceholderImage,
+  getWordThumbnail,
   hasFileData,
   isValidVocaWordClass,
   mustBeAudioIfExistValue,
@@ -134,6 +135,12 @@ const VocabularyDetailsPage = () => {
       toast.success("Create vocabulary successfully");
       navigate("/admin/voca?id=" + responseData.id);
     },
+    onError: (error) => {
+      toast.error(error.message || "Create vocabulary failed");
+    },
+    onSettled: () => {
+      createMutation.reset();
+    },
   });
 
   const updateMutation = useMutation({
@@ -141,6 +148,13 @@ const VocabularyDetailsPage = () => {
     onSuccess: (reponseData: VocabularyModel) => {
       toast.success("Update vocabulary successfully");
       queryClient.setQueryData(["voca", { id: vocaId }], reponseData);
+    },
+    onError: (error: { message: string | string[] }) => {
+      let errorMessage = "Update vocabulary failed";
+      if (error.message instanceof Array) {
+        errorMessage = error.message[0];
+      }
+      toast.error(errorMessage);
     },
   });
 
@@ -156,8 +170,6 @@ const VocabularyDetailsPage = () => {
     phoneticAudioSrc: voca?.audio || "",
     exampleAudioSrc: voca?.exampleAudio || "",
   });
-
-  console.log("Validation errors:", errors);
 
   const handleSaveForm: SubmitHandler<VocaFormData> = async (data) => {
     console.log("Form data:", data);
@@ -231,7 +243,7 @@ const VocabularyDetailsPage = () => {
       });
 
       setMediaInput({
-        imageSrc: voca.thumbnail,
+        imageSrc: getWordThumbnail(voca),
         phoneticAudioSrc: voca.audio,
         exampleAudioSrc: voca.exampleAudio,
       });
@@ -328,7 +340,7 @@ const VocabularyDetailsPage = () => {
                     gap={0.5}
                     padding="16.5px 14px"
                     iconButton={<AddPhotoAlternate />}
-                    defaultFileSrc={voca?.thumbnail}
+                    defaultFileSrc={voca?.thumbnail as string} // update/create voca at admin cannot be null
                     onChangeFile={(newFileSrc) =>
                       handleChangeMediaInput("imageSrc", newFileSrc)
                     }

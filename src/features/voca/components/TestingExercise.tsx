@@ -14,6 +14,7 @@ import { Image } from "../../../components/UI/Image";
 import RightAnswerGif from "../assets/right-answer.gif";
 import PhoneticAudioQuestionSlide from "./PhoneticAudioQuestionSlide";
 import { motion } from "framer-motion";
+import DefaultVocaThumbnail from "../../../assets/images/voca/default-voca-image.jpg";
 
 interface TestingExerciseProps {
   exercise: Exercise;
@@ -162,7 +163,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
                 audio={mainVoca.audio}
                 meaning={mainVoca.translate}
                 phonetic={mainVoca.pronunciation}
-                thumbnail={mainVoca.thumbnail}
+                thumbnail={mainVoca.thumbnail || DefaultVocaThumbnail}
                 playAudio={hasAnswered}
                 audioDelay={500}
               />

@@ -25,7 +25,7 @@ const VocaSearching: React.FC<VocaSearchingProps> = ({
   const anchorEle = useRef<HTMLDivElement>(null);
 
   const [wordInput, setWordInput] = useState("");
-  const wordInputDebounce = useDebounce(wordInput, 400);
+  const wordInputDebounce = useDebounce(wordInput, { delay: 400 });
 
   const openPopup = wordInput !== "";
 

@@ -27,6 +27,8 @@ import PinNewWordToExistingFolderRequest from "../types/PinNewWordToExistingFold
 import { WordItem } from "../../../types/voca-search";
 import { vocaWordClassAbrr2FullName } from "../../../utils/helper";
 import CustomModal from "../../../components/UI/CustomModal";
+import EditFlashCardModal from "./EditFlashCardModal";
+import VocabularyModel from "../../../types/VocabularyModel";
 
 const FolderDetailsPage = () => {
   const navigate = useNavigate();
@@ -41,6 +43,7 @@ const FolderDetailsPage = () => {
 
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [deletedVocaId, setDeletedVocaId] = useState<string | null>(null);
+  const [editedVocaId, setEditedVocaId] = useState<string | null>(null);
 
   const pinNewWordMutation = useMutation({
     mutationFn: pinNewWordToExistingFolder,
@@ -100,6 +103,14 @@ const FolderDetailsPage = () => {
     }
 
     unpinWordMutation.mutate({ folderId, vocaId: deletedVocaId });
+  };
+
+  const handleUpdatedFlashCard = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["userFolders", { id: folderId }],
+    });
+    // Then close the modal
+    setEditedVocaId(null);
   };
 
   if (!folderId) {
@@ -188,6 +199,7 @@ const FolderDetailsPage = () => {
             vocabularies={folder?.words || []}
             status={VocabularyCardState.DEFAULT}
             onCloseWordCard={(vocaId: string) => setDeletedVocaId(vocaId)}
+            onEditWordCard={(vocaId: string) => setEditedVocaId(vocaId)}
           />
 
           {folder?.words.length == 0 && (
@@ -248,6 +260,18 @@ const FolderDetailsPage = () => {
           </Stack>
         </Box>
       </CustomModal>
+
+      {editedVocaId && folder && (
+        <EditFlashCardModal
+          key={editedVocaId}
+          open={editedVocaId != null}
+          onClose={() => setEditedVocaId(null)}
+          onFlashCardUpdated={handleUpdatedFlashCard}
+          voca={
+            folder.words.find((v) => v.id === editedVocaId) as VocabularyModel
+          }
+        />
+      )}
     </Content>
   );
 };

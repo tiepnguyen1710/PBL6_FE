@@ -46,7 +46,7 @@ const VocaSetRow: React.FC<{
         {capitalizeFirstLetter(vocaSet.level)}
       </TableCell>
       <TableCell align="center">{vocaSet?.userCount}</TableCell>
-      <TableCell align="center">{vocaSet?.topicCount}</TableCell>
+      <TableCell align="center">{vocaSet?.topicsCount}</TableCell>
       <TableCell
         onClick={handleClick}
         align="center"

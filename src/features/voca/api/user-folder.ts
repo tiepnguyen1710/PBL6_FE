@@ -1,9 +1,11 @@
 import axiosClient from "../../../axios";
 import { UserFolder } from "../../../types/user-folder";
+import VocabularyModel from "../../../types/VocabularyModel";
 import PinNewWordToExistingFolderRequest from "../types/PinNewWordToExistingFolderRequest";
 import {
   NewUserFolderRequest,
   UpdateFolderRequest,
+  UpdateWordOfFolderRequest,
 } from "../types/UserFolderRequest";
 
 export async function createNewFolder(request: NewUserFolderRequest) {
@@ -74,6 +76,16 @@ export async function pinNewWordToExistingFolder(
 export async function unpinWordFromFolder(folderId: string, vocaId: string) {
   const response = await axiosClient.delete(
     `user-topic/${folderId}/word/${vocaId}`,
+  );
+
+  return response.data;
+}
+
+export async function updateWordOfFolder(request: UpdateWordOfFolderRequest) {
+  const { wordId, ...data } = request;
+  const response = await axiosClient.patch<VocabularyModel>(
+    "word/" + wordId,
+    data,
   );
 
   return response.data;

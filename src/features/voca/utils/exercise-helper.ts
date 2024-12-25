@@ -155,7 +155,7 @@ export function generateQuestion(
 export function getAnswerOptions(
   voca: VocabularyModel,
   practiceVocas: VocabularyModel[],
-  prop: keyof VocabularyModel,
+  prop: Exclude<keyof VocabularyModel, "thumbnail">,
 ): string[] {
   const anotherVocas = practiceVocas.filter((v) => v.id !== voca.id);
   const options = shuffleArray(anotherVocas)

@@ -1,7 +1,8 @@
-import {
+import VocabularyModel, {
   VocabularyWordClass,
   VocabularyWordClassAbbr,
 } from "../types/VocabularyModel";
+import VocaDefaultThumbnail from "../assets/images/voca/default-voca-image.jpg";
 
 export function getPlaceholderImage(width: number, height: number) {
   return `https://placehold.co/${width}x${height}`;
@@ -134,4 +135,8 @@ export function getPhoneValidator(errorMessage?: string) {
       message: errorMessage || "Phone number must be 10 or 11 digits",
     },
   };
+}
+
+export function getWordThumbnail(voca: VocabularyModel) {
+  return voca.thumbnail || VocaDefaultThumbnail;
 }
