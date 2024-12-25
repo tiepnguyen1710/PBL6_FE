@@ -1,5 +1,5 @@
 import { ExamResponse, groupQuestionResponse } from "../types/ExamResponse";
-import { groupQuestionData, TOEIC_PARTS } from "../types/examType";
+import { groupQuestionData } from "../types/examType";
 import NewExamRequest from "../types/NewExamRequest";
 
 export const convertExamData = (data: groupQuestionData[]) => {

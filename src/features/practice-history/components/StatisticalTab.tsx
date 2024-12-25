@@ -296,7 +296,7 @@ const StatisticalTab = () => {
                     </Stack>
 
                     <Typography sx={{ fontSize: 20 }}>
-                      {PracticeSpecificDay?.listen.avgScore}
+                      {PracticeSpecificDay?.listen.avgScore?.toFixed(1)}
                     </Typography>
                   </Stack>
                 </Box>
