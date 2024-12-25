@@ -80,6 +80,8 @@ function shortenPartOfSpeech(partOfSpeech: string) {
       return VocabularyWordClassAbbr.PREPOSITION;
     case "conjunction":
       return VocabularyWordClassAbbr.CONJUNCTION;
+    case "interjection":
+      return VocabularyWordClassAbbr.INTERJECTION;
   }
 
   return partOfSpeech;
