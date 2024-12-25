@@ -8,9 +8,15 @@ interface FolderProps {
   id: string; // folderId
   name: string;
   pinnedWords: number;
+  thumbnail?: string | null;
 }
 
-const Folder: React.FC<FolderProps> = ({ name, pinnedWords, id }) => {
+const Folder: React.FC<FolderProps> = ({
+  name,
+  pinnedWords,
+  id,
+  thumbnail,
+}) => {
   const [openPopup, setOpenPopup] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +33,7 @@ const Folder: React.FC<FolderProps> = ({ name, pinnedWords, id }) => {
     >
       <LessonCard
         name={name}
-        image={DefaultFolderImage}
+        image={thumbnail || DefaultFolderImage}
         nameSx={{ fontSize: "18px" }}
         onClickCard={handleClickCard}
         cardRef={cardRef}
