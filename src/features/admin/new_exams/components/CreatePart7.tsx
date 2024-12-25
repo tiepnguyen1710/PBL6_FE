@@ -92,7 +92,10 @@ const CreatePart7: React.FC<CrPartProps> = ({
     if (isUpdate) {
       console.log("kkk");
       const convertedExamData = convertExamData(examData);
-      setPart7Data(convertedExamData);
+      console.log("convert", convertedExamData);
+      if (convertedExamData.length > 0) {
+        setPart7Data(convertedExamData);
+      }
     }
   }, [examData]);
 
@@ -404,14 +407,14 @@ const CreatePart7: React.FC<CrPartProps> = ({
                       Upload Audio
                     </Button>
                   </label>
-                  {part7Data[group].audioUrl && (
+                  {part7Data[group]?.audioUrl && (
                     <audio
                       controls
                       style={{ marginTop: "15px", width: "250px" }}
                     >
                       <source
-                        src={part7Data[group].audioPreview}
-                        type={part7Data[group].audioUrl}
+                        src={part7Data[group]?.audioUrl}
+                        type="audio/mpeg"
                       />
                     </audio>
                   )}
@@ -431,7 +434,7 @@ const CreatePart7: React.FC<CrPartProps> = ({
                       Upload Image
                     </Button>
                   </label>
-                  {part7Data[group].imagePreview &&
+                  {part7Data[group]?.imagePreview &&
                     part7Data[group].imagePreview.map((previewUrl, index) => (
                       <Box key={index} mt={2} textAlign="center">
                         <Avatar
@@ -445,7 +448,7 @@ const CreatePart7: React.FC<CrPartProps> = ({
                           </Typography> */}
                       </Box>
                     ))}
-                  {part7Data[group].image &&
+                  {part7Data[group]?.image &&
                     part7Data[group].image?.length > 0 && (
                       <Button
                         variant="contained"
@@ -464,7 +467,7 @@ const CreatePart7: React.FC<CrPartProps> = ({
               <Stack flexDirection="column" flexGrow={1}>
                 <Editor
                   apiKey={import.meta.env.VITE_TINY_KEY}
-                  value={part7Data[group].detail}
+                  value={part7Data[group]?.detail}
                   init={{
                     height: 200,
                     width: "100%",
@@ -488,7 +491,7 @@ const CreatePart7: React.FC<CrPartProps> = ({
               <Stack flexDirection="column" flexGrow={1}>
                 <Editor
                   apiKey={import.meta.env.VITE_TINY_KEY}
-                  value={part7Data[group].transcript}
+                  value={part7Data[group]?.transcript}
                   init={{
                     height: 200,
                     width: "100%",
@@ -508,7 +511,7 @@ const CreatePart7: React.FC<CrPartProps> = ({
                   }
                 />
               </Stack>
-              {part7Data[group].questionData.map(
+              {part7Data[group]?.questionData.map(
                 (questionData, questionDataIndex) => {
                   return (
                     <Box key={questionDataIndex} mb={1}>

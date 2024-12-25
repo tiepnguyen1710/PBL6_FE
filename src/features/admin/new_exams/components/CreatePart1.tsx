@@ -72,7 +72,9 @@ const CreatePart1: React.FC<CrPartProps1> = ({
     if (isUpdate) {
       console.log("kkk");
       const convertedExamData = convertExamData(examData);
-      setPart1Data(convertedExamData);
+      if (convertedExamData.length > 0) {
+        setPart1Data(convertedExamData);
+      }
     }
   }, [examData]);
 

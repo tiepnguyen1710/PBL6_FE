@@ -38,41 +38,42 @@ const CreatePart4: React.FC<CrPartProps> = ({
   const part4Group = Array.from({
     length: TOEIC_PARTS.Part4.groupQuestion,
   });
-  const [part4Data, setPart4Data] = useState<groupQuestionData[]>(
-    Array.from(
-      { length: TOEIC_PARTS.Part4.groupQuestion },
-      (_, groupIndex) => ({
-        validate: validateState.blank,
-        audioUrl: null,
-        audioPreview: "",
-        image: [],
-        imagePreview: [],
-        transcript: "",
-        questionData: Array.from(
-          { length: TOEIC_PARTS.Part4.questionPerGroup },
-          (_, questionIndex) => ({
-            questionNumber:
-              TOEIC_PARTS.Part4.start +
-              groupIndex * TOEIC_PARTS.Part4.questionPerGroup +
-              questionIndex,
-            question: "",
-            explain: "",
-            answer: Array.from(
-              { length: TOEIC_PARTS.Part4.answerCount },
-              (_) => "",
-            ),
-            correctAnswer: "",
-          }),
-        ),
-      }),
-    ),
+  const initData = Array.from(
+    { length: TOEIC_PARTS.Part4.groupQuestion },
+    (_, groupIndex) => ({
+      validate: validateState.blank,
+      audioUrl: null,
+      audioPreview: "",
+      image: [],
+      imagePreview: [],
+      transcript: "",
+      questionData: Array.from(
+        { length: TOEIC_PARTS.Part4.questionPerGroup },
+        (_, questionIndex) => ({
+          questionNumber:
+            TOEIC_PARTS.Part4.start +
+            groupIndex * TOEIC_PARTS.Part4.questionPerGroup +
+            questionIndex,
+          question: "",
+          explain: "",
+          answer: Array.from(
+            { length: TOEIC_PARTS.Part4.answerCount },
+            (_) => "",
+          ),
+          correctAnswer: "",
+        }),
+      ),
+    }),
   );
+  const [part4Data, setPart4Data] = useState<groupQuestionData[]>(initData);
 
   useEffect(() => {
     if (isUpdate) {
-      console.log("kkk");
+      console.log("kkk", examData);
       const convertedExamData = convertExamData(examData);
-      setPart4Data(convertedExamData);
+      if (convertedExamData.length > 0) {
+        setPart4Data(convertedExamData);
+      }
     }
   }, [examData]);
 
