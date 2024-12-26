@@ -33,6 +33,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import dayjs from "dayjs";
+import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 
 const StatisticalTab = () => {
   const [day, setDay] = useState<string>("0");
@@ -94,7 +95,7 @@ const StatisticalTab = () => {
       </Box>
 
       {isPending ? (
-        "Loading"
+        <CustomBackdrop open />
       ) : (
         <>
           <Grid2 container spacing={1}>

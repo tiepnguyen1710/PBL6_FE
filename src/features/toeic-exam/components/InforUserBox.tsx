@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { differenceInDays, format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 
 const InforUserBox = () => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const InforUserBox = () => {
   return (
     <>
       {isLoading ? (
-        "Loading..."
+        <CustomBackdrop open />
       ) : (
         <>
           <Box sx={{ mb: 1 }}>
@@ -71,7 +72,7 @@ const InforUserBox = () => {
               <Stack direction="row" justifyContent={"space-between"}>
                 <Typography>Target score</Typography>
                 <Typography color="secondary.dark" fontWeight="bold">
-                  {user?.targetScore.toString() || "450"}
+                  {user?.targetScore ?? "450"}
                 </Typography>
               </Stack>
               <Button variant="contained" onClick={() => navigate("/history")}>
