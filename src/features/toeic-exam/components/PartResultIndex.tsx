@@ -18,6 +18,7 @@ import { QuestionProvider } from "./QuestionProvider";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import NavigationIcon from "@mui/icons-material/Navigation";
+import SubMitBox from "./SubmitBox/SubmitBox";
 
 const PartResultIndex = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -163,16 +164,22 @@ const PartResultIndex = () => {
                 )}
               </Grid2>
               <Grid2 size={2.5}>
-                {/* <Box
-                padding={2}
-                sx={{
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  borderRadius: 3,
-                  position: "sticky",
-                  top: "50px",
-                  alignSelf: "flex-start",
-                }}
-              ></Box> */}
+                <Box
+                  padding={2}
+                  sx={{
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    borderRadius: 3,
+                    position: "sticky",
+                    top: "50px",
+                    alignSelf: "flex-start",
+                  }}
+                >
+                  <SubMitBox
+                    partData={examDataReview?.partData || []}
+                    setCurrentIndex={setCurrentIndex}
+                    mode={"review"}
+                  />
+                </Box>
               </Grid2>
             </Grid2>
           </Box>

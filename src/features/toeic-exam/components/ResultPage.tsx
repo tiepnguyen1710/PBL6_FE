@@ -21,6 +21,9 @@ import Content from "../../../components/layout/Content";
 import { fetchPracticeDetailUser } from "../api/api";
 import { useQuery } from "@tanstack/react-query";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { resetNotedQuestion } from "../../../stores/notedQuestionSlice";
 const ResultPage = () => {
   const BoxStyle = {
     borderRadius: "10px",
@@ -28,7 +31,7 @@ const ResultPage = () => {
     height: "fit-content",
     padding: "30px",
   };
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const routeParams = useParams<{ resultId: string }>();
   const resultId = routeParams.resultId;
@@ -44,6 +47,10 @@ const ResultPage = () => {
 
   console.log("Received responseData:", responseResultData?.testPractice);
   console.log("total", TOTAL_QUESTIONS);
+
+  useEffect(() => {
+    dispatch(resetNotedQuestion());
+  }, []);
   return (
     <Content>
       <Container maxWidth="sm">

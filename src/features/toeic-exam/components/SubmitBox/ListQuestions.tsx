@@ -7,6 +7,7 @@ import { useQuestionContext } from "../QuestionProvider";
 interface partDataChosenProps {
   partDataChosen: partData[];
   setCurrentIndex: (index: number) => void;
+  mode?: string;
 }
 const ListQuestion: React.FC<partDataChosenProps> = ({
   partDataChosen,
@@ -66,7 +67,8 @@ const ListQuestion: React.FC<partDataChosenProps> = ({
                   const isActive =
                     activeAnswers[part]?.[groupIndex]?.[questionIndex] !==
                     undefined;
-
+                  const isCorrect = question.userAnswer?.isCorrect === true;
+                  const isInCorrect = question.userAnswer?.isCorrect === false;
                   return (
                     <Button
                       key={`btn-${groupIndex}-${questionIndex}`}
@@ -82,7 +84,11 @@ const ListQuestion: React.FC<partDataChosenProps> = ({
                           ? "orange"
                           : isActive
                             ? "1px solid white"
-                            : "1px solid var(--color-primary-main)",
+                            : isCorrect
+                              ? "1px solid #00B035"
+                              : isInCorrect
+                                ? "1px solid #E20D2C"
+                                : "1px solid var(--color-primary-main)",
                         marginRight: "4px",
                         marginBottom: "4px",
                         "&:hover": {
@@ -93,7 +99,11 @@ const ListQuestion: React.FC<partDataChosenProps> = ({
                           ? "orange"
                           : isActive
                             ? "var(--color-primary-main)"
-                            : "white",
+                            : isCorrect
+                              ? "#78D495"
+                              : isInCorrect
+                                ? "#F8C9D0"
+                                : "white",
                         color: isNoted
                           ? "white"
                           : isActive

@@ -19,8 +19,13 @@ import ConfirmDrawer from "./ConfirmDrawer";
 interface PartDataProps {
   partData: partData[];
   setCurrentIndex: (index: number) => void;
+  mode?: string;
 }
-const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
+const SubMitBox: React.FC<PartDataProps> = ({
+  partData,
+  setCurrentIndex,
+  mode,
+}) => {
   console.log("submit box", partData);
   const [openComfirm, setOpenConfirm] = useState<boolean>(false);
   const [partDataChosen, setPartDataChosen] = useState<partData[]>([]);
@@ -55,7 +60,8 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
   console.log("part", selectedPartsQuery);
 
   useEffect(() => {
-    const selectedPartsClone = [...selectedPartsQuery];
+    const selectedPartsClone =
+      mode === "review" ? [...allParts] : [...selectedPartsQuery];
     const partDataChosen = partData.filter((partItem) =>
       selectedPartsClone.includes(partItem.part),
     );
@@ -110,44 +116,50 @@ const SubMitBox: React.FC<PartDataProps> = ({ partData, setCurrentIndex }) => {
         <CustomBackdrop open />
       ) : (
         <>
-          <Box
-            sx={{
-              textAlign: "center",
-              marginBottom: "15px",
-            }}
-          >
-            <TimerCountdown
-              duration={limitTime}
-              timerRef={timerCountDownRef}
-              handleSubmit={handleSubmit}
-            />
-          </Box>
-          <Box
-            sx={{
-              textAlign: "center",
-            }}
-          >
-            <Button
-              sx={{
-                padding: "8px 50px",
-                borderRadius: "5px",
-                color: "var(--color-primary-main)",
-                border: "1px solid var(--color-primary-main)",
-                background: "white",
-                ":hover": {
-                  color: "white",
-                  background: "var(--color-primary-main)",
-                },
-              }}
-              onClick={handleButtonSubmit}
-            >
-              Submit
-            </Button>
-          </Box>
+          {!mode && (
+            <>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  marginBottom: "15px",
+                }}
+              >
+                <TimerCountdown
+                  duration={limitTime}
+                  timerRef={timerCountDownRef}
+                  handleSubmit={handleSubmit}
+                />
+              </Box>
+              <Box
+                sx={{
+                  textAlign: "center",
+                }}
+              >
+                <Button
+                  sx={{
+                    padding: "8px 50px",
+                    borderRadius: "5px",
+                    color: "var(--color-primary-main)",
+                    border: "1px solid var(--color-primary-main)",
+                    background: "white",
+                    ":hover": {
+                      color: "white",
+                      background: "var(--color-primary-main)",
+                    },
+                  }}
+                  onClick={handleButtonSubmit}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </>
+          )}
+
           <Box>
             <ListQuestion
               partDataChosen={partDataChosen}
               setCurrentIndex={setCurrentIndex}
+              mode={mode}
             />
           </Box>
         </>
