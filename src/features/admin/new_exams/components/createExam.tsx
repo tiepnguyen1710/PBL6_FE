@@ -19,6 +19,7 @@ import {
   fetchListTags,
   getListPart,
   updateGroupQuestion,
+  updateNameExam,
 } from "../api/examApi";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { useNavigate, useParams } from "react-router-dom";
@@ -73,6 +74,7 @@ export default function CreateExam() {
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [listPart, setListPart] = useState<part[]>([]);
   const [groupUpdate, setGroupUpdate] = useState<UpdateExamReq | null>(null);
+  const [modalUpdate, setModalUpdate] = useState<boolean>(false);
   const routeParams = useParams<{ examId: string }>();
   const examId = routeParams.examId;
 
@@ -211,6 +213,22 @@ export default function CreateExam() {
     },
   });
 
+  const updateExamMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await updateNameExam(examId!!, data);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["FetchExamSet", examId] });
+      toast.success("Update exam successfully!");
+      navigate("/admin/exam-set");
+    },
+    onSettled: () => {
+      setModalUpdate(false);
+      updateGroupMutation.reset();
+    },
+  });
+
   const handleUpdateGroup = () => {
     if (groupUpdate) {
       const { id, ...data } = groupUpdate;
@@ -218,6 +236,17 @@ export default function CreateExam() {
         updateGroupMutation.mutate({ id, data: data });
       }
     }
+  };
+
+  const handleUpdateExam = () => {
+    if (!examId) {
+      return;
+    }
+    const data = {
+      name: examData.name,
+      tag: examData.tags[0].id,
+    };
+    updateExamMutation.mutate(data);
   };
 
   return (
@@ -403,13 +432,23 @@ export default function CreateExam() {
         )}
 
         <Stack>
-          <Button
-            variant="contained"
-            sx={{ width: "fit-content" }}
-            onClick={() => handleCreateTest()}
-          >
-            Save
-          </Button>
+          {!examId ? (
+            <Button
+              variant="contained"
+              sx={{ width: "fit-content" }}
+              onClick={() => handleCreateTest()}
+            >
+              Create
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              sx={{ width: "fit-content" }}
+              onClick={() => setModalUpdate(true)}
+            >
+              Update
+            </Button>
+          )}
         </Stack>
       </Box>
       <CustomModal open={!!groupUpdate} onClose={() => setGroupUpdate(null)}>
@@ -432,6 +471,31 @@ export default function CreateExam() {
               )}
             </Button>
             <Button variant="outlined" onClick={() => setGroupUpdate(null)}>
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </CustomModal>
+      <CustomModal open={modalUpdate} onClose={() => setModalUpdate(false)}>
+        <Box sx={{ padding: 3 }}>
+          <Typography variant="h6" sx={{ marginBottom: 1 }}>
+            Do you want to update this test?
+          </Typography>
+          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleUpdateExam}
+              sx={{ width: "80px" }}
+              disabled={updateExamMutation.isPending}
+            >
+              {updateExamMutation.isPending ? (
+                <CircularProgress size={20} color="primary" />
+              ) : (
+                "Update"
+              )}
+            </Button>
+            <Button variant="outlined" onClick={() => setModalUpdate(false)}>
               Cancel
             </Button>
           </Stack>
