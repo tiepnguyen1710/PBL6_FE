@@ -420,7 +420,7 @@ export default function CreateExam() {
           <Stack direction="row" spacing={0.5} justifyContent="flex-end">
             <Button
               variant="contained"
-              color="error"
+              color="primary"
               onClick={handleUpdateGroup}
               sx={{ width: "80px" }}
               disabled={updateGroupMutation.isPending}
