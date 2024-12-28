@@ -21,17 +21,20 @@ import { toast } from "react-toastify";
 import { uploadFile } from "../api/examApi";
 import _ from "lodash";
 import { convertExamData } from "../utils/helper";
+import { UpdateExamReq } from "../types/UpdateExamReq";
 
 interface CrPartProps {
   updateExamData: (data: groupQuestionData[], part: string) => void;
   isUpdate: boolean;
   examData: groupQuestionData[];
+  onUpdate: (v: UpdateExamReq | null) => void;
 }
 
 const CreatePart4: React.FC<CrPartProps> = ({
   updateExamData,
   isUpdate,
   examData,
+  onUpdate,
 }) => {
   const [group, setGroup] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
@@ -103,6 +106,29 @@ const CreatePart4: React.FC<CrPartProps> = ({
 
   const handleCloseButton = (groupPara: number) => {
     if (show) {
+      if (isUpdate) {
+        console.log("dataupdate", part4Data[groupPara]);
+
+        const questionData = part4Data[groupPara].questionData.map(
+          ({ questionId, ...rest }) => {
+            return {
+              id: questionId,
+              ...rest,
+            };
+          },
+        );
+
+        const updateData: any = {
+          id: part4Data[groupPara]?.id ?? "",
+          detail: part4Data[groupPara]?.detail ?? "",
+          transcript: part4Data[groupPara]?.transcript ?? "",
+          questionData: questionData ?? [],
+          audioUrl: part4Data[groupPara]?.audioUrl ?? "",
+          image: part4Data[groupPara]?.image ?? [],
+        };
+        console.log("newdataupdate", updateData);
+        onUpdate(updateData);
+      }
       setShow(false);
     }
 
@@ -179,6 +205,12 @@ const CreatePart4: React.FC<CrPartProps> = ({
       _.omit(item, ["validate", "audioPreview", "imagePreview"]),
     );
     updateExamData(part4DataUpdate, "part4");
+  };
+
+  const handleCloseGroup = () => {
+    if (show) {
+      setShow(false);
+    }
   };
 
   const handleQuestionChange = (
@@ -575,12 +607,26 @@ const CreatePart4: React.FC<CrPartProps> = ({
                 },
               )}
               {show && (
-                <Button
-                  variant="contained"
-                  onClick={() => handleCloseButton(group)}
-                >
-                  Save
-                </Button>
+                <Stack direction={"row"} gap={1}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      handleCloseButton(group);
+                    }}
+                  >
+                    Save
+                  </Button>
+                  {isUpdate && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        handleCloseGroup();
+                      }}
+                    >
+                      Close
+                    </Button>
+                  )}
+                </Stack>
               )}
             </Grid>
           </Grid>

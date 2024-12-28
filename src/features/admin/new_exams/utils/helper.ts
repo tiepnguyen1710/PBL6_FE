@@ -45,6 +45,7 @@ export const convertExamResponse = (data: ExamResponse) => {
 
     const image = imageMedia.map((img) => {
       return {
+        id: img.id,
         fileUrl: img.url,
         index: img.index,
       };
@@ -63,6 +64,7 @@ export const convertExamResponse = (data: ExamResponse) => {
 
     questionData.sort((a, b) => a.questionNumber - b.questionNumber);
     const groupQuestionData: groupQuestionData = {
+      id: group.id,
       audioUrl: audioMedia?.url ?? null,
       image: image,
       transcript: group.transcript,

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useEffect, useState } from "react";
 import _ from "lodash";
-import { Box, Button, Stack, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, TextField } from "@mui/material";
 import { groupQuestionData, part } from "../types/examType";
 import CreatePart1 from "./CreatePart1";
 import CreatePart3 from "./CreatePart3";
@@ -18,6 +18,7 @@ import {
   fetchExamById,
   fetchListTags,
   getListPart,
+  updateGroupQuestion,
 } from "../api/examApi";
 import { GoBackButton } from "../../../../components/UI/GoBackButton";
 import { useNavigate, useParams } from "react-router-dom";
@@ -28,6 +29,9 @@ import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
 import { convertExamResponse } from "../utils/helper";
 import TagSelect from "./TagSelect";
 import CreatePart7 from "./CreatePart7";
+import queryClient from "../../../../queryClient";
+import { UpdateExamReq } from "../types/UpdateExamReq";
+import CustomModal from "../../../../components/UI/CustomModal";
 
 export default function CreateExam() {
   const navigate = useNavigate();
@@ -68,6 +72,7 @@ export default function CreateExam() {
   const [examData, setExamData] = useState<NewExamRequest>(initExamData);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [listPart, setListPart] = useState<part[]>([]);
+  const [groupUpdate, setGroupUpdate] = useState<UpdateExamReq | null>(null);
   const routeParams = useParams<{ examId: string }>();
   const examId = routeParams.examId;
 
@@ -191,185 +196,247 @@ export default function CreateExam() {
     createExamMuatation.mutate(newExam);
   };
 
+  const updateGroupMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateExamReq }) => {
+      const response = await updateGroupQuestion(id, data);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["FetchExamSet", examId] });
+      toast.success("Update group successfully!");
+    },
+    onSettled: () => {
+      setGroupUpdate(null);
+      updateGroupMutation.reset();
+    },
+  });
+
+  const handleUpdateGroup = () => {
+    if (groupUpdate) {
+      const { id, ...data } = groupUpdate;
+      if (id) {
+        updateGroupMutation.mutate({ id, data: data });
+      }
+    }
+  };
+
   return (
-    <Box
-      sx={{
-        padding: 3,
-      }}
-    >
-      <Stack direction="row" justifyContent="space-between" alignItems="start">
-        <Typography color="primary.main" variant="h5">
-          {!isUpdate ? "Create Exam" : "Update Exam"}
-        </Typography>
-        <GoBackButton />
-      </Stack>
+    <>
+      <Box
+        sx={{
+          padding: 3,
+        }}
+      >
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="start"
+        >
+          <Typography color="primary.main" variant="h5">
+            {!isUpdate ? "Create Exam" : "Update Exam"}
+          </Typography>
+          <GoBackButton />
+        </Stack>
 
-      <Stack spacing={0.25} sx={{ my: 1 }}>
-        <Typography color="primary.main" variant="caption">
-          Name
-        </Typography>
-        <TextField
-          value={examData.name}
-          size="small"
-          sx={{ width: "50%" }}
-          onChange={(event) => handleChangeName(event.target.value)}
-          placeholder="Name"
-        />
-      </Stack>
+        <Stack spacing={0.25} sx={{ my: 1 }}>
+          <Typography color="primary.main" variant="caption">
+            Name
+          </Typography>
+          <TextField
+            value={examData.name}
+            size="small"
+            sx={{ width: "50%" }}
+            onChange={(event) => handleChangeName(event.target.value)}
+            placeholder="Name"
+          />
+        </Stack>
 
-      <Stack spacing={0.25} sx={{ my: 1 }}>
-        <Typography color="primary.main" variant="caption">
-          Tag
-        </Typography>
-        {/* <TextField
+        <Stack spacing={0.25} sx={{ my: 1 }}>
+          <Typography color="primary.main" variant="caption">
+            Tag
+          </Typography>
+          {/* <TextField
           variant="outlined"
           size="small"
           sx={{ width: "50%" }}
           placeholder="Tag"
         /> */}
-        <TagSelect
-          labels={tags?.map((tag) => tag.name) || []}
-          values={tags?.map((tag) => tag?.id) || []}
-          selectedValue={examData?.tags?.[0]?.id ?? ""}
-          onChange={handleChangeTag}
-          sx={{
-            width: "50%",
-          }}
-        />
-      </Stack>
-
-      {isPending && isUpdate ? (
-        <CustomBackdrop open />
-      ) : (
-        <Stack spacing={0.25} sx={{ my: 1 }}>
-          <Typography color="primary.main" variant="caption">
-            Import Data
-          </Typography>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography>Part 1</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CreatePart1
-                updateExamData={updateExamData}
-                isUpdate={isUpdate}
-                examData={examData.partData[0].groupQuestionData}
-              />
-            </AccordionDetails>
-          </Accordion>
-
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography>Part 2</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CreatePart2
-                updateExamData={updateExamData}
-                isUpdate={isUpdate}
-                examData={examData.partData[1].groupQuestionData}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography>Part 3</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CreatePart3
-                updateExamData={updateExamData}
-                isUpdate={isUpdate}
-                examData={examData.partData[2].groupQuestionData}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography>Part 4</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CreatePart4
-                updateExamData={updateExamData}
-                isUpdate={isUpdate}
-                examData={examData.partData[3].groupQuestionData}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography>Part 5</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CreatePart5
-                updateExamData={updateExamData}
-                isUpdate={isUpdate}
-                examData={examData.partData[4].groupQuestionData}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography>Part 6</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CreatePart6
-                updateExamData={updateExamData}
-                isUpdate={isUpdate}
-                examData={examData.partData[5].groupQuestionData}
-              />
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography>Part 7</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CreatePart7
-                updateExamData={updateExamData}
-                isUpdate={isUpdate}
-                examData={examData.partData[6].groupQuestionData}
-              />
-            </AccordionDetails>
-          </Accordion>
+          <TagSelect
+            labels={tags?.map((tag) => tag.name) || []}
+            values={tags?.map((tag) => tag?.id) || []}
+            selectedValue={examData?.tags?.[0]?.id ?? ""}
+            onChange={handleChangeTag}
+            sx={{
+              width: "50%",
+            }}
+          />
         </Stack>
-      )}
 
-      <Stack>
-        <Button
-          variant="contained"
-          sx={{ width: "fit-content" }}
-          onClick={() => handleCreateTest()}
-        >
-          Save
-        </Button>
-      </Stack>
-    </Box>
+        {isPending && isUpdate ? (
+          <CustomBackdrop open />
+        ) : (
+          <Stack spacing={0.25} sx={{ my: 1 }}>
+            <Typography color="primary.main" variant="caption">
+              Import Data
+            </Typography>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <Typography>Part 1</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreatePart1
+                  updateExamData={updateExamData}
+                  isUpdate={isUpdate}
+                  examData={examData.partData[0].groupQuestionData}
+                  onUpdate={setGroupUpdate}
+                />
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <Typography>Part 2</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreatePart2
+                  updateExamData={updateExamData}
+                  isUpdate={isUpdate}
+                  examData={examData.partData[1].groupQuestionData}
+                  onUpdate={setGroupUpdate}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <Typography>Part 3</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreatePart3
+                  updateExamData={updateExamData}
+                  isUpdate={isUpdate}
+                  examData={examData.partData[2].groupQuestionData}
+                  onUpdate={setGroupUpdate}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <Typography>Part 4</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreatePart4
+                  updateExamData={updateExamData}
+                  isUpdate={isUpdate}
+                  examData={examData.partData[3].groupQuestionData}
+                  onUpdate={setGroupUpdate}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <Typography>Part 5</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreatePart5
+                  updateExamData={updateExamData}
+                  isUpdate={isUpdate}
+                  examData={examData.partData[4].groupQuestionData}
+                  onUpdate={setGroupUpdate}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <Typography>Part 6</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreatePart6
+                  updateExamData={updateExamData}
+                  isUpdate={isUpdate}
+                  examData={examData.partData[5].groupQuestionData}
+                  onUpdate={setGroupUpdate}
+                />
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                aria-controls="panel2-content"
+                id="panel2-header"
+              >
+                <Typography>Part 7</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CreatePart7
+                  updateExamData={updateExamData}
+                  isUpdate={isUpdate}
+                  examData={examData.partData[6].groupQuestionData}
+                  onUpdate={setGroupUpdate}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </Stack>
+        )}
+
+        <Stack>
+          <Button
+            variant="contained"
+            sx={{ width: "fit-content" }}
+            onClick={() => handleCreateTest()}
+          >
+            Save
+          </Button>
+        </Stack>
+      </Box>
+      <CustomModal open={!!groupUpdate} onClose={() => setGroupUpdate(null)}>
+        <Box sx={{ padding: 3 }}>
+          <Typography variant="h6" sx={{ marginBottom: 1 }}>
+            Do you want to update this group?
+          </Typography>
+          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleUpdateGroup}
+              sx={{ width: "80px" }}
+              disabled={updateGroupMutation.isPending}
+            >
+              {updateGroupMutation.isPending ? (
+                <CircularProgress size={20} color="primary" />
+              ) : (
+                "Update"
+              )}
+            </Button>
+            <Button variant="outlined" onClick={() => setGroupUpdate(null)}>
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </CustomModal>
+    </>
   );
 }

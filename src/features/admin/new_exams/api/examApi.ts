@@ -57,6 +57,11 @@ const fetchListTags = async () => {
   return response.data;
 };
 
+const updateGroupQuestion = async (id: string, data: any) => {
+  const response = await axiosClient.patch(`group-question/${id}`, { ...data });
+  return response.data;
+};
+
 const deleteEntireExam = async (id: string) => {
   const response = await axiosClient.delete(`test/${id}`);
   return response.data;
@@ -69,5 +74,6 @@ export {
   fetchAllExam,
   fetchExamById,
   fetchListTags,
+  updateGroupQuestion,
   deleteEntireExam,
 };

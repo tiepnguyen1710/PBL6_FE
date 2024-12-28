@@ -10,10 +10,11 @@ export interface partData {
 }
 
 export interface groupQuestionData {
+  id?: string;
   validate?: validateState;
   audioUrl?: string | null;
   audioPreview?: string;
-  image?: { fileUrl: string; index: number }[];
+  image?: { id?: string; fileUrl: string; index: number }[];
   imagePreview?: string[];
   questionData: questionData[];
   transcript?: string;

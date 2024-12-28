@@ -20,17 +20,20 @@ import { Editor } from "@tinymce/tinymce-react";
 import { uploadFile } from "../api/examApi";
 import _ from "lodash";
 import { convertExamData } from "../utils/helper";
+import { UpdateExamReq } from "../types/UpdateExamReq";
 
 interface CrPartProps1 {
   updateExamData?: (data: groupQuestionData[], part: string) => void;
   isUpdate: boolean;
   examData: groupQuestionData[];
+  onUpdate: (v: UpdateExamReq | null) => void;
 }
 
 const CreatePart1: React.FC<CrPartProps1> = ({
   updateExamData,
   isUpdate,
   examData,
+  onUpdate,
 }) => {
   console.log("isUpdate", isUpdate, examData);
   const [group, setGroup] = useState<number>(0);
@@ -104,6 +107,29 @@ const CreatePart1: React.FC<CrPartProps1> = ({
 
   const handleCloseButton = (groupPara: number) => {
     if (show) {
+      if (isUpdate) {
+        console.log("dataupdate", part1Data[groupPara]);
+
+        const questionData = part1Data[groupPara].questionData.map(
+          ({ questionId, ...rest }) => {
+            return {
+              id: questionId,
+              ...rest,
+            };
+          },
+        );
+
+        const updateData: any = {
+          id: part1Data[groupPara]?.id ?? "",
+          detail: part1Data[groupPara]?.detail ?? "",
+          transcript: part1Data[groupPara]?.transcript ?? "",
+          questionData: questionData ?? [],
+          audioUrl: part1Data[groupPara]?.audioUrl ?? "",
+          image: part1Data[groupPara]?.image ?? [],
+        };
+        console.log("newdataupdate", updateData);
+        onUpdate(updateData);
+      }
       setShow(false);
     }
 
@@ -181,6 +207,12 @@ const CreatePart1: React.FC<CrPartProps1> = ({
     );
     if (updateExamData) {
       updateExamData(part1DataUpdate, "part1");
+    }
+  };
+
+  const handleCloseGroup = () => {
+    if (show) {
+      setShow(false);
     }
   };
 
@@ -579,14 +611,26 @@ const CreatePart1: React.FC<CrPartProps1> = ({
                 },
               )}
               {show && (
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    handleCloseButton(group);
-                  }}
-                >
-                  Save
-                </Button>
+                <Stack direction={"row"} gap={1}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      handleCloseButton(group);
+                    }}
+                  >
+                    Save
+                  </Button>
+                  {isUpdate && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        handleCloseGroup();
+                      }}
+                    >
+                      Close
+                    </Button>
+                  )}
+                </Stack>
               )}
             </Grid>
           </Grid>

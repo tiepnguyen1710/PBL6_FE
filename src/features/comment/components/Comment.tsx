@@ -35,7 +35,7 @@ const Comment: React.FC<CommentProps> = ({
                 {comment.user.name}
               </Typography>
               <Typography sx={{ fontSize: 14 }}>
-                {dayjs(comment.createdAt).format("DD-MM-YYYY")}
+                {dayjs(comment.createdAt).format("DD-MM-YYYY hh:mm:ss")}
               </Typography>
             </Stack>
             <Typography>{comment.content}</Typography>
