@@ -4,7 +4,7 @@ import { partData } from "./examType";
 export interface IExamModel {
   id: string;
   name: string;
-  tags: Tag;
+  tags: Tag[];
   time: number;
   taken: number;
   partData: partData[];

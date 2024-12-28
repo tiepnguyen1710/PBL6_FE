@@ -21,6 +21,7 @@ import { setNotedQuestion } from "../../../stores/notedQuestionSlice";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import NavigationIcon from "@mui/icons-material/Navigation";
+import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 
 const PartIndex = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -170,11 +171,11 @@ const PartIndex = () => {
       <Container maxWidth="sm">
         <QuestionProvider>
           <Box my={2}>
-            <Grid2 container spacing={2}>
-              <Grid2 size={9.5}>
-                {isPending ? (
-                  "...Loading"
-                ) : (
+            {isPending ? (
+              <CustomBackdrop open />
+            ) : (
+              <Grid2 container spacing={2}>
+                <Grid2 size={9.5}>
                   <Stack direction={"column"} gap={1}>
                     <Box
                       sx={{
@@ -215,7 +216,7 @@ const PartIndex = () => {
                               }}
                               onClick={() => setCurrentIndex(partIndex)}
                             >
-                              {part}
+                              {`Part ${part[4]}`}
                             </Button>
                           );
                         })}
@@ -242,26 +243,26 @@ const PartIndex = () => {
                       {renderPart()}
                     </Box>
                   </Stack>
-                )}
+                </Grid2>
+                <Grid2 size={2.5}>
+                  <Box
+                    padding={2}
+                    sx={{
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                      borderRadius: 3,
+                      position: "sticky",
+                      top: "50px",
+                      alignSelf: "flex-start",
+                    }}
+                  >
+                    <SubMitBox
+                      partData={examData?.partData || []}
+                      setCurrentIndex={setCurrentIndex}
+                    />
+                  </Box>
+                </Grid2>
               </Grid2>
-              <Grid2 size={2.5}>
-                <Box
-                  padding={2}
-                  sx={{
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                    borderRadius: 3,
-                    position: "sticky",
-                    top: "50px",
-                    alignSelf: "flex-start",
-                  }}
-                >
-                  <SubMitBox
-                    partData={examData?.partData || []}
-                    setCurrentIndex={setCurrentIndex}
-                  />
-                </Box>
-              </Grid2>
-            </Grid2>
+            )}
           </Box>
         </QuestionProvider>
       </Container>

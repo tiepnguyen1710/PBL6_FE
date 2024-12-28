@@ -134,7 +134,7 @@ const PartResultIndex = () => {
                               }}
                               onClick={() => setCurrentIndex(partIndex)}
                             >
-                              {part}
+                              {`Part ${part[4]}`}
                             </Button>
                           );
                         })}

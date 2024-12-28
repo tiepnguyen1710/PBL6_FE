@@ -29,7 +29,7 @@ const Comment: React.FC<CommentProps> = ({
       <Box mb={1}>
         <Stack direction="row" gap={1} alignItems="flex-start">
           <Avatar src={comment.user.avatar} />
-          <Box>
+          <Box flex={1}>
             <Stack direction="row" gap={1} alignItems="center">
               <Typography sx={{ fontWeight: 600 }}>
                 {comment.user.name}
@@ -47,6 +47,7 @@ const Comment: React.FC<CommentProps> = ({
             >
               Reply
             </Typography>
+
             {isReplying && (
               <CommentForm
                 submitLabel="Reply"

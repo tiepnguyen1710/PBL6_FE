@@ -404,7 +404,7 @@ const StatisticalTab = () => {
                     </Stack>
 
                     <Typography sx={{ fontSize: 20 }}>
-                      {PracticeSpecificDay?.read.avgScore}
+                      {PracticeSpecificDay?.read.avgScore?.toFixed(1)}
                     </Typography>
                   </Stack>
                 </Box>
@@ -440,14 +440,27 @@ const StatisticalTab = () => {
           {isPendingHistory ? (
             "Loading ..."
           ) : (
-            <div style={{ width: "80%", margin: " 25px auto" }}>
+            <div style={{ width: "80%", margin: "50px auto" }}>
               <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={data}>
+                <LineChart
+                  data={data}
+                  margin={{ top: 5, right: 50, left: 20, bottom: 50 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
+                  <XAxis
+                    dataKey="date"
+                    angle={-75}
+                    dy={35}
+                    height={85}
+                    tick={{ fontSize: 12 }}
+                  />
                   <YAxis />
                   <Tooltip />
-                  <Legend />
+                  <Legend
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                  />
                   <Line
                     type="monotone"
                     dataKey="LCScore"

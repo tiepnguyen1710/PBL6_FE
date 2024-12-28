@@ -27,13 +27,13 @@ const uploadFile = async (file: File) => {
 };
 
 const fetchAllExam = async (
-  tagId: string,
+  tagId?: string,
   page: number = 1,
   limit: number = 12,
-  //search: string,
+  search?: string,
 ) => {
   const response = await axiosClient.get<IExamSetResponse>(
-    `test?${tagId ? `tag_id=${tagId}` : ""}${page ? `&page=${page}` : ""}${limit ? `&limit=${limit}` : ""}`,
+    `test?${tagId ? `tag_id=${tagId}` : ""}${page ? `&page=${page}` : ""}${limit ? `&limit=${limit}` : ""}${search ? `&search=${search}` : ""}`,
   );
   return response.data;
 };
@@ -57,6 +57,11 @@ const fetchListTags = async () => {
   return response.data;
 };
 
+const deleteEntireExam = async (id: string) => {
+  const response = await axiosClient.delete(`test/${id}`);
+  return response.data;
+};
+
 export {
   uploadFile,
   createExam,
@@ -64,4 +69,5 @@ export {
   fetchAllExam,
   fetchExamById,
   fetchListTags,
+  deleteEntireExam,
 };

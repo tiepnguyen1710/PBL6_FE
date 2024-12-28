@@ -162,6 +162,10 @@ export default function CreateExam() {
 
   const handleCreateTest = () => {
     const examDataClone = { ...examData };
+    if (examDataClone.name === "") {
+      toast.error("Name is required");
+      return;
+    }
     const {
       name: nameClone,
       tags: tagClone,

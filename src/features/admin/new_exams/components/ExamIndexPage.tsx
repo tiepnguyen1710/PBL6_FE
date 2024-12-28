@@ -1,6 +1,7 @@
 import { Add, FilterAlt, FilterAltOff } from "@mui/icons-material";
 import {
   Button,
+  CircularProgress,
   Grid2,
   Table,
   TableBody,
@@ -12,24 +13,26 @@ import {
   Typography,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import BootstrapSelect from "../../../../components/UI/BootstrapSelect";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import RoundedInput from "../../../../components/UI/RoundedInput";
-import { useQuery } from "@tanstack/react-query";
-import { fetchAllExam } from "../api/examApi";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteEntireExam, fetchAllExam } from "../api/examApi";
 import { useNavigate } from "react-router-dom";
 import { IExamModel } from "../types/Exam";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AdminTableContainer from "../../vocasets/components/AdminTableContainer";
-import useAdminTablePagination from "../hooks/useAdminTablePagination";
 import ExamSetRow from "./ExamSetRow";
-import TablePaginationActions from "../../../../components/UI/TablePaginationActions";
 import CustomBackdrop from "../../../../components/UI/CustomBackdrop";
+import CustomModal from "../../../../components/UI/CustomModal";
+import queryClient from "../../../../queryClient";
+import { toast } from "react-toastify";
 
 const ExamSet = () => {
-  const EXAMSET_PAGE_SIZE = 3;
   const navigate = useNavigate();
-  const [examSets, setExamSets] = useState<IExamModel[] | null>();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [search, setSearch] = useState("");
+  const [deletedExam, setDeletedExam] = useState<string | null>(null);
 
   interface IFilterExamForm {
     filterName: string;
@@ -42,13 +45,34 @@ const ExamSet = () => {
   };
 
   const { isPending, data: examSetData } = useQuery({
-    queryKey: ["fetchExam"],
-    queryFn: () => fetchAllExam(""),
+    queryKey: ["fetchExam", page, limit, search],
+    queryFn: () => fetchAllExam(undefined, page, limit, search),
   });
 
-  useEffect(() => {
-    setExamSets(examSetData?.data);
-  }, [examSetData]);
+  console.log("examsetdata", examSetData);
+
+  // useEffect(() => {
+  //   setExamSets(examSetData?.data);
+  // }, [examSetData]);
+
+  const deleteExamMutation = useMutation({
+    mutationFn: deleteEntireExam,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["fetchExam"] });
+      toast.success("Delete exam successfully!");
+    },
+    onSettled: () => {
+      // reset state
+      setDeletedExam(null);
+      deleteExamMutation.reset();
+    },
+  });
+
+  const handleDeleteExam = () => {
+    if (deletedExam) {
+      deleteExamMutation.mutate(deletedExam);
+    }
+  };
 
   const {
     reset: resetFilterForm,
@@ -59,27 +83,25 @@ const ExamSet = () => {
   });
 
   const handleFilterExam: SubmitHandler<IFilterExamForm> = (data) => {
-    const { filterName, filterStatus } = data;
-    const filteredData = examSetData?.data.filter(
-      (examSet) =>
-        (filterName === "" ||
-          examSet.name.toLowerCase().includes(filterName as string)) &&
-        (filterStatus === "all" || filterStatus === "inactive"),
-    );
-
-    setExamSets(filteredData);
-    setPage(0);
+    const { filterName } = data;
+    // const filteredData = examSetData?.data.filter(
+    //   (examSet) =>
+    //     (filterName === "" ||
+    //       examSet.name.toLowerCase().includes(filterName as string)) &&
+    //     (filterStatus === "all" || filterStatus === "inactive"),
+    // );
+    setSearch(filterName);
+    setPage(1);
   };
 
   const handleResetFilter = () => {
-    setExamSets(examSetData?.data);
-    setPage(0);
-
     resetFilterForm(DEFAULT_EXAM_FILTER_FORM);
+    setSearch("");
+    setPage(1);
   };
 
-  const { page, setPage, emptyRows, pageData, handleChangePage } =
-    useAdminTablePagination<IExamModel>(examSets || [], EXAMSET_PAGE_SIZE);
+  // const { page, setPage, emptyRows, pageData, handleChangePage } =
+  //   useAdminTablePagination<IExamModel>(examSets || [], EXAMSET_PAGE_SIZE);
 
   return (
     <>
@@ -124,7 +146,7 @@ const ExamSet = () => {
                 )}
               />
             </Grid2>
-            <Grid2 size={3}>
+            {/* <Grid2 size={3}>
               <Controller
                 name="filterStatus"
                 control={control}
@@ -138,7 +160,7 @@ const ExamSet = () => {
                   />
                 )}
               />
-            </Grid2>
+            </Grid2> */}
             <Grid2 size={2} display="flex" alignItems="end">
               <Button
                 type="submit"
@@ -146,7 +168,7 @@ const ExamSet = () => {
                 startIcon={<FilterAlt />}
                 sx={{ py: "12px", px: 3, marginBottom: "3px" }}
               >
-                Filter
+                Search
               </Button>
             </Grid2>
             <Grid2 size={2} display="flex" alignItems="end">
@@ -171,19 +193,22 @@ const ExamSet = () => {
               <TableHead>
                 <TableRow>
                   <TableCell width="30%">ID</TableCell>
-                  <TableCell width="15%">Name</TableCell>
+                  <TableCell width="25%">Name</TableCell>
                   <TableCell width="10%">Time</TableCell>
                   <TableCell width="10%">Taken</TableCell>
                   <TableCell width="10%">Tag</TableCell>
-                  <TableCell width="10%">Status</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {pageData.map((examSet: IExamModel) => (
-                  <ExamSetRow key={examSet.id} examSet={examSet} />
+                {examSetData?.data?.map((examSet: IExamModel) => (
+                  <ExamSetRow
+                    key={examSet.id}
+                    examSet={examSet}
+                    onDelete={() => setDeletedExam(examSet.id)}
+                  />
                 ))}
-                {emptyRows > 0 && (
+                {/* {emptyRows > 0 && (
                   <TableRow
                     style={{
                       height: 53 * emptyRows,
@@ -192,17 +217,22 @@ const ExamSet = () => {
                   >
                     <TableCell colSpan={7} />
                   </TableRow>
-                )}
+                )} */}
               </TableBody>
               <TableFooter>
                 <TableRow>
                   <TablePagination
-                    rowsPerPageOptions={[EXAMSET_PAGE_SIZE]}
-                    count={examSets?.length || 0}
-                    rowsPerPage={EXAMSET_PAGE_SIZE}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    ActionsComponent={TablePaginationActions}
+                    rowsPerPageOptions={[5, 10, 15]}
+                    count={examSetData?.total || 0}
+                    rowsPerPage={limit}
+                    page={page - 1}
+                    onPageChange={(_e, newPage) => {
+                      setPage(newPage + 1);
+                    }}
+                    onRowsPerPageChange={(e) => {
+                      setLimit(+e.target.value);
+                      setPage(1);
+                    }}
                   />
                 </TableRow>
               </TableFooter>
@@ -210,6 +240,32 @@ const ExamSet = () => {
           </AdminTableContainer>
         )}
       </Box>
+      {/* Delete modal */}
+      <CustomModal open={!!deletedExam} onClose={() => setDeletedExam(null)}>
+        <Box sx={{ padding: 3 }}>
+          <Typography variant="h6" sx={{ marginBottom: 1 }}>
+            Do you want to delete this exam?
+          </Typography>
+          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleDeleteExam}
+              sx={{ width: "80px" }}
+              disabled={deleteExamMutation.isPending}
+            >
+              {deleteExamMutation.isPending ? (
+                <CircularProgress size={20} color="error" />
+              ) : (
+                "Delete"
+              )}
+            </Button>
+            <Button variant="contained" onClick={() => setDeletedExam(null)}>
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </CustomModal>
     </>
   );
 };

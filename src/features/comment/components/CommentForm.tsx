@@ -18,13 +18,18 @@ const CommentForm: React.FC<CommentFormProps> = ({
     setText("");
   };
   return (
-    <Stack direction="row" gap={1} mb={1}>
+    <Stack direction="row" gap={1} my={1}>
       <TextField
         size="small"
-        sx={{ width: "100%" }}
+        sx={{ flex: 1 }}
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Write your comment..."
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onSubmit(e);
+          }
+        }}
       />
       <Button
         variant="contained"

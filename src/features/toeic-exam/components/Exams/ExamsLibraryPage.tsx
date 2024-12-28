@@ -30,6 +30,8 @@ const ExamsLibraryPage = () => {
   const [page, setPage] = useState(1);
   const [selectedTag, setSelectedTag] = useState<Tag | null>();
   const [search, setSearch] = useState("");
+  const [searchValueDebounce, setSearchValueDebounce] = useState("");
+  const LIMIT = 12;
 
   useEffect(() => {
     if (!tagId) {
@@ -38,8 +40,8 @@ const ExamsLibraryPage = () => {
   });
 
   const { data: examSetData, isPending } = useQuery({
-    queryKey: ["fetchExam", tagId, page, search],
-    queryFn: () => fetchAllExam(tagId, page),
+    queryKey: ["fetchExam", tagId, page, LIMIT, searchValueDebounce],
+    queryFn: () => fetchAllExam(tagId, page, LIMIT, searchValueDebounce),
   });
 
   const { data: tags, isPending: isPendingTags } = useQuery({
@@ -60,7 +62,7 @@ const ExamsLibraryPage = () => {
 
   const debouncedSearch = useCallback(
     debounce((value: string) => {
-      setSearch(value);
+      setSearchValueDebounce(value);
     }, 1000),
     [],
   );

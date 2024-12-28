@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
+import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logos/logo.svg";
 import LogoMini from "../../../assets/logos/logomini.png";
@@ -59,13 +59,10 @@ const SideBar = (props: any) => {
             <MenuItem>Accounts</MenuItem>
           </Link>
         )}
-        <SubMenu label="Exams">
-          <MenuItem onClick={() => navigate("/admin/exam-set")}>
-            {" "}
-            Exam set{" "}
-          </MenuItem>
+        <MenuItem onClick={() => navigate("/admin/exam-set")}>
           {/* <MenuItem onClick={() => navigate("/admin/exam")}>Exam</MenuItem> */}
-        </SubMenu>
+          Exams
+        </MenuItem>
 
         <MenuItem onClick={() => navigate("/admin/voca-set")}>
           Vocabularies

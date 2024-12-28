@@ -60,7 +60,7 @@ const CreatePart2: React.FC<CrPartProps> = ({
             explain: "",
             answer: Array.from(
               { length: TOEIC_PARTS.Part2.answerCount },
-              (_) => "",
+              (_, index) => `Statement ${String.fromCharCode(65 + index)}`,
             ),
             correctAnswer: "",
           }),
@@ -212,7 +212,7 @@ const CreatePart2: React.FC<CrPartProps> = ({
   ) => {
     let updateData = [...part2Data];
     updateData[groupIndex].questionData[questionDataIndex].correctAnswer =
-      `${String.fromCharCode(65 + answerIndex)}`;
+      `${updateData[groupIndex].questionData[questionDataIndex].answer[answerIndex]}`;
     setPart2Data(updateData);
   };
 
@@ -507,8 +507,8 @@ const CreatePart2: React.FC<CrPartProps> = ({
                             control={
                               <Radio
                                 checked={
-                                  questionData.correctAnswer ===
-                                  `${String.fromCharCode(65 + answerIndex)}`
+                                  answer != "" &&
+                                  questionData.correctAnswer === answer
                                 }
                                 onChange={() =>
                                   handleChangeCorrectAnswer(
@@ -539,6 +539,7 @@ const CreatePart2: React.FC<CrPartProps> = ({
                             size="small"
                             fullWidth
                             margin="dense"
+                            disabled
                           />
                         </Stack>
                       ))}

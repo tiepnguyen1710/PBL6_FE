@@ -91,7 +91,6 @@ const ListenGroupAdmin = () => {
   const [typeParams, setTypeParams] = useState<filterType>("all");
   const [search, setSearch] = useState("");
   const [searchParams, setSearchParams] = useState("");
-
   const [openNewModal, setOpenNewModal] = useState(false);
   const [deletedListenGroup, setDeletedListenGroup] = useState<string | null>(
     null,
