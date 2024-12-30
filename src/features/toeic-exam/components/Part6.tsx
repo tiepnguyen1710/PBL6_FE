@@ -208,8 +208,16 @@ const Part6: React.FC<Part6Props> = ({
               >
                 <Typography mb={1}>
                   {/* Add your passage text here */}
-                  {group.detail ? parse(group.detail) : "No Content"}
+
+                  {group.detail ? parse(group.detail) : ""}
                 </Typography>
+                <Box>
+                  {group.image && group.image.length > 0
+                    ? group.image.map((img) => (
+                        <img src={img.fileUrl} alt="" key={img.index} />
+                      ))
+                    : ""}
+                </Box>
                 {isExplain && (
                   <>
                     <Stack

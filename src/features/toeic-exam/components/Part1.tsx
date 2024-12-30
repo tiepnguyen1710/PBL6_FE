@@ -13,6 +13,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import parse from "html-react-parser";
 import useScrollToTop from "../hooks/useScrollToTop";
 import { useQuestionContext } from "./QuestionProvider";
+import { setScript } from "../../../stores/selectedScript";
 
 interface Part1Props {
   partData?: partData;
@@ -105,6 +106,9 @@ const Part1: React.FC<Part1Props> = ({
   const explainAnswers = useSelector(
     (state: RootState) => state.userAnswers.explainAnswers,
   );
+  const expandedScript = useSelector(
+    (state: RootState) => state.seletedScript.expandedScript,
+  );
   const handleClick = (
     part: number,
     groupIndex: number,
@@ -147,6 +151,17 @@ const Part1: React.FC<Part1Props> = ({
     return found?.isExpanded ?? false;
   };
 
+  const checkScriptExpanded = (part: number, groupIndex: number) => {
+    const found = expandedScript.find(
+      (item) => item.part === part && item.groupIndex === groupIndex,
+    );
+    return found?.isExpanded ?? false;
+  };
+
+  const handleExpandScript = (part: number, groupIndex: number) => {
+    dispatch(setScript({ part, groupIndex }));
+  };
+
   return (
     <>
       <Typography
@@ -175,6 +190,9 @@ const Part1: React.FC<Part1Props> = ({
 
       {/* Group Questions */}
       {partData?.groupQuestionData.map((group, groupIndex) => {
+        let isDisabled = mode === "review";
+        let isExplain = mode === "review";
+        let isScriptExpanded = checkScriptExpanded(PART, groupIndex);
         return (
           <Box
             sx={{
@@ -194,6 +212,7 @@ const Part1: React.FC<Part1Props> = ({
                   justifyContent: "center",
                   alignItems: "center",
                 }}
+                mb={1}
               >
                 <>
                   {group.image?.map((img, imgIndex) => {
@@ -218,13 +237,61 @@ const Part1: React.FC<Part1Props> = ({
                   </>
                 </>
               </Stack>
+              {isExplain && (
+                <Item
+                  isDisabled={isDisabled}
+                  isExplain={isExplain}
+                  onClick={() => handleExpandScript(PART, groupIndex)}
+                  sx={{
+                    display: "flex",
+                    gap: "15px",
+                    alignItems: "center",
+                  }}
+                >
+                  <Stack direction="column">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Stack direction="row" gap={1}>
+                        <InfoIcon color="primary" />
+                        <Typography
+                          sx={{
+                            fontWeight: "500",
+                            color: "primary.main",
+                          }}
+                        >
+                          Transcript
+                        </Typography>
+                      </Stack>
+                      <Box>
+                        <ArrowDropDownIcon />
+                      </Box>
+                    </Box>
+
+                    {isScriptExpanded && (
+                      <Box mt={1} onClick={(e) => e.stopPropagation()}>
+                        <Divider />
+                        <Typography mt={1}>
+                          {group.transcript
+                            ? parse(group.transcript)
+                            : "No transcript"}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Stack>
+                </Item>
+              )}
             </Box>
 
             {/* List of Items */}
             <Box sx={{ width: "100%" }}>
               {group.questionData.map((question, questionIndex) => {
                 let isCorrectQuestion = question.userAnswer?.isCorrect;
-                let isDisabled = mode === "review";
+
                 let isExplain = mode === "review";
                 let isExpanded = isItemExpanded(
                   PART,
@@ -233,7 +300,7 @@ const Part1: React.FC<Part1Props> = ({
                 );
                 let isNoted = isNotedQuestion(PART, groupIndex, questionIndex);
                 return (
-                  <Stack spacing={1}>
+                  <Stack spacing={1} marginTop={1}>
                     <Box
                       ref={(el) => {
                         if (el) {

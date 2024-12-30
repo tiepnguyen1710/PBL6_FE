@@ -54,7 +54,15 @@ const PartResultIndex = () => {
     }
   }, [ExamSetReviewData]);
 
-  const selectedParts = ["part1", "part2", "part3", "part4", "part5", "part6"];
+  const selectedParts = [
+    "part1",
+    "part2",
+    "part3",
+    "part4",
+    "part5",
+    "part6",
+    "part7",
+  ];
 
   const handleNext = () => setCurrentIndex((prev) => prev + 1);
   const handlePrevious = () => setCurrentIndex((prev) => prev - 1);
@@ -76,7 +84,7 @@ const PartResultIndex = () => {
       case "part6":
         return <Part6 partData={examDataReview?.partData[5]} mode={"review"} />;
       case "part7":
-        return <Part7 partData={examDataReview?.partData[6]} />;
+        return <Part7 partData={examDataReview?.partData[6]} mode={"review"} />;
       default:
         return <div>Cannot find this part</div>;
     }
