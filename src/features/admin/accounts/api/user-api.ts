@@ -1,6 +1,7 @@
 import axiosClient from "../../../../axios";
 import { User } from "../../../../types/auth";
 import {
+  ChangeRoleOfUserRequest,
   UpdateUserPasswordRequest,
   UpdateUserProfileRequest,
 } from "../types/Request";
@@ -53,6 +54,15 @@ export async function updateUserPassword(request: UpdateUserPasswordRequest) {
     "/users/updatePassword/" + userId,
     data,
   );
+
+  return response.data;
+}
+
+export async function changeRoleOfUser(request: ChangeRoleOfUserRequest) {
+  const { userId, roles } = request;
+  const response = await axiosClient.patch<User>("/users/roles/" + userId, {
+    roles,
+  });
 
   return response.data;
 }

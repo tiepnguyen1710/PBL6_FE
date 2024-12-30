@@ -4,10 +4,13 @@ import {
   Button,
   Chip,
   Divider,
+  FormControl,
   FormControlLabel,
   FormGroup,
   Grid2,
   IconButton,
+  Radio,
+  RadioGroup,
   Stack,
   Switch,
   TextField,
@@ -16,13 +19,14 @@ import {
 import CustomModal, {
   CustomModalProps,
 } from "../../../../components/UI/CustomModal";
-import { User } from "../../../../types/auth";
+import { getRole, RoleEnum, User } from "../../../../types/auth";
 import { AddAPhoto } from "@mui/icons-material";
 import PasswordTextField from "../../../../components/UI/PasswordTextField";
 import UserStatusLegend from "./UserStatusLegend";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  changeRoleOfUser,
   deleteUser,
   switchUserStatus,
   updateUserPassword,
@@ -41,7 +45,7 @@ import useFileInput from "../../../../hooks/useFileInput";
 
 interface UserInfoModalProps {
   modal: CustomModalProps;
-  defaultUser: User | null;
+  defaultUser: User;
 }
 
 type FormData = {
@@ -59,9 +63,11 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
   const queryClient = useQueryClient();
   const [openConfirmSwitchStatusModal, setOpenConfirmSwitchStatusModal] =
     useState(false);
+  const [updatedRole, setUpdatedRole] = useState<RoleEnum | null>(null);
+
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-  const [user, setUser] = useState<User | null>(defaultUser);
+  const [user, setUser] = useState<User>(defaultUser);
   const [hasChanged, setHasChanged] = useState(false);
 
   const {
@@ -73,16 +79,16 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     setValue,
   } = useForm<FormData>({
     defaultValues: {
-      email: defaultUser?.email || "",
-      name: defaultUser?.name || "",
-      phone: defaultUser?.phone || "",
+      email: defaultUser.email || "",
+      name: defaultUser.name || "",
+      phone: defaultUser.phone || "",
       newPassword: "",
       confirmNewPassword: "",
     },
   });
 
   const { fileInputRef, fileSrc, handleChangeFileInput, chooseFile } =
-    useFileInput(user?.avatar || "");
+    useFileInput(user.avatar || "");
 
   const switchStatusMutation = useMutation({
     mutationFn: (request: { userId: string; activate: boolean }) =>
@@ -141,10 +147,32 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
     },
   });
 
+  const changeRoleMutation = useMutation({
+    mutationFn: changeRoleOfUser,
+    onSuccess: (newUserData: User) => {
+      toast.success("User role has been updated!");
+      setUser(newUserData);
+      setHasChanged(true);
+    },
+    onSettled: () => {
+      changeRoleMutation.reset();
+      setUpdatedRole(null);
+    },
+  });
+
   const handleConfirmSwitchStatus = () => {
     if (!user) return;
 
     switchStatusMutation.mutate({ userId: user.id, activate: !user.isActive });
+  };
+
+  const handleChangeRole = () => {
+    if (!updatedRole) return;
+
+    changeRoleMutation.mutate({
+      userId: user.id,
+      roles: [updatedRole],
+    });
   };
 
   const handleCloseModal = () => {
@@ -286,11 +314,11 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
                 </Box>
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: "600" }}>
-                    {user?.name}
+                    {user.name}
                   </Typography>
-                  <Typography variant="body1">{user?.email}</Typography>
+                  <Typography variant="body1">{user.email}</Typography>
                   <Chip
-                    label={"ID: " + user?.id}
+                    label={"ID: " + user.id}
                     sx={{
                       py: "12px",
                       px: "6px",
@@ -311,9 +339,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
                   }}
                 >
                   <FormControlLabel
-                    control={
-                      <Switch color="success" checked={user?.isActive} />
-                    }
+                    control={<Switch color="success" checked={user.isActive} />}
                     label="Account status"
                     labelPlacement="start"
                   />
@@ -333,7 +359,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
                   sx={{ marginTop: 0.5, textAlign: "right" }}
                 >
                   Created at{" "}
-                  {user?.createdAt &&
+                  {user.createdAt &&
                     format(new Date(user.createdAt), "dd/MM/y")}
                 </Typography>
               </Box>
@@ -363,7 +389,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
               <Grid2 size={6}>
                 <TextField
                   label="User name"
-                  defaultValue={user?.username}
+                  defaultValue={user.username}
                   slotProps={{ input: { readOnly: true } }}
                 />
               </Grid2>
@@ -381,12 +407,48 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
                   error={!!validationErrors.phone}
                   helperText={validationErrors.phone?.message}
                   {...register("phone", {
-                    ...(user?.phone && { required: "Phone is required" }),
+                    ...(user.phone && { required: "Phone is required" }),
                     ...getPhoneValidator(),
                   })}
                 />
               </Grid2>
             </Grid2>
+          </Box>
+          <Divider />
+
+          <Box sx={{ padding: 1.5, paddingTop: 1 }}>
+            <Typography variant="h6" sx={{ fontWeight: "600" }}>
+              Role
+            </Typography>
+            <Typography variant="body1">
+              Select the appropriate role for the user from the options below
+              (be cautious with updating role to admin).
+            </Typography>
+
+            <FormControl sx={{ marginTop: 0.5 }}>
+              <RadioGroup
+                row
+                onChange={(e) => setUpdatedRole(e.target.value as RoleEnum)}
+                value={getRole(user)}
+                sx={{ columnGap: 1 }}
+              >
+                <FormControlLabel
+                  value={RoleEnum.User}
+                  control={<Radio size="small" />}
+                  label="Student"
+                />
+                <FormControlLabel
+                  value={RoleEnum.Moderator}
+                  control={<Radio size="small" />}
+                  label="Moderator"
+                />
+                <FormControlLabel
+                  value={RoleEnum.Admin}
+                  control={<Radio size="small" />}
+                  label="Admin"
+                />
+              </RadioGroup>
+            </FormControl>
           </Box>
           <Divider />
 
@@ -499,10 +561,10 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
       >
         <Box sx={{ padding: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Do you want to {user?.isActive ? "deactivate" : "activate"} this
+            Do you want to {user.isActive ? "deactivate" : "activate"} this
             account?
           </Typography>
-          {user?.isActive ? (
+          {user.isActive ? (
             <Typography>
               Deactivating the account will temporarily disable the user's
               access.
@@ -525,6 +587,30 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
               variant="outlined"
               onClick={() => setOpenConfirmSwitchStatusModal(false)}
             >
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </CustomModal>
+
+      {/* Modal confirm change role */}
+      <CustomModal open={!!updatedRole} onClose={() => setUpdatedRole(null)}>
+        <Box sx={{ padding: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Do you want to change this user's role?
+          </Typography>
+          <Typography>
+            Please note that changing the user's role may affect their access
+          </Typography>
+          <Stack direction="row" spacing={0.5} sx={{ marginTop: 1 }}>
+            <Button
+              variant="contained"
+              onClick={handleChangeRole}
+              sx={{ boxShadow: "none", minWidth: "85px" }}
+            >
+              OK
+            </Button>
+            <Button variant="outlined" onClick={() => setUpdatedRole(null)}>
               Cancel
             </Button>
           </Stack>

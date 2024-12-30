@@ -285,14 +285,16 @@ const AccountIndexPage: React.FC = () => {
         )}
 
         {/* User information modal */}
-        <UserInfoModal
-          key={selectedUser?.id}
-          modal={{
-            open: selectedUser !== null,
-            onClose: () => setSelectedUser(null),
-          }}
-          defaultUser={selectedUser}
-        />
+        {selectedUser && (
+          <UserInfoModal
+            key={selectedUser?.id}
+            modal={{
+              open: selectedUser !== null,
+              onClose: () => setSelectedUser(null),
+            }}
+            defaultUser={selectedUser}
+          />
+        )}
       </Box>
     </>
   );

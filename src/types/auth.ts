@@ -33,3 +33,13 @@ export function canAccessAdminPage(user: User) {
 export function isAdmin(user: User) {
   return user.roles.includes(RoleEnum.Admin);
 }
+
+export function getRole(user: User) {
+  if (user.roles.includes(RoleEnum.Admin)) {
+    return RoleEnum.Admin;
+  }
+  if (user.roles.includes(RoleEnum.Moderator)) {
+    return RoleEnum.Moderator;
+  }
+  return RoleEnum.User;
+}

@@ -1,3 +1,5 @@
+import { RoleEnum } from "../../../../types/auth";
+
 export interface UpdateUserProfileRequest {
   userId: string;
   email?: string;
@@ -10,4 +12,9 @@ export interface UpdateUserPasswordRequest {
   userId: string;
   password: string;
   passwordConfirm: string;
+}
+
+export interface ChangeRoleOfUserRequest {
+  userId: string;
+  roles: RoleEnum[];
 }
