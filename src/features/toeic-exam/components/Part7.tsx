@@ -212,9 +212,12 @@ const Part7: React.FC<Part7Props> = ({
                 </Typography>
                 <Box>
                   {group.image && group.image.length > 0
-                    ? group.image.map((img) => (
-                        <img src={img.fileUrl} alt="" key={img.index} />
-                      ))
+                    ? group.image
+                        .slice() // Create a shallow copy to avoid mutating the original array
+                        .sort((a, b) => a.index - b.index) // Sort by index in ascending order
+                        .map((img) => (
+                          <img src={img.fileUrl} alt="" key={img.index} />
+                        ))
                     : ""}
                 </Box>
                 {isExplain && (
