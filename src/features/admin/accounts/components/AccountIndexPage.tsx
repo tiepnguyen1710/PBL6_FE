@@ -234,7 +234,7 @@ const AccountIndexPage: React.FC = () => {
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.name}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       {user.roles
                         .map((role) => capitalizeFirstLetter(role))
                         .join(",")}

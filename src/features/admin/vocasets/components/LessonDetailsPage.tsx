@@ -279,10 +279,10 @@ const LessonDetailsPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
+                  <TableCell width={100}>ID</TableCell>
                   <TableCell>Thumbnail</TableCell>
                   <TableCell>Word</TableCell>
-                  <TableCell>Type</TableCell>
+                  <TableCell width={100}>Type</TableCell>
                   <TableCell>Meaning</TableCell>
                   <TableCell width={150} align="center">
                     Action
@@ -294,7 +294,7 @@ const LessonDetailsPage = () => {
                   <TableRow>
                     <TableCell
                       sx={{
-                        maxWidth: "50px",
+                        maxWidth: "100px",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
                         overflow: "hidden",

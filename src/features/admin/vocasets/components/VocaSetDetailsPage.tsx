@@ -385,10 +385,10 @@ const VocaSetDetailsPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
+                  <TableCell width={100}>ID</TableCell>
                   <TableCell>Thumbnail</TableCell>
                   <TableCell>Name</TableCell>
-                  <TableCell>Number of vocabularies</TableCell>
+                  <TableCell width={200}>Number of vocabularies</TableCell>
                   <TableCell width={150} align="center">
                     Action
                   </TableCell>
@@ -399,7 +399,7 @@ const VocaSetDetailsPage = () => {
                   <TableRow key={lesson.id}>
                     <TableCell
                       sx={{
-                        maxWidth: "50px",
+                        maxWidth: "100px",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
                         overflow: "hidden",

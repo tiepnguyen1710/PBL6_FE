@@ -258,7 +258,7 @@ const ListenGroupAdmin = () => {
                   </TableCell>
                   <TableCell sx={{ height: "20px" }}>Name</TableCell>
                   <TableCell sx={{ height: "20px" }}>Level</TableCell>
-                  <TableCell sx={{ height: "20px" }}>Lession</TableCell>
+                  <TableCell sx={{ height: "20px" }}>Lessons</TableCell>
                   <TableCell sx={{ height: "20px" }} align="center">
                     Action
                   </TableCell>
