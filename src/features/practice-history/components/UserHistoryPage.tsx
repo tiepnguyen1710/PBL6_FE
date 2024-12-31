@@ -3,7 +3,6 @@ import Content from "../../../components/layout/Content";
 import UserProfileBackground from "../assets/user-profile-background.png";
 import TabPanel from "../../../components/UI/TabPanel";
 import { useState } from "react";
-import useFileInput from "../../../hooks/useFileInput";
 import DefaultAvatar from "../../../assets/avatars/default.svg";
 import { useQuery } from "@tanstack/react-query";
 import { me } from "../../auth/api/account-api";
@@ -36,7 +35,6 @@ const UserHistoryPage = () => {
     enabled: isAuthenticated,
   });
 
-  const { fileSrc, fileInputRef } = useFileInput(DefaultAvatar);
   return (
     <Content>
       <Box sx={{ px: 2, maxWidth: "840px", mx: "auto" }}>
@@ -51,7 +49,7 @@ const UserHistoryPage = () => {
             }}
           >
             <Avatar
-              src={fileSrc}
+              src={user?.avatar || DefaultAvatar}
               sx={{
                 width: "120px",
                 height: "120px",
@@ -59,7 +57,6 @@ const UserHistoryPage = () => {
               }}
             />
 
-            <input type="file" hidden name="avatar" ref={fileInputRef} />
             {isLoading ? (
               <CustomBackdrop open />
             ) : (
@@ -69,9 +66,10 @@ const UserHistoryPage = () => {
                   position: "absolute",
                   left: "50%",
                   transform: "translateX(-50%)",
+                  whiteSpace: "nowrap",
                 }}
               >
-                {user?.username}
+                {user?.username || user?.name}
               </Typography>
             )}
           </Box>
@@ -84,6 +82,7 @@ const UserHistoryPage = () => {
             padding: 1,
             paddingBottom: 2,
             marginBottom: 2,
+            boxShadow: "0 0 29px rgba(100,100,111,.2)",
           }}
         >
           <>

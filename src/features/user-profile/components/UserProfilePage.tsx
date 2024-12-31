@@ -197,15 +197,20 @@ const UserProfilePage: React.FC = () => {
                 position: "absolute",
                 left: "50%",
                 transform: "translateX(-50%)",
+                whiteSpace: "nowrap",
               }}
             >
-              {user?.username}
+              {user?.username || user?.name}
             </Typography>
           </Box>
         </Box>
         <Paper
           elevation={1}
-          sx={{ marginTop: 7, minHeight: "200px", padding: 1 }}
+          sx={{
+            marginTop: 7,
+            minHeight: "200px",
+            padding: 1,
+          }}
         >
           <>
             <Tabs
