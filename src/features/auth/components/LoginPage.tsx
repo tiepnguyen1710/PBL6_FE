@@ -18,14 +18,15 @@ import RoundedPasswordInput from "./RoundedPasswordInput";
 import { authActions } from "../../../stores/authSlice";
 import { AppDispatch } from "../../../stores";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
-import { Alert } from "@mui/material";
+import { Alert, Divider } from "@mui/material";
 import { loginGoggle, postLogin } from "../api/account-api";
 import LoginResponse from "../types/LoginResponse";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import Link from "../../../components/UI/Link";
-import { RoleEnum } from "../../../types/auth";
+import { canAccessAdminPage } from "../../../types/auth";
+import GoogleIcon from "../../../assets/icons/google.svg";
+import { Image } from "../../../components/UI/Image";
 
-// Interface for form data
 interface FormData {
   username: string;
   password: string;
@@ -54,6 +55,17 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
+  const loginGg = useGoogleLogin({
+    flow: "implicit",
+    onSuccess: (response: { access_token: string }) => {
+      loginGoogleMutation.mutate(response.access_token);
+    },
+    onError: (error) => {
+      toast.error("Please try another way to login!");
+      console.error("Google login error: ", error);
+    },
+  });
+
   const handleLoginSuccess = useCallback(
     (responseData: LoginResponse) => {
       dispatch(
@@ -64,11 +76,7 @@ const LoginPage: React.FC = () => {
         }),
       );
 
-      const roles = responseData.user.roles;
-      if (
-        roles.includes(RoleEnum.Admin) ||
-        roles.includes(RoleEnum.Moderator)
-      ) {
+      if (canAccessAdminPage(responseData.user)) {
         navigate("/admin");
       } else {
         navigate("/");
@@ -90,17 +98,8 @@ const LoginPage: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log("Form submitted with data:", data);
     mutate(data);
   };
-
-  const handleCredentialResponse = useCallback(
-    (response: CredentialResponse) => {
-      // Send to backend
-      loginGoogleMutation.mutate(response.credential as string);
-    },
-    [loginGoogleMutation],
-  );
 
   return (
     <>
@@ -168,31 +167,55 @@ const LoginPage: React.FC = () => {
           </Stack>
         </form>
 
-        <Button
-          type="submit"
-          form="login-form"
-          variant="contained"
-          sx={{
-            backgroundColor: "success.main",
-            borderRadius: "32px",
-            py: "6px",
-            width: "100%",
-            alignSelf: { lg: "flex-end" },
-            marginBottom: "-16px",
-          }}
-        >
-          Login
-        </Button>
-        <GoogleLogin
-          onSuccess={handleCredentialResponse}
-          onError={() => console.log("Oauth error")}
-          useOneTap={false}
-          theme="outline"
-          size="large"
-          shape="circle"
-          text="signin_with" // Tùy chỉnh văn bản
-          auto_select={false}
-        />
+        <Stack spacing={1.5}>
+          <Button
+            type="submit"
+            form="login-form"
+            variant="contained"
+            sx={{
+              backgroundColor: "success.main",
+              borderRadius: "32px",
+              py: "6px",
+              width: "100%",
+              alignSelf: { lg: "flex-end" },
+              marginBottom: "-16px",
+            }}
+          >
+            Login
+          </Button>
+          <Divider
+            sx={{
+              color: "text.secondary",
+              fontSize: "14px",
+              px: "20%",
+            }}
+          >
+            Or
+          </Divider>
+          <Button
+            onClick={() => loginGg()}
+            variant="outlined"
+            startIcon={
+              <Image
+                src={GoogleIcon}
+                alt="Google Icon"
+                sx={{ width: "18px", height: "18px" }}
+              />
+            }
+            sx={{
+              borderRadius: "32px",
+              py: "6px",
+              width: "100%",
+              alignSelf: { lg: "flex-end" },
+              marginBottom: "-16px",
+              border: "1px solid #dadce0",
+              color: "text.primary",
+              fontWeight: "400",
+            }}
+          >
+            Login with Google
+          </Button>
+        </Stack>
       </Stack>
     </>
   );

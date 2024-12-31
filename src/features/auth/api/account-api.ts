@@ -23,8 +23,8 @@ export async function me(token: string) {
   return response.data;
 }
 
-export async function loginGoggle(ggToken: string) {
-  const response = await axios.post("/auth/google", { token: ggToken });
+export async function loginGoggle(accessToken: string) {
+  const response = await axios.post("/auth/google", { token: accessToken });
 
   return response.data;
 }
