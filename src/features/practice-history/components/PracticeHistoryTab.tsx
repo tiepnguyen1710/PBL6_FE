@@ -5,7 +5,8 @@ import { PracticeHistory } from "../types/PracticeHistory";
 import { groupPracticeByTest } from "../utils/helper";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import PracticeHistoryTable from "./PracticeHistoryTable";
-import { Box } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import Link from "../../../components/UI/Link";
 
 const PracticeHistoryTab = () => {
   const [PracticeHistoryData, setPracticeHistoryData] = useState<
@@ -41,6 +42,21 @@ const PracticeHistoryTab = () => {
                 </Box>
               );
             },
+          )}
+
+          {/* Placeholder */}
+          {(!PracticeHistoryData || PracticeHistoryData.length == 0) && (
+            <Stack spacing={0.5} alignItems="center" sx={{ mt: 1 }}>
+              <Typography>You haven't taken any exam test yet</Typography>
+              <Link to="/exams">
+                <Button
+                  variant="contained"
+                  sx={{ boxShadow: "none", width: "250px" }}
+                >
+                  Take your first exam now!
+                </Button>
+              </Link>
+            </Stack>
           )}
         </>
       )}
