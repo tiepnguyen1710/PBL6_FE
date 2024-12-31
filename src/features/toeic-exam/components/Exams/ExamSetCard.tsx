@@ -27,12 +27,12 @@ const ExamSetCard: React.FC<ExamCardProps> = ({
   return (
     <CustomCard
       sx={{
-        minWidth: "240px",
+        minWidth: "280px",
         backgroundColor: "#f8f9fa",
         padding: 1,
         display: "inline-flex",
         flexDirection: "column",
-        gap: 0.5,
+        gap: 1,
       }}
     >
       <CardTitle>{title}</CardTitle>

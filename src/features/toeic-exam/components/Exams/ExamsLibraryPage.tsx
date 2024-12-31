@@ -68,7 +68,7 @@ const ExamsLibraryPage = () => {
   );
   return (
     <Content>
-      <Box sx={{ flexGrow: 1, maxWidth: "1200px", mx: "auto", py: 3, px: 2 }}>
+      <Box sx={{ flexGrow: 1, maxWidth: "1250px", mx: "auto", py: 3, px: 2 }}>
         <Grid container spacing={2}>
           <Grid size={9}>
             <Typography variant="h4" sx={{ marginBottom: 2 }}>
@@ -110,7 +110,7 @@ const ExamsLibraryPage = () => {
                 <TextField
                   sx={{
                     width: "100%",
-                    paddingRight: 3.5,
+                    paddingRight: 4.5,
                   }}
                   variant="outlined"
                   value={search}
