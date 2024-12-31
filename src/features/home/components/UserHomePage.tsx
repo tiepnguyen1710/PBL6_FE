@@ -189,9 +189,11 @@ const UserHomePage = () => {
               sx={{ py: 2 }}
             >
               <Typography variant="h5">Latest Practice Results</Typography>
-              <Button variant="outlined" sx={{ px: 1, py: 0.25 }}>
-                Analysis your practice
-              </Button>
+              <Link to="/history?tab=analysis">
+                <Button variant="outlined" sx={{ px: 1, py: 0.25 }}>
+                  Analysis your practice
+                </Button>
+              </Link>
             </Stack>
             <Stack
               direction="row"

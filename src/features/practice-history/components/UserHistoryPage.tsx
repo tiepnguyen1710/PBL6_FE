@@ -13,12 +13,18 @@ import { AuthState } from "../../../stores/authSlice";
 import PracticeHistoryTab from "./PracticeHistoryTab";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import StatisticalTab from "./StatisticalTab";
+import { useSearchParams } from "react-router-dom";
 
 const UserHistoryPage = () => {
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab");
+  const defaultTabIndex = tab === "analysis" ? 1 : 0;
+
   const { isAuthenticated, token } = useSelector<RootState, AuthState>(
     (state) => state.auth,
   );
-  const [tabIndex, setTabIndex] = useState(0);
+
+  const [tabIndex, setTabIndex] = useState(defaultTabIndex);
 
   const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -72,7 +78,13 @@ const UserHistoryPage = () => {
         </Box>
         <Paper
           elevation={1}
-          sx={{ marginTop: 7, minHeight: "200px", padding: 1 }}
+          sx={{
+            marginTop: 7,
+            minHeight: "200px",
+            padding: 1,
+            paddingBottom: 2,
+            marginBottom: 2,
+          }}
         >
           <>
             <Tabs
