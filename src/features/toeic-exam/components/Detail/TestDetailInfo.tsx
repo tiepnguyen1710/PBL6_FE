@@ -32,13 +32,14 @@ const TestDetailInfo: React.FC<TestDetailInfoProps> = ({ examId }) => {
       <Stack direction="row" spacing={0.5}>
         <AccessAlarmIcon />
         <Typography variant="subtitle1">
-          Time: 120 minutes | 7 parts | 200 questions | 798 comment
+          Time: 120 minutes | 7 parts | 200 questions |{" "}
+          {testDetailPractice?.test.commentCount} comment
         </Typography>
       </Stack>
       <Stack direction="row" spacing={0.5}>
         <PersonIcon />
         <Typography variant="subtitle1">
-          123 users have practiced this test
+          {testDetailPractice?.test.taken} users have practiced this test
         </Typography>
       </Stack>
     </>
