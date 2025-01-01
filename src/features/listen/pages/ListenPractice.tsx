@@ -176,6 +176,7 @@ const ListenPractice: React.FC = () => {
   };
 
   const handleNavigateSentence = (index: number) => {
+    setShowAnswer(false);
     const tempAnstate = [...answerState];
     const tempAnswer = [...answer];
     const tempSentenceCheck = [...sentenceCheck];
