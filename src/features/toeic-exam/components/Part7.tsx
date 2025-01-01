@@ -210,6 +210,7 @@ const Part7: React.FC<Part7Props> = ({
                   {/* Add your passage text here */}
                   {group.detail ? parse(group.detail) : ""}
                 </Typography>
+
                 <Box>
                   {group.image && group.image.length > 0
                     ? group.image

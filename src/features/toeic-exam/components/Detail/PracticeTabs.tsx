@@ -202,7 +202,7 @@ export default function PracticeTabs() {
                 <MenuItem value={0}>
                   <em>Time limit</em>
                 </MenuItem>
-                <MenuItem value={10}>10 minutes</MenuItem>
+                <MenuItem value={600}>10 minutes</MenuItem>
                 <MenuItem value={1200}>20 minutes</MenuItem>
                 <MenuItem value={1800}>30 minutes</MenuItem>
                 <MenuItem value={2400}>40 minutes</MenuItem>

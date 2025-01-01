@@ -72,7 +72,7 @@ const ExamsLibraryPage = () => {
         <Grid container spacing={2}>
           <Grid size={9}>
             <Typography variant="h4" sx={{ marginBottom: 2 }}>
-              Library Exam
+              Exam Library
             </Typography>
             {isPendingTags && isPending ? (
               <Box sx={{ marginTop: 2 }}>

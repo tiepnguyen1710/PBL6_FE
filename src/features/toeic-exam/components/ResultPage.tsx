@@ -12,7 +12,6 @@ import DoneIcon from "@mui/icons-material/Done";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import HeadphonesIcon from "@mui/icons-material/Headphones";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,12 +23,13 @@ import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { resetNotedQuestion } from "../../../stores/notedQuestionSlice";
+
 const ResultPage = () => {
   const BoxStyle = {
     borderRadius: "10px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     height: "fit-content",
-    padding: "30px",
+    padding: "30px 20px",
   };
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -59,7 +59,7 @@ const ResultPage = () => {
         ) : (
           <Box my={2}>
             <Grid2 container spacing={2}>
-              <Grid2 size={9}>
+              <Grid2 size={9.5}>
                 <Box
                   sx={{
                     borderRadius: "10px",
@@ -69,7 +69,7 @@ const ResultPage = () => {
                   }}
                 >
                   <Typography variant="h5" mb={2}>
-                    Result New Economy TOEIC Test 10
+                    {responseResultData?.test.name}
                   </Typography>
                   <Grid2 container spacing={1.5}>
                     <Grid2 size={3}>
@@ -84,7 +84,11 @@ const ResultPage = () => {
                             </Stack>
                             <Typography>{`${responseResultData?.testPractice.numCorrect}/${TOTAL_QUESTIONS}`}</Typography>
                           </Stack>
-                          <Stack direction="row" justifyContent="space-between">
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            flexWrap="wrap"
+                          >
                             <Stack direction="row" spacing={0.25}>
                               <TrackChangesIcon fontSize="small" />
                               <Typography sx={{ fontWeight: 600 }}>
@@ -118,7 +122,7 @@ const ResultPage = () => {
                     </Grid2>
                     <Grid2 size={9}>
                       <Grid2 container spacing={1}>
-                        <Grid2 size={4}>
+                        <Grid2 size={6}>
                           <Box sx={BoxStyle}>
                             <Stack
                               direction="column"
@@ -145,7 +149,7 @@ const ResultPage = () => {
                             </Stack>
                           </Box>
                         </Grid2>
-                        <Grid2 size={4}>
+                        <Grid2 size={6}>
                           <Box sx={BoxStyle}>
                             <Stack
                               direction="column"
@@ -174,7 +178,7 @@ const ResultPage = () => {
                             </Stack>
                           </Box>
                         </Grid2>
-                        <Grid2 size={4}>
+                        {/* <Grid2 size={4}>
                           <Box sx={BoxStyle}>
                             <Stack
                               direction="column"
@@ -197,7 +201,7 @@ const ResultPage = () => {
                               <Typography>{`${(TOTAL_QUESTIONS ?? 0) - (responseResultData?.testPractice.totalQuestion ?? 0)}`}</Typography>
                             </Stack>
                           </Box>
-                        </Grid2>
+                        </Grid2> */}
                         <Grid2 size={6}>
                           <Box sx={BoxStyle}>
                             <Stack
@@ -265,7 +269,7 @@ const ResultPage = () => {
                   </Button>
                 </Box>
               </Grid2>
-              <Grid2 size={3}>
+              <Grid2 size={2.5}>
                 {" "}
                 <Box
                   sx={{
