@@ -229,7 +229,9 @@ const Part7: React.FC<Part7Props> = ({
                       onClick={() => handleExpandScript(PART, groupIndex)}
                       style={{ cursor: "pointer" }}
                     >
-                      <Typography color="primary.main">Translate</Typography>
+                      <Typography color="primary.main" mb={1}>
+                        Translate
+                      </Typography>
                       <ArrowDropDownIcon color="primary" />
                     </Stack>
                     {isScriptExpanded && (
