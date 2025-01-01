@@ -98,6 +98,12 @@ const StatisticalTab = () => {
         <CustomBackdrop open />
       ) : (
         <>
+          <Button
+            variant={"contained"}
+            sx={{ borderRadius: 5, marginBottom: 1 }}
+          >
+            Full Test
+          </Button>
           <Grid2 container spacing={1}>
             <Grid2 size={3}>
               <Box sx={{ ...BoxStyle }}>

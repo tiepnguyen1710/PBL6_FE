@@ -31,7 +31,7 @@ const ExamsLibraryPage = () => {
   const [selectedTag, setSelectedTag] = useState<Tag | null>();
   const [search, setSearch] = useState("");
   const [searchValueDebounce, setSearchValueDebounce] = useState("");
-  const LIMIT = 12;
+  const LIMIT = 9;
 
   useEffect(() => {
     if (!tagId) {
