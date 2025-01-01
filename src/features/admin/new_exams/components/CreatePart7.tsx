@@ -409,7 +409,9 @@ const CreatePart7: React.FC<CrPartProps> = ({
                 width: 120,
                 ...getChipStyle(part7Data[groupIndex]?.validate),
               }}
-              label={part7Labels[groupIndex]}
+              label={
+                isUpdate ? `Group ${groupIndex + 1}` : part7Labels[groupIndex]
+              }
               onClick={() => handleGroupQuestion(groupIndex)}
             />
           );

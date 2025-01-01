@@ -29,7 +29,7 @@ const ResultPage = () => {
     borderRadius: "10px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     height: "fit-content",
-    padding: "30px 20px",
+    padding: "30px",
   };
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ const ResultPage = () => {
                     {responseResultData?.test.name}
                   </Typography>
                   <Grid2 container spacing={1.5}>
-                    <Grid2 size={3}>
+                    <Grid2 size={3.5}>
                       <Box sx={BoxStyle}>
                         <Stack direction="column" spacing={4}>
                           <Stack direction="row" justifyContent="space-between">
@@ -120,7 +120,7 @@ const ResultPage = () => {
                         </Stack>
                       </Box>
                     </Grid2>
-                    <Grid2 size={9}>
+                    <Grid2 size={8.5}>
                       <Grid2 container spacing={1}>
                         <Grid2 size={6}>
                           <Box sx={BoxStyle}>

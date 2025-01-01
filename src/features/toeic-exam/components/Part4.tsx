@@ -247,7 +247,7 @@ const Part4: React.FC<Part4Props> = ({
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "space-between",
+                        justifyContent: "flex-start",
                         alignItems: "center",
                       }}
                     >
@@ -426,7 +426,7 @@ const Part4: React.FC<Part4Props> = ({
                           <Box
                             sx={{
                               display: "flex",
-                              justifyContent: "space-between",
+                              justifyContent: "flex-start",
                               alignItems: "center",
                             }}
                           >

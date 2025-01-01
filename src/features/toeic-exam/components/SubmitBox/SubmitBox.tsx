@@ -94,6 +94,10 @@ const SubMitBox: React.FC<PartDataProps> = ({
   });
 
   const handleButtonSubmit = () => {
+    if (userAnswers.length === 0) {
+      toast.error("You need to answer at least one question");
+      return;
+    }
     setOpenConfirm(true);
   };
 

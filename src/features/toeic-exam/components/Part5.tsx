@@ -356,7 +356,7 @@ const Part5: React.FC<Part5Props> = ({
                           <Box
                             sx={{
                               display: "flex",
-                              justifyContent: "space-between",
+                              justifyContent: "flex-start",
                               alignItems: "center",
                             }}
                           >
