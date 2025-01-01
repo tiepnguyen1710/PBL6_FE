@@ -64,6 +64,7 @@ const ListListenGroup = () => {
   });
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setPage(1);
     setTabIndex(newValue);
     setTabValue(LISTEN_TABS[newValue].value);
   };
