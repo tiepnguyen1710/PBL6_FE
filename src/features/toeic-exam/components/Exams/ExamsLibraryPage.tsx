@@ -52,11 +52,12 @@ const ExamsLibraryPage = () => {
   const handleTagClick = (tag: Tag) => {
     setSelectedTag(tag);
     setSearchParams(tag.id !== "" ? { tag_id: tag.id } : {});
-    setPage(0);
+    setPage(1);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+    setPage(1);
     debouncedSearch(event.target.value);
   };
 
@@ -138,6 +139,8 @@ const ExamsLibraryPage = () => {
                               id: examSet.id,
                               name: examSet.name,
                               time: examSet.time,
+                              taken: examSet.taken,
+                              commentCount: examSet.commentCount,
                             };
                             return examSetInfo;
                           })
@@ -149,8 +152,8 @@ const ExamsLibraryPage = () => {
                                   id={examSet.id}
                                   title={examSet.name}
                                   duration={examSet.time.toString()}
-                                  totalParticipants={0}
-                                  totalComments={0}
+                                  totalParticipants={examSet.taken}
+                                  totalComments={examSet.commentCount}
                                   numOfParts={7}
                                   numOfQuestions={200}
                                   tags={["Listening", "Reading"]}

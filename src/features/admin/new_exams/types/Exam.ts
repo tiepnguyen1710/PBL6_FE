@@ -7,6 +7,7 @@ export interface IExamModel {
   tags: Tag[];
   time: number;
   taken: number;
+  commentCount: number;
   partData: partData[];
 }
 

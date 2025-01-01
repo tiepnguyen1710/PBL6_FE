@@ -176,6 +176,7 @@ const ListenPractice: React.FC = () => {
   };
 
   const handleNavigateSentence = (index: number) => {
+    setShowAnswer(false);
     const tempAnstate = [...answerState];
     const tempAnswer = [...answer];
     const tempSentenceCheck = [...sentenceCheck];
@@ -331,6 +332,7 @@ const ListenPractice: React.FC = () => {
                     marginLeft: "20px",
                     marginBottom: "20px",
                     minHeight: "60px",
+                    flexWrap: "wrap",
                   }}
                 >
                   <TipsAndUpdatesIcon
@@ -346,18 +348,29 @@ const ListenPractice: React.FC = () => {
                   ) : (
                     <>
                       <Typography variant="h6">Check:</Typography>
-                      {answerState[currIndex - 1].checked &&
-                        sentenceCheck[currIndex - 1].map((sentence, index) => {
-                          return (
-                            <Typography
-                              key={index}
-                              color={sentence.state}
-                              variant="h6"
-                            >
-                              {sentence.sentence}
-                            </Typography>
-                          );
-                        })}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: "4px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {answerState[currIndex - 1].checked &&
+                          sentenceCheck[currIndex - 1].map(
+                            (sentence, index) => {
+                              return (
+                                <Typography
+                                  key={index}
+                                  color={sentence.state}
+                                  variant="h6"
+                                >
+                                  {sentence.sentence}
+                                </Typography>
+                              );
+                            },
+                          )}
+                      </Box>
                     </>
                   )}
                 </Box>

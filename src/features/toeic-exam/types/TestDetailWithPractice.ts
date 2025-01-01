@@ -3,6 +3,8 @@ export interface TestDetailWithPractice {
     id: string;
     name: string;
     time: number;
+    taken: number;
+    commentCount: number;
   };
   testPractice: TestPractice[];
 }

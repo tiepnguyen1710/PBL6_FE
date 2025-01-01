@@ -26,7 +26,7 @@ const SideBar = (props: any) => {
         }}
       >
         <Link
-          to="/admin"
+          to="/"
           style={{
             width: 150,
             height: "auto",

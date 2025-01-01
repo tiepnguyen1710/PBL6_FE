@@ -11,11 +11,11 @@ const ExamSetRow: React.FC<{
     <TableRow>
       <TableCell>{examSet.id}</TableCell>
       <TableCell>{examSet.name}</TableCell>
-      <TableCell>{examSet.time}</TableCell>
-      <TableCell>{0}</TableCell>
-      <TableCell>{examSet?.tags[0]?.name}</TableCell>
-      <TableCell>
-        <Stack direction="row" spacing={0.5}>
+      <TableCell align="center">{examSet.time}</TableCell>
+      {/* <TableCell align="center">{0}</TableCell> */}
+      <TableCell align="center">{examSet?.tags[0]?.name}</TableCell>
+      <TableCell align="center">
+        <Stack direction="row" spacing={0.5} justifyContent="center">
           <Link to={`/admin/exam-set/${examSet.id}`}>
             <Button startIcon={<Edit />}>Edit</Button>
           </Link>

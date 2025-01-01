@@ -3,7 +3,6 @@ import Content from "../../../components/layout/Content";
 import UserProfileBackground from "../assets/user-profile-background.png";
 import TabPanel from "../../../components/UI/TabPanel";
 import { useState } from "react";
-import useFileInput from "../../../hooks/useFileInput";
 import DefaultAvatar from "../../../assets/avatars/default.svg";
 import { useQuery } from "@tanstack/react-query";
 import { me } from "../../auth/api/account-api";
@@ -13,12 +12,18 @@ import { AuthState } from "../../../stores/authSlice";
 import PracticeHistoryTab from "./PracticeHistoryTab";
 import CustomBackdrop from "../../../components/UI/CustomBackdrop";
 import StatisticalTab from "./StatisticalTab";
+import { useSearchParams } from "react-router-dom";
 
 const UserHistoryPage = () => {
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab");
+  const defaultTabIndex = tab === "analysis" ? 1 : 0;
+
   const { isAuthenticated, token } = useSelector<RootState, AuthState>(
     (state) => state.auth,
   );
-  const [tabIndex, setTabIndex] = useState(0);
+
+  const [tabIndex, setTabIndex] = useState(defaultTabIndex);
 
   const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -30,7 +35,6 @@ const UserHistoryPage = () => {
     enabled: isAuthenticated,
   });
 
-  const { fileSrc, fileInputRef } = useFileInput(DefaultAvatar);
   return (
     <Content>
       <Box sx={{ px: 2, maxWidth: "840px", mx: "auto" }}>
@@ -45,7 +49,7 @@ const UserHistoryPage = () => {
             }}
           >
             <Avatar
-              src={fileSrc}
+              src={user?.avatar || DefaultAvatar}
               sx={{
                 width: "120px",
                 height: "120px",
@@ -53,7 +57,6 @@ const UserHistoryPage = () => {
               }}
             />
 
-            <input type="file" hidden name="avatar" ref={fileInputRef} />
             {isLoading ? (
               <CustomBackdrop open />
             ) : (
@@ -63,16 +66,24 @@ const UserHistoryPage = () => {
                   position: "absolute",
                   left: "50%",
                   transform: "translateX(-50%)",
+                  whiteSpace: "nowrap",
                 }}
               >
-                {user?.username}
+                {user?.username || user?.name}
               </Typography>
             )}
           </Box>
         </Box>
         <Paper
           elevation={1}
-          sx={{ marginTop: 7, minHeight: "200px", padding: 1 }}
+          sx={{
+            marginTop: 7,
+            minHeight: "200px",
+            padding: 1,
+            paddingBottom: 2,
+            marginBottom: 2,
+            boxShadow: "0 0 29px rgba(100,100,111,.2)",
+          }}
         >
           <>
             <Tabs

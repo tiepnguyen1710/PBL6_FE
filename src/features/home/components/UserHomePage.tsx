@@ -189,9 +189,11 @@ const UserHomePage = () => {
               sx={{ py: 2 }}
             >
               <Typography variant="h5">Latest Practice Results</Typography>
-              <Button variant="outlined" sx={{ px: 1, py: 0.25 }}>
-                Analysis your practice
-              </Button>
+              <Link to="/history?tab=analysis">
+                <Button variant="outlined" sx={{ px: 1, py: 0.25 }}>
+                  Analysis your practice
+                </Button>
+              </Link>
             </Stack>
             <Stack
               direction="row"
@@ -199,24 +201,26 @@ const UserHomePage = () => {
               useFlexGap
               sx={{ flexWrap: "wrap" }}
             >
-              {lastPractice?.lastPractice?.map((practice) => {
-                return (
-                  <PracticeResult
-                    key={practice.id}
-                    id={practice.id}
-                    testTitle={practice.test.name}
-                    tags={practice.isFullTest ? [] : practice.listPart}
-                    fullTest={practice.isFullTest}
-                    dateTaken={format(
-                      new Date(practice.createdAt),
-                      "dd/MM/yyyy",
-                    )}
-                    completionTime={`${convertSecondsToHMS(practice.time)}`}
-                    result={`${practice.numCorrect}/${practice.totalQuestion}`}
-                    score={practice.LCScore + practice.RCScore}
-                  />
-                );
-              })}
+              {lastPractice?.lastPractice
+                ?.filter((practice) => practice.test != null)
+                .map((practice) => {
+                  return (
+                    <PracticeResult
+                      key={practice.id}
+                      id={practice.id}
+                      testTitle={practice.test.name}
+                      tags={practice.isFullTest ? [] : practice.listPart}
+                      fullTest={practice.isFullTest}
+                      dateTaken={format(
+                        new Date(practice.createdAt),
+                        "dd/MM/yyyy",
+                      )}
+                      completionTime={`${convertSecondsToHMS(practice.time)}`}
+                      result={`${practice.numCorrect}/${practice.totalQuestion}`}
+                      score={practice.LCScore + practice.RCScore}
+                    />
+                  );
+                })}
 
               {lastPractice?.lastPractice?.length === 0 && (
                 <Box>

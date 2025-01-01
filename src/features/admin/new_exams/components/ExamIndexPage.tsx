@@ -195,7 +195,7 @@ const ExamSet = () => {
                   <TableCell width="30%">ID</TableCell>
                   <TableCell width="25%">Name</TableCell>
                   <TableCell width="10%">Time</TableCell>
-                  <TableCell width="10%">Taken</TableCell>
+                  {/* <TableCell width="10%">Taken</TableCell> */}
                   <TableCell width="10%">Tag</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
