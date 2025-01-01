@@ -201,24 +201,26 @@ const UserHomePage = () => {
               useFlexGap
               sx={{ flexWrap: "wrap" }}
             >
-              {lastPractice?.lastPractice?.map((practice) => {
-                return (
-                  <PracticeResult
-                    key={practice.id}
-                    id={practice.id}
-                    testTitle={practice.test.name}
-                    tags={practice.isFullTest ? [] : practice.listPart}
-                    fullTest={practice.isFullTest}
-                    dateTaken={format(
-                      new Date(practice.createdAt),
-                      "dd/MM/yyyy",
-                    )}
-                    completionTime={`${convertSecondsToHMS(practice.time)}`}
-                    result={`${practice.numCorrect}/${practice.totalQuestion}`}
-                    score={practice.LCScore + practice.RCScore}
-                  />
-                );
-              })}
+              {lastPractice?.lastPractice
+                ?.filter((practice) => practice.test != null)
+                .map((practice) => {
+                  return (
+                    <PracticeResult
+                      key={practice.id}
+                      id={practice.id}
+                      testTitle={practice.test.name}
+                      tags={practice.isFullTest ? [] : practice.listPart}
+                      fullTest={practice.isFullTest}
+                      dateTaken={format(
+                        new Date(practice.createdAt),
+                        "dd/MM/yyyy",
+                      )}
+                      completionTime={`${convertSecondsToHMS(practice.time)}`}
+                      result={`${practice.numCorrect}/${practice.totalQuestion}`}
+                      score={practice.LCScore + practice.RCScore}
+                    />
+                  );
+                })}
 
               {lastPractice?.lastPractice?.length === 0 && (
                 <Box>
