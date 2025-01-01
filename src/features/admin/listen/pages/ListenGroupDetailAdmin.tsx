@@ -46,7 +46,7 @@ interface ListenGroupFormData {
   level: string;
 }
 
-const LESSON_PAGE_SIZE = 2;
+const LESSON_PAGE_SIZE = 4;
 const ListenGroupDetailAdmin = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -334,8 +334,18 @@ const ListenGroupDetailAdmin = () => {
                     >
                       {lesson.name}
                     </TableCell>
-                    <TableCell>{lesson?.listenSentences.length || 0}</TableCell>
-                    <TableCell align="right">
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                      }}
+                    >
+                      {lesson?.listenSentences.length || 0}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                      }}
+                    >
                       <Stack direction="row" spacing={0.5}>
                         <Link to={`/admin/listen-lesson?id=${lesson.id}`}>
                           <Button startIcon={<Tune />}>Manage</Button>

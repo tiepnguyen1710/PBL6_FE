@@ -216,9 +216,9 @@ const ListListenGroup = () => {
                               spacing={2}
                             >
                               {listenGroup.listenLessons.map(
-                                (listenLesson, index) => {
+                                (listenLesson) => {
                                   return (
-                                    <Grid2 size={3} key={listenLesson.id}>
+                                    <Grid2 size={4} key={listenLesson.id}>
                                       <Link to={`/listen/${listenLesson.id}`}>
                                         <Chip
                                           variant="outlined"
@@ -235,12 +235,7 @@ const ListListenGroup = () => {
                                               "0px 2px 2px rgba(0, 0, 0, 0.25)",
                                           }}
                                           size="medium"
-                                          label={
-                                            "#" +
-                                            (index + 1) +
-                                            ". " +
-                                            listenLesson.name
-                                          }
+                                          label={listenLesson.name}
                                         />
                                       </Link>
                                     </Grid2>
