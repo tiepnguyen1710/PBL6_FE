@@ -15,6 +15,7 @@ import RightAnswerGif from "../assets/right-answer.gif";
 import PhoneticAudioQuestionSlide from "./PhoneticAudioQuestionSlide";
 import { motion } from "framer-motion";
 import DefaultVocaThumbnail from "../../../assets/images/voca/default-voca-image.jpg";
+import { strEqualIgnoreCase } from "../../../utils/helper";
 
 interface TestingExerciseProps {
   exercise: Exercise;
@@ -49,7 +50,8 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
   const [userAnswer, setUserAnswer] = useState<string>("");
 
   const hasAnswered = userAnswer !== "";
-  const isAnswerCorrect = hasAnswered && userAnswer === exercise.correctAnswer;
+  const isAnswerCorrect =
+    hasAnswered && strEqualIgnoreCase(userAnswer, exercise.correctAnswer);
 
   const mainVoca = exercise.voca;
   const isSelectQuestion = exercise.options && exercise.options.length > 0;
@@ -97,7 +99,7 @@ const TestingExercise: React.FC<TestingExerciseProps> = ({
         onFulfilled?.();
       }, EXERCISE_DELAY_FULFILLED);
 
-      if (selectedAnswer === exercise.correctAnswer) {
+      if (strEqualIgnoreCase(selectedAnswer, exercise.correctAnswer)) {
         onCorrectAnswer?.(exercise.voca.id, exercise.type);
       } else {
         onWrongAnswer?.();
